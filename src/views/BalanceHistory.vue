@@ -1,0 +1,91 @@
+<template>
+  <div class="balance_history">
+
+    <div v-if="dataCollection.loaded">
+
+      <div class="current_balance_container">
+        Current balance: JPY {{current_balance.toLocaleString()}}
+      </div>
+
+      <LineChart
+        class="chart"
+        v-if="dataCollection.loaded"
+        v-bind:data="dataCollection"/>
+
+    </div>
+
+    <Loader v-else/>
+
+  </div>
+</template>
+
+<script>
+// @ is an alias to /src
+import LineChart from '@/components/charts/LineChart.vue'
+import Loader from '@/components//Loader.vue'
+
+export default {
+  name: 'BalanceHistory',
+  components: {
+    LineChart,
+    Loader
+  },
+  data(){
+    return {
+
+      current_balance: "loading",
+
+      dataCollection: {
+        loaded: false,
+        labels: [], // filled by API call
+        datasets: [
+          {
+            label: 'Balance',
+            data: [], // filled by API call
+            borderColor: '#c00000',
+            fill: false,
+            pointRadius: 0,
+            pointHitRadius: 3,
+            pointHoverRadius: 3,
+            borderWidth: 2,
+          }
+        ],
+      }
+    }
+  },
+  mounted(){
+
+    // Loading history
+    this.dataCollection.loaded = false;
+    this.axios.post("https://finances.maximemoreillon.com/balance_history_influx", {
+      account: process.env.VUE_APP_BANK_ACCOUNT_NAME
+    })
+    .then(response => {
+      // Empty array
+      this.dataCollection.labels.splice(0,this.dataCollection.labels.length)
+      this.dataCollection.datasets[0].data.splice(0,this.dataCollection.datasets[0].data.length)
+      // repopulate
+      response.data.forEach(entry => {
+        this.dataCollection.datasets[0].data.push(Number(entry.balance))
+        this.dataCollection.labels.push(new Date(entry.time))
+      })
+
+      this.current_balance = response.data[response.data.length-1].balance
+
+      this.dataCollection.loaded = true;
+    })
+    .catch( error => alert(error))
+
+  }
+}
+</script>
+
+<style scoped>
+
+.current_balance_container{
+  text-align: center;
+  font-size: 120%;
+  margin-bottom: 25px;
+}
+
+</style>
