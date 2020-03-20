@@ -57,7 +57,7 @@ export default {
 
     // Loading history
     this.dataCollection.loaded = false;
-    this.axios.post("https://finances.maximemoreillon.com/balance_history_influx", {
+    this.axios.post(`${process.env.VUE_APP_API_URL}/balance_history`, {
       account: process.env.VUE_APP_BANK_ACCOUNT_NAME
     })
     .then(response => {
@@ -74,7 +74,7 @@ export default {
 
       this.dataCollection.loaded = true;
     })
-    .catch( error => alert(error))
+    .catch( error => console.log(error))
 
   }
 }
