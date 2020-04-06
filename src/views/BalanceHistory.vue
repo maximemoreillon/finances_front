@@ -54,7 +54,7 @@ export default {
     }
   },
   mounted(){
-
+    
     // Loading history
     this.dataCollection.loaded = false;
     this.axios.post(`${process.env.VUE_APP_API_URL}/balance_history`, {
