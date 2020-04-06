@@ -6,12 +6,9 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueCookies from 'vue-cookies'
 
-import '@mdi/font/css/materialdesignicons.css';
-
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 
-Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
 
@@ -24,9 +21,10 @@ router.beforeEach((to, from, next) => {
     window.location.href = "https://authentication.maximemoreillon.com/";
   }
 
-
-
 });
+
+Vue.config.productionTip = false
+
 
 new Vue({
   router,

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finances-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finances-front
+  template:
+    metadata:
+      labels:
+        app: finances-front
+    spec:
+
+      containers:
+      - name: finances-front
+        image: 192.168.1.2:5000/finances-front
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: finances-front
+  name: finances-front
+spec:
+  ports:
+  - port: 80
+    nodePort: 31111
+  selector:
+    app: finances-front
+  type: LoadBalancer

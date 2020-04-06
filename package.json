@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && rm -r /home/moreillon/node/finances/dist && cp -r dist /home/moreillon/node/finances/dist",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@mdi/font": "^4.9.95",
-    "@moreillon/vue_application_template": "^0.1.2",
+    "@moreillon/vue_application_template": "^0.1.3",
     "axios": "^0.19.2",
     "c3": "^0.7.15",
     "chart.js": "^2.9.3",
