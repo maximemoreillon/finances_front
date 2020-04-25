@@ -68,7 +68,7 @@ export default {
     get_transaction(){
       this.transaction = null
       this.transaction_loading = true
-      this.axios.post(`${process.env.VUE_APP_API_URL}/get_transaction`, {
+      this.axios.post(`${process.env.VUE_APP_FINANCES_API_URL}/get_transaction`, {
         _id: this.$route.query._id
       })
       .then(response => {
@@ -80,14 +80,14 @@ export default {
 
 
     update_transaction(){
-      this.axios.post(`${process.env.VUE_APP_API_URL}/update_transaction`, this.transaction)
+      this.axios.post(`${process.env.VUE_APP_FINANCES_API_URL}/update_transaction`, this.transaction)
       .then( () => { this.get_transaction() })
       .catch(error => console.log(error))
     },
 
     delete_transaction(){
       if(confirm('Delete transaction? This action is irreversible')){
-        this.axios.post(`${process.env.VUE_APP_API_URL}/delete_transaction`, this.transaction)
+        this.axios.post(`${process.env.VUE_APP_FINANCES_API_URL}/delete_transaction`, this.transaction)
         .then( () => { this.$router.push({ name: 'balance' }) })
         .catch(error => console.log(error))
       }

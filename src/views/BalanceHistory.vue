@@ -57,7 +57,7 @@ export default {
 
     // Loading history
     this.dataCollection.loaded = false;
-    this.axios.post(`${process.env.VUE_APP_API_URL}/balance_history`, {
+    this.axios.post(`${process.env.VUE_APP_FINANCES_API_URL}/balance_history`, {
       account: process.env.VUE_APP_BANK_ACCOUNT_NAME
     })
     .then(response => {
