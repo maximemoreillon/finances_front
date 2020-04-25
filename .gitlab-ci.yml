@@ -4,19 +4,33 @@ stages:
 
 variables:
   APPLICATION_NAME: finances-front
-  CONTAINER_REGISTRY: 192.168.1.2:5000
+  DOCKER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+  CERTIFICATE_DOMAIN: finances.maximemoreillon.com
 
 containerization:
   stage: containerization
   script:
-    - cp ${ENV} ./.env
+    # If docker registry password provided, attempt login
+    - >
+      if [ -z ${CONTAINER_REGISTRY_PASSWORD} ];
+      then echo "CONTAINER_REGISTRY_PASSWORD not set, skipping login";
+      else echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin;
+      fi
+    # Copy env vars
+    - cp ${ACCOUNT_NAMES} ./.env
+    - cp ${ENV} ./.env.production
+    # Building and pushing container image
     - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
     - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+    - docker image rm ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+
 
 deployment:
-  stage: deployment
+  stage: deploy
   script:
-    - kubectl apply -f deployment.yml
+    - envsubst < deployment.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
-    name: staging
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}
