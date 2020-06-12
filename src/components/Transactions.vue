@@ -83,7 +83,7 @@ export default {
 
     this.dataCollection.loaded = false;
 
-    this.axios.post(`${process.env.VUE_APP_FINANCES_API_URL}/transactions`, {account: this.account})
+    this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transactions`, {params: {account: this.account}})
     .then( response => {
 
 
