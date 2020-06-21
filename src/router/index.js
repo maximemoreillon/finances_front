@@ -6,19 +6,20 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'home',
+    component: () => import('../views/Home.vue')
+  },
+  {
+    path: '/balance',
     name: 'balance',
     component: () => import('../views/BalanceHistory.vue')
   },
   {
-    path: '/credit_card_transactions',
-    name: 'credit_card_transactions',
-    component: () => import('../views/CreditCardTransactions.vue')
+    path: '/transactions',
+    name: 'transactions',
+    component: () => import('../views/Transactions.vue')
   },
-  {
-    path: '/bank_account_transactions',
-    name: 'bank_account_transactions',
-    component: () => import('../views/BankAccountTransactions.vue')
-  },
+
   {
     path: '/view_transaction',
     name: 'view_transaction',

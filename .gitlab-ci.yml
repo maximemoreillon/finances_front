@@ -16,8 +16,8 @@ containerization:
       then echo "CONTAINER_REGISTRY_PASSWORD not set, skipping login";
       else echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin;
       fi
-    # Copy env vars
-    - cp ${ACCOUNT_NAMES} ./.env
+    # Copy accounts config
+    - cp ${ACCOUNTS_CONFIG} src/accounts_config.js
     # Building and pushing container image
     - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
     - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}

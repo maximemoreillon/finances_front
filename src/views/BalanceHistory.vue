@@ -54,28 +54,33 @@ export default {
     }
   },
   mounted(){
+    this.get_balance_history(this.$route.query.account)
 
-    // Loading history
-    this.dataCollection.loaded = false;
-    this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance_history`, {
-      params: {account: process.env.VUE_APP_BANK_ACCOUNT_NAME}
-    })
-    .then(response => {
-      // Empty array
-      this.dataCollection.labels.splice(0,this.dataCollection.labels.length)
-      this.dataCollection.datasets[0].data.splice(0,this.dataCollection.datasets[0].data.length)
-      // repopulate
-      response.data.forEach(entry => {
-        this.dataCollection.datasets[0].data.push(Number(entry.balance))
-        this.dataCollection.labels.push(new Date(entry.time))
+
+  },
+  methods: {
+    get_balance_history(account){
+      // Loading history
+      this.dataCollection.loaded = false;
+      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance_history`, {
+        params: {account: account}
       })
+      .then(response => {
+        // Empty array
+        this.dataCollection.labels.splice(0,this.dataCollection.labels.length)
+        this.dataCollection.datasets[0].data.splice(0,this.dataCollection.datasets[0].data.length)
+        // repopulate
+        response.data.forEach(entry => {
+          this.dataCollection.datasets[0].data.push(Number(entry.balance))
+          this.dataCollection.labels.push(new Date(entry.time))
+        })
 
-      this.current_balance = response.data[response.data.length-1].balance
+        this.current_balance = response.data[response.data.length-1].balance
 
-      this.dataCollection.loaded = true;
-    })
-    .catch( error => console.log(error))
-
+        this.dataCollection.loaded = true;
+      })
+      .catch( error => console.log(error))
+    }
   }
 }
 </script>

@@ -19,4 +19,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-.env
+
+# Custom files
+src/accounts_config.js
