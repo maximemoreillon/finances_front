@@ -18,7 +18,6 @@ containerization:
       fi
     # Copy env vars
     - cp ${ACCOUNT_NAMES} ./.env
-    - cp ${ENV} ./.env.production
     # Building and pushing container image
     - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
     - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
