@@ -49,7 +49,6 @@ import HomeIcon from 'vue-material-design-icons/Home.vue'
 import ChartDonutIcon from 'vue-material-design-icons/ChartDonut.vue'
 import ChartLineIcon from 'vue-material-design-icons/ChartLine.vue'
 
-import accounts_config from '@/accounts_config.js'
 
 export default {
   name: 'app',
@@ -63,9 +62,35 @@ export default {
 
   data(){
     return {
-      transactions_accounts: accounts_config.transactions_accounts,
-      balance_accounts: accounts_config.balance_accounts,
+      transactions_accounts: [],
+      balance_accounts: [],
     }
+  },
+  mounted(){
+    this.get_balance_accounts()
+    this.get_transaction_accounts()
+  },
+  methods: {
+    get_balance_accounts(){
+      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance_accounts`)
+      .then( response => {
+        this.balance_accounts = []
+        response.data.forEach((account) => {
+          this.balance_accounts.push(account.name)
+        })
+      })
+      .catch(error => console.error(error))
+    },
+    get_transaction_accounts(){
+      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transaction_accounts`)
+      .then( response => {
+        this.transactions_accounts = []
+        response.data.forEach((account) => {
+          this.transactions_accounts.push(account)
+        })
+      })
+      .catch(error => console.error(error))
+    },
   }
 }
 </script>
