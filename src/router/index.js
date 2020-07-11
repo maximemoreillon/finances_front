@@ -15,6 +15,11 @@ const routes = [
     component: () => import('../views/BalanceHistory.vue')
   },
   {
+    path: '/register_balance',
+    name: 'register_balance',
+    component: () => import('../views/RegisterBalance.vue')
+  },
+  {
     path: '/transactions',
     name: 'transactions',
     component: () => import('../views/Transactions.vue')
@@ -25,6 +30,7 @@ const routes = [
     name: 'view_transaction',
     component: () => import('../views/ViewTransaction.vue')
   },
+
 ]
 
 const router = new VueRouter({

@@ -4,7 +4,7 @@ import { Line } from 'vue-chartjs'
 
 export default {
   name: 'LineChart',
-  props: ['data'],
+  props: ['data', 'currency'],
   mixins: [Line],
   mounted(){
     this.renderChart(this.data, {
@@ -22,12 +22,21 @@ export default {
           }
         }],
         yAxes: [{
+
           ticks: {
-            // Include a dollar sign in the ticks
             callback: value => {
-              return value/10000 + "万円";
+              if(this.currency === 'JPY') {
+                return `${(value/10000)}万`
+              }
+              else {
+                return `${(value/1000)}k`
+              }
+
+
+
             }
           }
+
         }]
       }
     });

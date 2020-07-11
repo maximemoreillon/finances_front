@@ -1,6 +1,9 @@
 <template>
   <div class="">
 
+    <h1>{{$route.query.account || Transactions}}</h1>
+
+
     <div v-if="dataCollection.loaded">
       <DoughnutChart v-bind:data="dataCollection"/>
 
