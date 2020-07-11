@@ -10,3 +10,7 @@ FROM nginx as production-stage
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Custom stuff
+COPY ./entrypoint.sh /entrypoint.sh
+ENTRYPOINT ['bash', '/entrypoint.sh']
