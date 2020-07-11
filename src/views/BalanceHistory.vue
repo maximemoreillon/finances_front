@@ -1,12 +1,12 @@
 <template>
   <div class="balance_history">
 
-    <h1>{{$route.query.account || Balance}}</h1>
+    <h1>{{ $route.query.account  || Balance}}</h1>
 
     <div v-if="dataCollection.loaded">
 
       <div class="current_balance_container">
-        Current balance: {{currency}} {{current_balance.toLocaleString()}}
+        Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
       </div>
 
       <LineChart
