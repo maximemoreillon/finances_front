@@ -4,7 +4,7 @@ ROOT_DIR=/app
 
 # Replace env vars in files served by NGINX
 echo "Replacing eenvironment variables"
-for file in $ROOT_DIR/js/app.*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*.js;
+for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*.js;
 do
   echo "Processing $file ...";
 
