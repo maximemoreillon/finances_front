@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ROOT_DIR=/app
+VUE_APP_AUTHENTICATION_API_URL=banana
 
 # Replace env vars in files served by NGINX
 echo "Replacing eenvironment variables"
