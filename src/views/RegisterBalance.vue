@@ -4,13 +4,28 @@
     <h1>Register Balance</h1>
 
     <form class="" @submit.prevent="submit()">
-      <label >Account</label>
-      <input type="text" v-model="account">
-      <label >Currency</label>
-      <input type="text" v-model="currency">
-      <label >Balance</label>
-      <input type="text" v-model="balance">
-      <input type="submit">
+      <p>
+        <label >Account</label>
+        <input type="text" v-model="account">
+      </p>
+
+      <p>
+        <label >Currency</label>
+        <input type="text" v-model="currency">
+      </p>
+
+      <p>
+        <label >Balance</label>
+        <input type="text" v-model="balance">
+      </p>
+
+      <p>
+        <input type="submit">
+      </p>
+
+
+
+
 
     </form>
 
@@ -53,6 +68,9 @@ export default {
 
 <style scoped>
 
+label {
+  margin-right: 0.5em;
+}
 
 
 </style>

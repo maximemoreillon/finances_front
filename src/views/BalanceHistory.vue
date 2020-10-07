@@ -3,6 +3,12 @@
 
     <h1>{{ $route.query.account  || Balance}}</h1>
 
+    <router-link
+      class="button"
+      :to="{ name: 'register_balance'}">
+      Register balance
+    </router-link>
+
     <div v-if="dataCollection.loaded">
 
       <div class="current_balance_container">

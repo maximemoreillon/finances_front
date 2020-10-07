@@ -150,5 +150,9 @@ button:hover,
   background-color: #c00000;
 }
 
+h1 {
+  text-transform: uppercase;
+}
+
 
 </style>
