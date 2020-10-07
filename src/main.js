@@ -21,7 +21,7 @@ router.beforeEach((to, from, next) => {
     window.location.href = process.env.VUE_APP_AUTHENTICATION_FRONT_URL
   }
 
-});
+})
 
 Vue.config.productionTip = false
 

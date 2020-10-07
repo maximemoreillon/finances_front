@@ -3,11 +3,8 @@
   <div class="transaction">
 
     <div class="table_wrapper" v-if="transaction">
+      <h1>{{transaction.description}}</h1>
       <table>
-        <tr>
-          <td>Description</td>
-          <td>{{transaction.description}}</td>
-        </tr>
         <tr>
           <td>Account</td>
           <td>{{transaction.account}}</td>
@@ -102,7 +99,7 @@ export default {
 
 table {
   width: 100%;
-  max-width: 800px;
+  //max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   border-collapse: collapse;

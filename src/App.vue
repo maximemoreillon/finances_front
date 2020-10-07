@@ -10,12 +10,17 @@
           <span>Home</span>
         </router-link>
 
+        <router-link to="/about">
+          <InformationOutlineIcon />
+          <span>About</span>
+        </router-link>
+
         <span class="nav_separator">Balance</span>
 
         <router-link
-        v-for="(account, account_index) in balance_accounts"
-        v-bind:key="`balance_account_${account_index}`"
-        v-bind:to="{ name: 'balance', query: {account: account} }">
+          v-for="(account, account_index) in balance_accounts"
+          v-bind:key="`balance_account_${account_index}`"
+          v-bind:to="{ name: 'balance', query: {account: account} }">
           <chart-line-icon />
           <span>{{account}}</span>
         </router-link>
@@ -24,9 +29,9 @@
 
         <!-- Transaction accounts -->
         <router-link
-        v-for="(account, account_index) in transactions_accounts"
-        v-bind:key="`transaction_account_${account_index}`"
-        v-bind:to="{ name: 'transactions', query: {account: account} }">
+          v-for="(account, account_index) in transactions_accounts"
+          v-bind:key="`transaction_account_${account_index}`"
+          v-bind:to="{ name: 'transactions', query: {account: account} }">
           <chart-donut-icon />
           <span>{{account}}</span>
         </router-link>
@@ -48,6 +53,7 @@ import AppTemplate from '@moreillon/vue_application_template'
 import HomeIcon from 'vue-material-design-icons/Home.vue'
 import ChartDonutIcon from 'vue-material-design-icons/ChartDonut.vue'
 import ChartLineIcon from 'vue-material-design-icons/ChartLine.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 
 
 export default {
@@ -57,6 +63,7 @@ export default {
     ChartDonutIcon,
     ChartLineIcon,
     HomeIcon,
+    InformationOutlineIcon,
   },
 
 
@@ -79,7 +86,10 @@ export default {
           this.balance_accounts.push(account.name)
         })
       })
-      .catch(error => console.error(error))
+      .catch(error => {
+        if(error.response) console.log(error.response.data)
+        console.error(error)
+      })
     },
     get_transaction_accounts(){
       this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transaction_accounts`)
