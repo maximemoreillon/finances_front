@@ -19,7 +19,7 @@
         v-for="(account, account_index) in transactions_accounts"
         v-bind:key="`transaction_account_${account_index}`">
         <router-link
-          v-bind:to="{ name: 'balance', query: {account: account} }">
+          v-bind:to="{ name: 'transactions', query: {account: account} }">
           {{account}}
         </router-link>
       </li>

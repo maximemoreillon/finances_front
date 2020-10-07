@@ -1,7 +1,14 @@
 <template>
   <div class="">
 
-    <h1>{{$route.query.account || Transactions}}</h1>
+    <h1>{{$route.query.account || "Transactions"}}</h1>
+    <p>
+      <router-link
+        class="button"
+        :to="{ name: 'transaction_categories'}">
+        Manage expense categories
+      </router-link>
+    </p>
 
 
     <div v-if="dataCollection.loaded">
@@ -36,7 +43,7 @@
 // @ is an alias to /src
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
-import account_config from '@/accounts_config.js'
+//import account_config from '@/accounts_config.js'
 
 export default {
   name: 'Transactions',
@@ -49,7 +56,7 @@ export default {
 
       transactions: [],
 
-      expense_categories: account_config.expense_categories,
+      expense_categories: [],
 
 
 
@@ -76,10 +83,24 @@ export default {
   },
 
   mounted(){
-    this.get_transactions(this.$route.query.account)
+    //this.get_transactions(this.$route.query.account)
+    this.get_transaction_categories()
 
   },
   methods: {
+    get_transaction_categories(){
+      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transactions/categories`)
+      .then( response => {
+        this.expense_categories = response.data
+
+        this.get_transactions(this.$route.query.account)
+      })
+      .catch(error => {
+        console.error(error)
+        alert('Error')
+      })
+
+    },
     get_transactions(account){
       this.dataCollection.loaded = false;
 
