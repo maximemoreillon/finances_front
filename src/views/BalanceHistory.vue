@@ -3,17 +3,29 @@
 
     <h1>{{ $route.query.account  || Balance}}</h1>
 
-    <router-link
-      class="button"
-      :to="{ name: 'register_balance'}">
-      Register balance
-    </router-link>
+    <p>
+      <router-link
+        class="button"
+        :to="{ name: 'register_balance'}">
+        Register balance
+      </router-link>
+    </p>
+
 
     <div v-if="dataCollection.loaded">
 
-      <div class="current_balance_container">
-        Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
-      </div>
+        <div class="current_balance_container">
+          Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
+        </div>
+        <div class="last_retrieved">
+          (Last retrieved {{last_retrieved_formatted}})
+        </div>
+
+
+
+
+
+
 
       <LineChart
         class="chart"
@@ -43,6 +55,7 @@ export default {
     return {
       current_balance: "loading",
       currency: null,
+      last_retrieved: null,
 
       dataCollection: {
         loaded: false,
@@ -93,10 +106,20 @@ export default {
 
         this.current_balance = response.data[response.data.length-1].balance
         this.currency = response.data[response.data.length-1].currency
+        this.last_retrieved = response.data[response.data.length-1].time
 
         this.dataCollection.loaded = true;
       })
       .catch( error => console.log(error))
+    }
+  },
+  computed: {
+    last_retrieved_formatted(){
+      const date =  new Date(this.last_retrieved)
+      const year = date.getYear() + 1900
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      return `${year}/${month}/${day}`
     }
   }
 }
@@ -107,7 +130,16 @@ export default {
 .current_balance_container{
   text-align: center;
   font-size: 120%;
-  margin-bottom: 25px;
+}
+
+.last_retrieved {
+  margin-top: 0.25em;
+  font-size: 80%;
+  text-align: center;
+}
+
+.chart {
+  margin-top: 1em;
 }
 
 </style>
