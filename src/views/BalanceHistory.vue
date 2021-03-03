@@ -59,21 +59,13 @@ export default {
         chart: {
           id: 'balance-chart',
         },
+        stroke: {
+          curve: 'straight',
+        },
         zoom: {
           autoScaleYaxis: true
         },
         colors: ['#c00000'],
-        /*
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.9,
-            stops: [0, 100]
-          }
-        },
-        */
 
         xaxis: {
           type: 'datetime'
@@ -81,12 +73,6 @@ export default {
         dataLabels: {
           enabled: false
         },
-        /*
-        yaxis: {
-          min: 0,
-          max: 100,
-        }
-        */
 
       },
       series: [{
