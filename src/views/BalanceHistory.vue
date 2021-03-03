@@ -11,68 +11,87 @@
       </router-link>
     </p>
 
-
-    <div v-if="dataCollection.loaded">
-
-        <div class="current_balance_container">
-          Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
-        </div>
-        <div class="last_retrieved">
-          (Last retrieved {{last_retrieved_formatted}})
-        </div>
-
+    <template v-if="!loading">
+      <div class="current_balance_container">
+        Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
+      </div>
+      <div class="last_retrieved">
+        (Last retrieved {{last_retrieved_formatted}})
+      </div>
+    </template>
 
 
+    <Loader v-if="loading"/>
 
+    <div
+      v-if="!loading"
+      class="chart_wrapper">
+      <apexchart
 
-
-
-      <LineChart
-        class="chart"
-        v-if="dataCollection.loaded"
-        v-bind:data="dataCollection"
-        v-bind:currency="currency"/>
-
+        ref="weight_chart"
+        width="100%"
+        height="100%"
+        type="area"
+        v-bind:options="options"
+        :series="series" />
     </div>
-
-    <Loader v-else/>
 
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import LineChart from '@/components/charts/LineChart.vue'
 import Loader from '@/components//Loader.vue'
 
 export default {
   name: 'BalanceHistory',
   components: {
-    LineChart,
     Loader
   },
   data(){
     return {
+      loading: false,
       current_balance: "loading",
       currency: null,
       last_retrieved: null,
 
-      dataCollection: {
-        loaded: false,
-        labels: [], // filled by API call
-        datasets: [
-          {
-            label: 'Balance',
-            data: [], // filled by API call
-            borderColor: '#c00000',
-            fill: false,
-            pointRadius: 0,
-            pointHitRadius: 3,
-            pointHoverRadius: 3,
-            borderWidth: 2,
+      options: {
+        chart: {
+          id: 'balance-chart',
+        },
+        zoom: {
+          autoScaleYaxis: true
+        },
+        colors: ['#c00000'],
+        /*
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            stops: [0, 100]
           }
-        ],
-      }
+        },
+        */
+
+        xaxis: {
+          type: 'datetime'
+        },
+        dataLabels: {
+          enabled: false
+        },
+        /*
+        yaxis: {
+          min: 0,
+          max: 100,
+        }
+        */
+
+      },
+      series: [{
+        data: []
+      }],
     }
   },
   beforeRouteUpdate (_to, _from, next) {
@@ -88,29 +107,42 @@ export default {
   methods: {
     get_balance_history(){
       // Loading history
-      this.dataCollection.loaded = false;
+      this.loading = true
 
-      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance_history`, {
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/balance_history`
+      // TODO: use REST API
+      const options = {
         params: {account: this.$route.query.account}
-      })
+      }
+
+      this.axios.get(url, options)
       .then(response => {
 
-        // Empty array
-        this.dataCollection.labels.splice(0,this.dataCollection.labels.length)
-        this.dataCollection.datasets[0].data.splice(0,this.dataCollection.datasets[0].data.length)
-        // repopulate
-        response.data.forEach(entry => {
-          this.dataCollection.datasets[0].data.push(Number(entry.balance))
-          this.dataCollection.labels.push(new Date(entry.time))
+        const data_length = response.data.length
+        const last_item = response.data[data_length-1]
+
+        this.current_balance = last_item.balance
+        this.currency = last_item.currency
+        this.last_retrieved = last_item.time
+
+        const chart_data = response.data.map((entry) => {
+          return [
+            new Date(entry.time).getTime(),
+            entry.balance
+          ]
         })
 
-        this.current_balance = response.data[response.data.length-1].balance
-        this.currency = response.data[response.data.length-1].currency
-        this.last_retrieved = response.data[response.data.length-1].time
+        this.series = [ { name: 'balance', data: chart_data } ]
 
-        this.dataCollection.loaded = true;
+
+
+
       })
-      .catch( error => console.log(error))
+      .catch( error => {
+        console.error(error)
+        alert('`Failed to load data`')
+      })
+      .finally(() => {this.loading = false})
     }
   },
   computed: {
@@ -138,8 +170,13 @@ export default {
   text-align: center;
 }
 
-.chart {
-  margin-top: 1em;
+.current_weight_wrapper{
+  text-align: center;
+  font-size: 150%;
+}
+
+.chart_wrapper {
+  height: 60vh;
 }
 
 </style>

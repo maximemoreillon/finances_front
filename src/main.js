@@ -5,10 +5,13 @@ import store from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueCookies from 'vue-cookies'
+import VueApexCharts from 'vue-apexcharts'
 
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
+Vue.use(VueApexCharts)
 
+Vue.component('apexchart', VueApexCharts)
 
 router.beforeEach((to, from, next) => {
 
