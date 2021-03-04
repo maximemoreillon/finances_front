@@ -3,6 +3,7 @@
 
     <h1>{{ $route.query.account  || Balance}}</h1>
 
+    <!-- TODO: Replace by more appripriate div with proper styling -->
     <p>
       <router-link
         class="button"
@@ -11,6 +12,9 @@
       </router-link>
     </p>
 
+
+    <Loader v-if="loading"/>
+
     <template v-if="!loading">
       <div class="current_balance_container">
         Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
@@ -18,23 +22,58 @@
       <div class="last_retrieved">
         (Last retrieved {{last_retrieved_formatted}})
       </div>
+
+
+      <!-- TODO: Replace by more appripriate div with proper styling -->
+      <p class="zoom_buttons_wrapper">
+        <button
+          id="one_month"
+          @click="updateData('one_month')"
+          :class="{active: selection==='one_month'}">
+          1M
+        </button>
+
+          <button
+            id="six_months"
+            @click="updateData('six_months')"
+            :class="{active: selection==='six_months'}">
+            6M
+          </button>
+
+          <button
+            id="one_year"
+            @click="updateData('one_year')"
+            :class="{active: selection==='one_year'}">
+            1Y
+          </button>
+
+          <button
+            id="all"
+            @click="updateData('all')"
+            :class="{active: selection==='all'}">
+            ALL
+          </button>
+      </p>
+
+
+      <div
+        v-if="!loading"
+        class="chart_wrapper">
+        <apexchart
+          ref="chart"
+          width="100%"
+          height="100%"
+          v-bind:options="options"
+          :series="series" />
+      </div>
+
     </template>
 
 
-    <Loader v-if="loading"/>
 
-    <div
-      v-if="!loading"
-      class="chart_wrapper">
-      <apexchart
 
-        ref="weight_chart"
-        width="100%"
-        height="100%"
-        type="area"
-        v-bind:options="options"
-        :series="series" />
-    </div>
+
+
 
   </div>
 </template>
@@ -54,17 +93,20 @@ export default {
       current_balance: "loading",
       currency: null,
       last_retrieved: null,
+      selection: 'one_year',
 
       options: {
         chart: {
-          id: 'balance-chart',
+          id: 'area-datetime',
+          type: 'area',
+          zoom: {
+            autoScaleYaxis: true
+          },
         },
         stroke: {
           curve: 'straight',
         },
-        zoom: {
-          autoScaleYaxis: true
-        },
+
         colors: ['#c00000'],
 
         xaxis: {
@@ -120,15 +162,44 @@ export default {
 
         this.series = [ { name: 'balance', data: chart_data } ]
 
-
-
-
       })
       .catch( error => {
         console.error(error)
         alert('`Failed to load data`')
       })
       .finally(() => {this.loading = false})
+    },
+
+    updateData(timeline){
+      this.selection = timeline
+
+      switch (timeline) {
+        case 'one_month':
+          this.$refs.chart.zoomX(
+            new Date().setMonth(new Date().getMonth() - 1),
+            new Date()
+          )
+          break
+        case 'six_months':
+          this.$refs.chart.zoomX(
+            new Date().setMonth(new Date().getMonth() - 6),
+            new Date()
+          )
+          break
+        case 'one_year':
+          this.$refs.chart.zoomX(
+            new Date().setMonth(new Date().getMonth() - 12),
+            new Date()
+          )
+          break
+        case 'all':
+          this.$refs.chart.zoomX(
+            this.series[0].data[0][0],
+            new Date(),
+          )
+          break
+        default:
+      }
     }
   },
   computed: {
@@ -163,6 +234,16 @@ export default {
 
 .chart_wrapper {
   height: 60vh;
+}
+
+.zoom_buttons_wrapper button:not(:last-child) {
+  margin-right: 0.5em;
+}
+
+.zoom_buttons_wrapper button.active {
+  color: white;
+  background-color: #c00000;
+  border-color: #c00000; 
 }
 
 </style>
