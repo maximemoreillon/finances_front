@@ -93,7 +93,7 @@ export default {
       current_balance: "loading",
       currency: null,
       last_retrieved: null,
-      selection: 'one_year',
+      selection: 'all',
 
       options: {
         chart: {
@@ -243,7 +243,7 @@ export default {
 .zoom_buttons_wrapper button.active {
   color: white;
   background-color: #c00000;
-  border-color: #c00000; 
+  border-color: #c00000;
 }
 
 </style>
