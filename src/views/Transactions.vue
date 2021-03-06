@@ -2,7 +2,8 @@
   <div class="">
 
     <h1>{{account || "Transactions"}}</h1>
-    <p class="toolbar">
+
+    <div class="toolbar">
       <label for="">From</label>
       <input
         type="date"
@@ -22,7 +23,7 @@
         :to="{ name: 'transaction_categories'}">
         Manage expense categories
       </router-link>
-    </p>
+    </div>
 
     <div
       v-if="!loading"
@@ -253,6 +254,7 @@ export default {
 <style scoped>
 
 .chart_wrapper {
+  margin-top: 1em;
   height: 30vh;
 }
 
@@ -304,6 +306,11 @@ tr:not(:first-child):hover{
 .toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar > * {
+  margin: 0.5em 0;
 }
 
 .toolbar > *:not(:last-child) {
