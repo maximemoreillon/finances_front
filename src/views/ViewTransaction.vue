@@ -65,9 +65,12 @@ export default {
     get_transaction(){
       this.transaction = null
       this.transaction_loading = true
-      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transaction`, {
-        params: {_id: this.$route.query._id}
-      })
+      // UPDATE TO REST API
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/transaction`
+      const options = {
+        params: {_id: this.$route.params.transaction_id}
+      }
+      this.axios.get(url,options)
       .then(response => {
         this.transaction = response.data
         this.transaction_loading = false
@@ -77,17 +80,18 @@ export default {
 
 
     update_transaction(){
+      // UPDATE THIS TO REST API!
       this.axios.put(`${process.env.VUE_APP_FINANCES_API_URL}/transaction`, this.transaction)
       .then( () => { this.get_transaction() })
       .catch(error => console.log(error))
     },
 
     delete_transaction(){
-      if(confirm('Delete transaction? This action is irreversible')){
-        this.axios.delete(`${process.env.VUE_APP_FINANCES_API_URL}/transaction`, {params: {_id: this.transaction._id}})
-        .then( () => { this.$router.go(-1)})
-        .catch(error => console.log(error))
-      }
+      if(!confirm('Delete transaction? This action is irreversible')) return
+
+      this.axios.delete(`${process.env.VUE_APP_FINANCES_API_URL}/transaction`, {params: {_id: this.transaction._id}})
+      .then( () => { this.$router.go(-1)})
+      .catch(error => console.log(error))
 
     }
 

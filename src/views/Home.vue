@@ -8,7 +8,7 @@
         v-for="(account, account_index) in balance_accounts"
         v-bind:key="`balance_account_${account_index}`">
         <router-link
-          v-bind:to="{ name: 'balance', query: {account: account} }">
+          v-bind:to="{ name: 'balance', params: {account} }">
           {{account}}
         </router-link>
       </li>
@@ -19,7 +19,7 @@
         v-for="(account, account_index) in transactions_accounts"
         v-bind:key="`transaction_account_${account_index}`">
         <router-link
-          v-bind:to="{ name: 'transactions', query: {account: account} }">
+          v-bind:to="{ name: 'transactions', params: {account} }">
           {{account}}
         </router-link>
       </li>

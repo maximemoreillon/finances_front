@@ -24,25 +24,25 @@ const routes = [
     name: 'transaction_category',
     component: () => import('../views/TransactionCategory.vue')
   },
-  {
-    path: '/balance',
-    name: 'balance',
-    component: () => import('../views/BalanceHistory.vue')
-  },
+
   {
     path: '/register_balance',
     name: 'register_balance',
     component: () => import('../views/RegisterBalance.vue')
   },
   {
-    path: '/transactions',
+    path: '/accounts/:account/balance',
+    name: 'balance',
+    component: () => import('../views/BalanceHistory.vue')
+  },
+  {
+    path: '/accounts/:account/transactions',
     name: 'transactions',
     component: () => import('../views/Transactions.vue')
   },
-
   {
-    path: '/view_transaction',
-    name: 'view_transaction',
+    path: '/accounts/:account/transactions/:transaction_id',
+    name: 'transaction',
     component: () => import('../views/ViewTransaction.vue')
   },
 

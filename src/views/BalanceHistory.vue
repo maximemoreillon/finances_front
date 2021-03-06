@@ -1,7 +1,7 @@
 <template>
   <div class="balance_history">
 
-    <h1>{{ $route.query.account  || Balance}}</h1>
+    <h1>{{ account  || 'Balance'}}</h1>
 
     <!-- TODO: Replace by more appripriate div with proper styling -->
     <p>
@@ -63,7 +63,7 @@
           ref="chart"
           width="100%"
           height="100%"
-          v-bind:options="options"
+          :options="options"
           :series="series" />
       </div>
 
@@ -137,13 +137,9 @@ export default {
       // Loading history
       this.loading = true
 
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/balance_history`
-      // TODO: use REST API
-      const options = {
-        params: {account: this.$route.query.account}
-      }
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
 
-      this.axios.get(url, options)
+      this.axios.get(url)
       .then(response => {
 
         const data_length = response.data.length
@@ -209,6 +205,9 @@ export default {
       const month = date.getMonth() + 1
       const day = date.getDate()
       return `${year}/${month}/${day}`
+    },
+    account(){
+      return this.$route.params.account
     }
   }
 }
