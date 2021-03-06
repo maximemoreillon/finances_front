@@ -21,7 +21,7 @@
       <router-link
         class="button"
         :to="{ name: 'transaction_categories'}">
-        Manage expense categories
+        Manage categories
       </router-link>
     </div>
 
