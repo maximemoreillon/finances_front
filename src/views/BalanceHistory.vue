@@ -137,7 +137,7 @@ export default {
       // Loading history
       this.loading = true
 
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance/history`
 
       this.axios.get(url)
       .then(response => {
