@@ -88,6 +88,7 @@ export default {
 
       options: {
         chart: {
+          id: 'transactions',
           type: 'donut'
         },
         labels: [],
@@ -153,8 +154,23 @@ export default {
     },
     populate_graph(){
       const out = this.categorized_expenses
+      const chart = this.$refs.chart
+
       this.series = out.map(x => x.amount)
-      this.options.labels = out.map(x => x.label)
+
+      // NOT NICE BUT CAN'T FINDOTHER WAY
+      if(!chart) {
+        this.options.labels = out.map(x => x.label)
+      }
+      else {
+        chart.updateOptions({labels: out.map(x => x.label)}, false, true)
+      }
+
+
+
+
+
+
     },
 
     format_date(date){
