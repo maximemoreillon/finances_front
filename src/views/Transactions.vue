@@ -16,6 +16,8 @@
         v-model="end_date"
         @change="populate_graph()">
 
+      <button type="button" @click="reset_date_filter()">Reset</button>
+
       <span class="spacer"/>
 
       <router-link
@@ -152,10 +154,35 @@ export default {
       })
       .finally(() => { this.loading = false})
     },
-    populate_graph(){
-      const out = this.categorized_expenses
-      const chart = this.$refs.chart
+    generate_graph_data(){
+      const max_categories = 8
+      return this.categorized_expenses.reduce((acc, expense) => {
 
+        const entry = acc.find(entry => entry.label === expense.category)
+        const amount = Math.abs(expense.amount)
+
+        // if label not found, create it
+        if(!entry) acc.push({ label: expense.category, amount })
+        else entry.amount += amount
+
+        return acc
+      },[])
+      // Further reduce to remove categories that are too small
+      .sort((a, b) =>  b.amount - a.amount)
+      // Remove categories that are too small
+      .reduce((acc, item, index) => {
+        if(index < max_categories) acc.push(item)
+        else {
+          if(!acc[max_categories]) acc.push({label: 'Other', amount: item.amount})
+          else acc[max_categories].amount += item.amount
+        }
+        return acc
+      }, [])
+
+    },
+    populate_graph(){
+      const out = this.generate_graph_data()
+      const chart = this.$refs.chart
       this.series = out.map(x => x.amount)
 
       // NOT NICE BUT CAN'T FINDOTHER WAY
@@ -176,6 +203,11 @@ export default {
     format_date(date){
       const options = {year: '2-digit', month: '2-digit', day: '2-digit' };
       return new Date(date).toLocaleString('ja-JP', options)
+    },
+    reset_date_filter(){
+      this.start_date = null,
+      this.end_date = null,
+      this.populate_graph()
     },
 
   },
@@ -208,12 +240,8 @@ export default {
     },
     categorized_expenses(){
 
-      const max_categories = 5
-
-      // Looks quite inefficient
-      return this.non_business_expenses
-      .reduce(( acc, expense) => {
-
+      // Add a category to every expense
+      return this.non_business_expenses.map( (expense) => {
         // Find the correct category from the available categories
         const category = this.expense_categories.find(category => {
           return category.keywords.find(keyword => {
@@ -221,47 +249,14 @@ export default {
           })
         })
 
-        // If the expense does not fit in any category, then use description as label
-        const label = category ? category.label : expense.description
-
-        const entry = acc.find(entry => {
-          return entry.label === label
-        })
-
-        const amount = Math.abs(expense.amount)
-
-        // if label not found, create it
-        if(!entry) acc.push({ label, amount })
-        else entry.amount += amount
-
-
-        return acc
-
-
-      }, [])
-      // Further reduce to remove categories that are too small
-      .sort((a, b) => {
-        return b.amount - a.amount
+        return {
+          ...expense,
+          category: category ? category.label : expense.description
+        }
       })
-      .reduce((acc, item, index) => {
-        if(index < max_categories) {
-          acc.push(item)
-          return acc
-        }
-        else {
-          if(!acc[max_categories]) {
-            acc.push({label: 'Other', amount: item.amount})
-          }
-          else {
-            acc[max_categories].amount += item.amount
-          }
-          return acc
-        }
-      }, [])
-
-
 
     }
+
   }
 
 }
@@ -323,6 +318,7 @@ tr:not(:first-child):hover{
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 1em;
 }
 
 .toolbar > * {
