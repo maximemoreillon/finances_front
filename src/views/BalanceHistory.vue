@@ -152,7 +152,8 @@ export default {
         const chart_data = response.data.map((entry) => {
           return [
             new Date(entry.time).getTime(),
-            entry.balance
+            // not super clean but easy
+            Math.round(entry.balance)
           ]
         })
 

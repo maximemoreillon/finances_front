@@ -13,6 +13,7 @@ Vue.use(VueApexCharts)
 
 Vue.component('apexchart', VueApexCharts)
 
+/*
 router.beforeEach((to, from, next) => {
 
   if(Vue.$cookies.get("jwt")) {
@@ -25,6 +26,7 @@ router.beforeEach((to, from, next) => {
   }
 
 })
+*/
 
 Vue.config.productionTip = false
 

@@ -1,9 +1,11 @@
 <template>
   <div id="app">
 
-    <AppTemplate applicationName="Finances">
+    <AppTemplate
+      :options="options"
+      @user="user_changed($event)">
 
-      <template v-slot:navigation>
+      <template v-slot:nav>
 
         <router-link to="/">
           <home-icon />
@@ -39,8 +41,6 @@
 
       </template>
 
-      <router-view/>
-
     </AppTemplate>
 
   </div>
@@ -69,15 +69,25 @@ export default {
 
   data(){
     return {
+      options: {
+        title: 'Finances',
+        authenticate: true,
+        login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
+        identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
+      },
       transactions_accounts: [],
       balance_accounts: [],
     }
   },
   mounted(){
-    this.get_balance_accounts()
-    this.get_transaction_accounts()
+
   },
   methods: {
+    user_changed(user){
+      if(!user) return
+      this.get_balance_accounts()
+      this.get_transaction_accounts()
+    },
     get_balance_accounts(){
       this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance/accounts`)
       .then( response => {
@@ -107,12 +117,9 @@ export default {
 
 
 <style>
-main {
-  margin: 1em;
-}
+
 
 .nav_separator {
-  text-align: center;
   font-size: 120%;
   color: #c00000;
   padding: 15px;
