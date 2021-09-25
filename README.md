@@ -1,5 +1,7 @@
 # finances_front
 
+Project page: https://articles.maximemoreillon.com/articles/165
+
 ## Project setup
 ```
 npm install
