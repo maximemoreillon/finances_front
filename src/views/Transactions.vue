@@ -134,7 +134,6 @@ export default {
     get_transactions(){
       this.loading = true
 
-      // TODO: update to REST API
       const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/transactions`
 
       this.axios.get(url)
@@ -193,11 +192,6 @@ export default {
         chart.updateOptions({labels: out.map(x => x.label)}, false, true)
       }
 
-
-
-
-
-
     },
 
     format_date(date){
@@ -216,16 +210,20 @@ export default {
       return this.$route.params.account
     },
     filtered_transactions(){
+
       if(!this.start_date) return this.transactions
 
-      const end_date = this.end_date || new Date()
-      const filter_time = new Date(this.start_date)
+      let end_date
+      if(this.end_date) end_date = new Date(this.end_date)
+      else end_date = new Date()
+      
+      const start_date = new Date(this.start_date)
 
       return this.transactions.filter(transaction => {
         const transaction_time = new Date(transaction.date)
 
 
-        return end_date > transaction_time && transaction_time > filter_time
+        return end_date > transaction_time && transaction_time > start_date
       })
     },
     expenses(){
