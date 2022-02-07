@@ -14,18 +14,13 @@ spec:
     spec:
       containers:
       - name: ${APPLICATION_NAME}
-        image: ${DOCKER_IMAGE}
-        # Ensures that k8s pulls a new image on restart
-        imagePullPolicy: Always
+        image: ${CONTAINER_IMAGE_TAGGED}
         ports:
         - containerPort: 80
         # Get environment variables from secret
         envFrom:
         - secretRef:
            name: environment-variables
-      # Credentials to pull image from registry
-      imagePullSecrets:
-      - name: registry-credentials
 ---
 apiVersion: v1
 kind: Service

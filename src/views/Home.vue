@@ -48,12 +48,7 @@ export default {
   methods: {
     get_balance_accounts(){
       this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance/accounts`)
-      .then( response => {
-        this.balance_accounts = []
-        response.data.forEach((account) => {
-          this.balance_accounts.push(account.name)
-        })
-      })
+      .then( ({data}) => { this.balance_accounts = data })
       .catch(error => {
         if(error.response) console.log(error.response.data)
         console.error(error)
@@ -61,12 +56,7 @@ export default {
     },
     get_transaction_accounts(){
       this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transactions/accounts`)
-      .then( response => {
-        this.transactions_accounts = []
-        response.data.forEach((account) => {
-          this.transactions_accounts.push(account)
-        })
-      })
+      .then( ({data}) => { this.transactions_accounts = data })
       .catch(error => console.error(error))
     },
   }
