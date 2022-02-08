@@ -1,92 +1,105 @@
 <template>
-  <div id="app">
+  <AppTemplate
+    @user="get_user($event)"
+    :options="options">
 
-    <AppTemplate
-      :options="options"
-      @user="user_changed($event)">
+    <template v-slot:nav>
+      <v-list
+        dense
+        nav >
+        <v-list-item
+          v-for="(item, index) in nav"
+          :key="`nav_item_${index}`"
+          :to="item.to"
+          exact>
+          <v-list-item-icon>
+            <v-icon>{{item.icon}}</v-icon>
+          </v-list-item-icon>
 
-      <template v-slot:nav>
+          <v-list-item-content>
+            <v-list-item-title>{{item.title}}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
-        <router-link to="/">
-          <home-icon />
-          <span>Home</span>
-        </router-link>
+        <v-list-group
+          :value="false"
+          no-action
+          prepend-icon="mdi-chart-line">
 
-        <router-link to="/about">
-          <InformationOutlineIcon />
-          <span>About</span>
-        </router-link>
+          <template v-slot:activator>
+            <v-list-item-title>Accounts</v-list-item-title>
+          </template>
 
-        <span class="nav_separator">Balance</span>
+          <v-list-item
+            v-for="(account, account_index) in accounts"
+            :key="`account_${account_index}`"
+            :to="{ name: 'account', params: {account} }"
+            exact>
+            <v-list-item-icon>
+              <v-icon>mdi-chart-line</v-icon>
+            </v-list-item-icon>
 
-        <router-link
-          v-for="(account, account_index) in balance_accounts"
-          v-bind:key="`balance_account_${account_index}`"
-          v-bind:to="{ name: 'balance', params: {account: account} }">
-          <chart-line-icon />
-          <span>{{account}}</span>
-        </router-link>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{account.toUpperCase()}}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
-        <span class="nav_separator">Transactions</span>
-
-        <!-- Transaction accounts -->
-        <router-link
-          v-for="(account, account_index) in transactions_accounts"
-          v-bind:key="`transaction_account_${account_index}`"
-          v-bind:to="{ name: 'transactions', params: {account: account} }">
-          <chart-donut-icon />
-          <span>{{account}}</span>
-        </router-link>
+        </v-list-group>
 
 
-      </template>
 
-    </AppTemplate>
+      </v-list>
+    </template>
 
-  </div>
+  </AppTemplate>
 </template>
 
 <script>
-//import AppTemplate from '@/components/vue_application_template/AppTemplate.vue'
-import AppTemplate from '@moreillon/vue_application_template'
-
-import HomeIcon from 'vue-material-design-icons/Home.vue'
-import ChartDonutIcon from 'vue-material-design-icons/ChartDonut.vue'
-import ChartLineIcon from 'vue-material-design-icons/ChartLine.vue'
-import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
-
-
+import AppTemplate from '@moreillon/vue_application_template_vuetify'
 export default {
-  name: 'app',
+  name: 'App',
+
   components: {
-    AppTemplate,
-    ChartDonutIcon,
-    ChartLineIcon,
-    HomeIcon,
-    InformationOutlineIcon,
+    AppTemplate
   },
 
+  data: () => ({
+    transactions_accounts: [],
+    balance_accounts: [],
 
-  data(){
-    return {
-      options: {
-        title: 'Finances',
-        authenticate: true,
-        login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
-        identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
-      },
-      transactions_accounts: [],
-      balance_accounts: [],
-    }
-  },
-  mounted(){
+    accounts: [],
+    loading: false,
 
-  },
+    options: {
+      title: "Finances",
+      skip_greetings: process.env.NODE_ENV === 'development',
+      login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
+      identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
+    },
+    nav: [
+      {title: 'Home', to: {name: 'home'}, icon: 'mdi-home'},
+      {title: 'About', to: {name: 'about'}, icon: 'mdi-information-outline'},
+    ]
+  }),
+
   methods: {
-    user_changed(user){
+    get_user(user){
       if(!user) return
+      this.get_accounts()
       this.get_balance_accounts()
       this.get_transaction_accounts()
+    },
+    get_accounts(){
+      this.loading = true
+      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/accounts`)
+      .then( ({data}) => { this.accounts = data })
+      .catch(error => {
+        if(error.response) console.log(error.response.data)
+        console.error(error)
+      })
+      .finally(() => {this.loading = false})
     },
     get_balance_accounts(){
       this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance/accounts`)
@@ -101,55 +114,13 @@ export default {
       .then( ({data}) => { this.transactions_accounts = data })
       .catch(error => console.error(error))
     },
+
   }
-}
+};
 </script>
 
-
 <style>
-
-
-.nav_separator {
-  font-size: 120%;
-  color: #c00000;
-  padding: 15px;
-  margin-top: 15px;
+.apexcharts-toolbar {
+  z-index: 0 !important;
 }
-
-button,
-.button {
-  font-size: 85%;
-  text-decoration: none;
-  color: currentColor;
-  border: 1px solid #444444;
-  border-radius: 0.33em;
-  padding: 0.33em;
-  background-color: transparent;
-
-  transition: 0.25s;
-  cursor: pointer;
-}
-
-button:hover,
-.button:hover {
-  border-color: #c00000;
-  color: #c00000;
-}
-
-.dangerous {
-  color: #c00000;
-  border-color: #c00000;
-  transition: 0.25s;
-}
-
-.dangerous:hover {
-  color: white;
-  background-color: #c00000;
-}
-
-h1 {
-  text-transform: uppercase;
-}
-
-
 </style>

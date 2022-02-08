@@ -5,105 +5,13 @@
     <v-toolbar flat>
       <v-row align="baseline">
         <v-col cols="auto">
-          <v-card-title>{{ account  || 'Balance'}}</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            :to="{ name: 'register_balance'}">
-            Register new
-          </v-btn>
+          <v-card-title>Accounts</v-card-title>
         </v-col>
       </v-row>
-      
     </v-toolbar>
     <v-divider />
 
-
-
-    <v-card-text>
-      <v-card outlined>
-        <v-card-title class="justify-center">
-          Current balance: {{currency}} {{parseFloat(current_balance).toLocaleString()}}
-        </v-card-title>
-        <v-card-subtitle class="text-center">
-          (Last retrieved {{last_retrieved_formatted}})
-        </v-card-subtitle>        
-      </v-card>
-    
-    </v-card-text>
-
-    <v-card-text>
-      <v-card outlined>
-        <v-toolbar flat>
-
-          <v-row align="baseline" dense>
-            <v-col cols="auto">
-              <v-btn
-                id="one_month"
-                :dark="selection==='one_month'"
-                @click="updateData('one_month')">
-                1M
-              </v-btn>
-            </v-col>
-            <v-col cols="auto">
-              <v-btn
-                id="six_months"
-                @click="updateData('six_months')"
-                :dark="selection==='six_months'">
-                6M
-              </v-btn>
-            </v-col>
-            <v-col cols="auto">
-              <v-btn
-                id="one_year"
-                @click="updateData('one_year')"
-                :dark="selection==='one_year'">
-                1Y
-              </v-btn>
-            </v-col>
-            <v-col cols="auto">
-              <v-btn
-                id="all"
-                @click="updateData('all')"
-                :dark="selection==='all'">
-                ALL
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-toolbar>
-
-        <v-card-text>
-          <apexchart
-            ref="chart"
-            width="100%"
-            :options="options"
-            :series="series" />
-        </v-card-text>
-      </v-card>
-    </v-card-text>
-
-    
-
-    
-
-
-      
-
-
-
-
-      <!-- TODO: Replace by more appripriate div with proper styling -->
-      <p class="zoom_buttons_wrapper">
-        
-      </p>
-
-
-      
-        
-
   </v-card>
-
 </template>
 
 <script>
@@ -111,7 +19,7 @@
 export default {
   name: 'BalanceHistory',
   components: {
-    
+
   },
   data(){
     return {

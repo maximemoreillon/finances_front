@@ -10,6 +10,16 @@ const routes = [
     component: () => import('../views/Home.vue')
   },
   {
+    path: '/accounts',
+    name: 'accounts',
+    component: () => import('../views/Accounts.vue')
+  },
+  {
+    path: '/accounts/:account',
+    name: 'account',
+    component: () => import('../views/Account.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue')
@@ -30,6 +40,7 @@ const routes = [
     name: 'register_balance',
     component: () => import('../views/RegisterBalance.vue')
   },
+
   {
     path: '/accounts/:account/balance',
     name: 'balance',
@@ -39,6 +50,11 @@ const routes = [
     path: '/accounts/:account/transactions',
     name: 'transactions',
     component: () => import('../views/Transactions.vue')
+  },
+  {
+    path: '/accounts/:account/monthlytransactions',
+    name: 'monthly_transactions',
+    component: () => import('../views/MonthlyExpenses.vue')
   },
   {
     path: '/accounts/:account/transactions/:transaction_id',
