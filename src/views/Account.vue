@@ -16,10 +16,17 @@
       <AccountTransactionsTable />
     </v-card-text>
     <v-card-text>
-      <AccountMonthlyExpensesTotal />
+      <AccountMonthlyExpensesTotal
+        @yearSelection="year = $event"
+        @monthSelection="month = $event"
+        :year="year"/>
     </v-card-text>
     <v-card-text>
-      <AccountExpenseBreakdown />
+      <AccountExpenseBreakdown
+        @yearSelection="year = $event"
+        @monthSelection="month = $event"
+        :month="month"
+        :year="year"/>
     </v-card-text>
 
   </v-card>
@@ -41,6 +48,8 @@ export default {
   },
   data(){
     return {
+      month: new Date().getMonth() + 1,
+      year: new Date().getYear() + 1900,
     }
   },
   watch: {

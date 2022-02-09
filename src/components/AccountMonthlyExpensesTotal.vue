@@ -12,7 +12,8 @@
         <v-col cols="auto">
           <v-select
             :items="years"
-            v-model="year"
+            :value="year"
+            @change="$emit('yearSelection', $event)"
             label="Year" />
         </v-col>
       </v-row>
@@ -24,7 +25,7 @@
         ref="chart"
         width="100%"
         height="300"
-        :options="options"
+        :options="chart_options"
         :series="series" />
     </v-card-text>
   </v-card>
@@ -37,17 +38,27 @@ export default {
   components: {
 
   },
+  props: {
+    year: Number,
+  },
   data(){
     return {
       loading: false,
       transactions: [],
       years: Array.from(Array(10).keys()).map(y => 2022-y),
-      year: new Date().getYear() + 1900,
-      options: {
+
+      chart_options: {
         chart: {
           id: 'area-datetime',
           type: 'bar',
+          events: {
+            dataPointSelection: (_, __, config) => {
+              const clicked_month = config.dataPointIndex + 1
+              this.$emit('monthSelection', clicked_month)
+            }
+          },
         },
+
         yaxis: {
           labels: {
             formatter: (value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'")

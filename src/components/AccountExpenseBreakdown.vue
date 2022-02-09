@@ -12,13 +12,15 @@
         <v-col cols="auto">
           <v-select
             :items="years"
-            v-model="year"
+            :value="year"
+            @change="$emit('yearSelection', $event)"
             label="Year" />
         </v-col>
         <v-col cols="auto">
           <v-select
             :items="months"
-            v-model="month"
+            :value="month"
+            @change="$emit('monthSelection', $event)"
             label="Month" />
         </v-col>
       </v-row>
@@ -43,12 +45,17 @@ export default {
   components: {
 
   },
+  props: {
+    month: Number,
+    year: Number,
+  },
   data(){
     return {
       months: Array.from(Array(12).keys()).map(m => m + 1),
       years: Array.from(Array(10).keys()).map(y => 2022-y),
-      year: new Date().getYear() + 1900,
-      month: new Date().getMonth() + 1,
+
+      //year: new Date().getYear() + 1900,
+      // month: new Date().getMonth() + 1,
 
       loading: false,
       transactions: [],

@@ -66,8 +66,6 @@ export default {
   },
 
   data: () => ({
-    transactions_accounts: [],
-    balance_accounts: [],
 
     accounts: [],
     loading: false,
@@ -79,7 +77,7 @@ export default {
       identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
     },
     nav: [
-      {title: 'Home', to: {name: 'home'}, icon: 'mdi-home'},
+      {title: 'Home', to: {name: 'accounts'}, icon: 'mdi-home'},
       {title: 'About', to: {name: 'about'}, icon: 'mdi-information-outline'},
     ]
   }),
@@ -88,8 +86,6 @@ export default {
     get_user(user){
       if(!user) return
       this.get_accounts()
-      this.get_balance_accounts()
-      this.get_transaction_accounts()
     },
     get_accounts(){
       this.loading = true
@@ -101,19 +97,7 @@ export default {
       })
       .finally(() => {this.loading = false})
     },
-    get_balance_accounts(){
-      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/balance/accounts`)
-      .then( ({data}) => { this.balance_accounts = data })
-      .catch(error => {
-        if(error.response) console.log(error.response.data)
-        console.error(error)
-      })
-    },
-    get_transaction_accounts(){
-      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/transactions/accounts`)
-      .then( ({data}) => { this.transactions_accounts = data })
-      .catch(error => console.error(error))
-    },
+
 
   }
 };
