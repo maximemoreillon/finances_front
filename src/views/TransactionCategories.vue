@@ -1,18 +1,31 @@
 
 <template>
-  <div class="home">
-    <h1>Categories</h1>
-    <p>
-      <router-link
-        class="button"
-        :to="{ name: 'transaction_category', params: {category_id: 'new'}}">
-        Create category
-      </router-link>
-    </p>
+  <v-card>
+
+    <v-toolbar
+      flat>
+      <v-row align="baseline">
+        <v-col cols="auto">
+          <v-card-title>Transaction categories</v-card-title>
+        </v-col>
+        <v-spacer />
+        <v-col cols="auto">
+          <v-btn
+            exact
+            :to="{ name: 'new_transaction_category'}">
+            New category
+          </v-btn>
+        </v-col>
+      </v-row>
+
+    </v-toolbar>
 
 
 
-    <div class="categories_wrapper">
+
+
+
+    <v-card-text>
       <router-link
         class="category"
         v-for="category in categories"
@@ -33,7 +46,7 @@
         </div>
 
       </router-link>
-    </div>
+    </v-card-text>
 
 
 
@@ -42,7 +55,7 @@
 
 
 
-  </div>
+  </v-card>
 </template>
 
 <script>

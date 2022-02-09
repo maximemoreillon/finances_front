@@ -3,27 +3,43 @@
     :loading="loading"
     outlined>
 
-    <v-toolbar flat>
+    <v-toolbar
+      flat
+      extended>
       <v-row align="baseline">
         <v-col cols="auto">
           <v-card-title>Expenses breakdown</v-card-title>
         </v-col>
         <v-spacer />
         <v-col cols="auto">
-          <v-select
-            :items="years"
-            :value="year"
-            @change="$emit('yearSelection', $event)"
-            label="Year" />
-        </v-col>
-        <v-col cols="auto">
-          <v-select
-            :items="months"
-            :value="month"
-            @change="$emit('monthSelection', $event)"
-            label="Month" />
+          <v-btn
+            :to="{name: 'transaction_categories'}">
+            Manage categories
+          </v-btn>
         </v-col>
       </v-row>
+
+      <template v-slot:extension>
+        <v-container>
+          <v-row align="baseline">
+            <v-col cols="auto">
+              <v-select
+                :items="years"
+                :value="year"
+                @change="$emit('yearSelection', $event)"
+                label="Year" />
+            </v-col>
+            <v-col cols="auto">
+              <v-select
+                :items="months"
+                :value="month"
+                @change="$emit('monthSelection', $event)"
+                label="Month" />
+            </v-col>
+          </v-row>
+        </v-container>
+
+      </template>
     </v-toolbar>
 
 
