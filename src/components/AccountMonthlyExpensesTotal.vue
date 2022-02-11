@@ -64,7 +64,7 @@ export default {
             formatter: (value) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'")
           },
         },
-        colors: ['#c00000'],
+        colors: ['#00c000','#c00000'],
         dataLabels: {
           enabled: false
         },
@@ -94,37 +94,53 @@ export default {
       .finally(() => { this.loading = false})
     },
 
-        transactions_of_month(year, month){
+    transactions_of_month(year, month){
 
-            const start_date = new Date(`${year}/${month}/01`)
-            const end_year = month < 12 ? year : year + 1;
-            const end_month = month < 12 ? month + 1 : 1;
+        const start_date = new Date(`${year}/${month}/01`)
+        const end_year = month < 12 ? year : year + 1;
+        const end_month = month < 12 ? month + 1 : 1;
 
-            const end_date = new Date(`${end_year}/${end_month}/01`)
+        const end_date = new Date(`${end_year}/${end_month}/01`)
 
-            return this.transactions.filter(t => (start_date < new Date(t.date)) && (new Date(t.date) < end_date))
-        },
-
-        sum_for_month(year, month) {
-            return this.transactions_of_month(year,month)
-                .reduce( (acc, {amount}) => {
-                    // Only expenses
-                    if(amount < 0) acc += -amount
-                    return acc
-                }, 0)
-        }
+        return this.transactions.filter(t => (start_date < new Date(t.date)) && (new Date(t.date) < end_date))
+    },
+    income_sum_for_month(year, month) {
+      return this.transactions_of_month(year,month)
+        .reduce( (acc, {amount}) => {
+          // Only expenses
+          if(amount > 0) acc += amount
+          return acc
+        }, 0)
+    },
+    expenses_sum_for_month(year, month) {
+      return this.transactions_of_month(year,month)
+        .reduce( (acc, {amount}) => {
+          // Only expenses
+          if(amount < 0) acc += -amount
+          return acc
+        }, 0)
+    }
   },
   computed: {
     account(){
       return this.$route.params.account
     },
-    formatted_transactions(){
-        return Array.from(Array(12).keys())
-            .map(m => m + 1)
-            .map(month => this.sum_for_month(this.year, month) )
+    formatted_income(){
+      return Array.from(Array(12).keys())
+        .map(m => m + 1)
+        .map(month => this.income_sum_for_month(this.year, month) )
+    },
+    formatted_expenses(){
+      return Array.from(Array(12).keys())
+        .map(m => m + 1)
+        .map(month => this.expenses_sum_for_month(this.year, month) )
     },
     series(){
-        return [{ data: this.formatted_transactions }]
+      console.log(this.formatted_income);
+      return [
+        { name: "Income", data: this.formatted_income },
+        { name: "Expenses", data: this.formatted_expenses },
+      ]
     }
   }
 }
