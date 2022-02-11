@@ -136,7 +136,6 @@ export default {
         .map(month => this.expenses_sum_for_month(this.year, month) )
     },
     series(){
-      console.log(this.formatted_income);
       return [
         { name: "Income", data: this.formatted_income },
         { name: "Expenses", data: this.formatted_expenses },
