@@ -1,5 +1,7 @@
 <template>
   <v-card
+    max-width="500px"
+    class="mx-auto"
     :loading="loading">
 
     <v-toolbar flat>
@@ -13,6 +15,7 @@
     <v-card-text>
       <v-row>
         <v-col
+          cols="12"
           v-for="account in accounts"
           :key="account">
           <v-card

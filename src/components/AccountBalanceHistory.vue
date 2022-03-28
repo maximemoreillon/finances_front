@@ -11,12 +11,12 @@
       <v-toolbar flat>
 
         <v-row align="baseline" dense>
-          <v-col>
+          <v-col cols="6">
             <v-card-title class="">
               {{currency}} {{parseFloat(current_balance).toLocaleString()}}
             </v-card-title>
             <v-card-subtitle class="">
-              (Last retrieved {{last_retrieved_formatted}})
+              As of {{last_retrieved_formatted}}
             </v-card-subtitle>
           </v-col>
           <v-spacer/>
@@ -25,7 +25,7 @@
             v-for="button in chartControlButtons"
             :key="button.value">
             <v-btn
-              small
+              x-small
               :dark="selection===button.value"
               @click="updateData(button.value)">
               {{button.text}}
