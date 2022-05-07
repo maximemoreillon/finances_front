@@ -1,6 +1,6 @@
 
 <template>
-  <div class="home">
+  <v-card>
     <h1>Register Balance</h1>
 
     <form class="" @submit.prevent="submit()">
@@ -16,7 +16,9 @@
 
       <p>
         <label >Balance</label>
-        <input type="text" v-model="balance">
+        <v-text-field
+          v-model="balance"
+          label="Balance" />
       </p>
 
       <p>
@@ -30,7 +32,7 @@
     </form>
 
 
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -41,7 +43,6 @@ export default {
 
   data(){
     return {
-      account: '',
       currency: '',
       balance: '',
     }
@@ -60,6 +61,11 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    }
+  },
+  computed: {
+    account(){
+      return this.$route.params.account
     }
   }
 

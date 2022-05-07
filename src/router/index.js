@@ -16,6 +16,11 @@ const routes = [
     component: () => import('../views/Account.vue')
   },
   {
+    path: '/accounts/:account/balance/register',
+    name: 'register_balance',
+    component: () => import('../views/RegisterBalance.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue')
@@ -36,11 +41,11 @@ const routes = [
     component: () => import('../views/TransactionCategory.vue')
   },
 
-  {
-    path: '/register_balance',
-    name: 'register_balance',
-    component: () => import('../views/RegisterBalance.vue')
-  },
+  // {
+  //   path: '/register_balance',
+  //   name: 'register_balance',
+  //   component: () => import('../views/RegisterBalance.vue')
+  // },
 
   {
     path: '/accounts/:account/balance',
