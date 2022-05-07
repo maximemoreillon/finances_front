@@ -1,54 +1,91 @@
 
 <template>
-  <v-card>
-    <h1>Register Balance</h1>
+  <v-card
+    max-width="30em"
+    class="mx-auto">
 
-    <form class="" @submit.prevent="submit()">
-      <p>
-        <label >Account</label>
-        <input type="text" v-model="account">
-      </p>
+    <v-toolbar flat>
+      <v-row align="center">
+        <v-col cols="auto">
+          <v-btn
+            icon
+            exact
+            :to="{name: 'account', params: {account}}">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-toolbar-title>
+            Register balance
+          </v-toolbar-title>
+        </v-col>
+      </v-row>
+    </v-toolbar>
+    
 
-      <p>
-        <label >Currency</label>
-        <input type="text" v-model="currency">
-      </p>
+    <v-card-text>
+      
+      <v-form @submit.prevent="submit()">
 
-      <p>
-        <label >Balance</label>
-        <v-text-field
-          v-model="balance"
-          label="Balance" />
-      </p>
+        <v-row>
+          <v-col cols="12">
+            <v-select
+              width="100%"
+              :items="currencies"
+              v-model="currency"
+              label="Currency"
+              />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              width="100%"
+              v-model="balance"
+              label="Balance" />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-col cols="auto">
+            <v-btn 
+              type="submit"
+              :loading="registering">
+              Register
+            </v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+        </v-row>
+   
+      </v-form>
+    </v-card-text>
 
-      <p>
-        <input type="submit">
-      </p>
-
-
-
-
-
-    </form>
 
 
   </v-card>
 </template>
 
 <script>
-// @ is an alias to /src
 
 export default {
   name: 'ViewTransaction',
 
   data(){
     return {
+      currencies: [
+        'JPY',
+        'USD',
+        'CHF',
+        'EUR',
+      ],
       currency: '',
       balance: '',
+      registering: false,
     }
   },
   methods: {
     submit(){
+      this.registering = true
       let url = `${process.env.VUE_APP_FINANCES_API_URL}/balance`
       let body = {
         account: this.account,
@@ -57,9 +94,14 @@ export default {
       }
       this.axios
         .post(url,body)
-        .then(() => this.$router.push({name: 'balance', query: {'account' : this.account}}))
+        .then(() => {
+          this.$router.push({name: 'account', params: {account : this.account}})
+        })
         .catch((error) => {
           console.log(error)
+        })
+        .finally(() => {
+          this.registering = false
         })
     }
   },
