@@ -3,28 +3,45 @@
     :loading="loading"
     outlined>
 
-    <v-card-title>Balance</v-card-title>
 
     <template v-if="!loading && series.length">
 
 
-      <v-toolbar flat>
+      <v-container fluid>
 
-        <v-row align="baseline" dense>
-          <v-col cols="6">
-            <v-card-title class="">
-              {{currency}} {{parseFloat(current_balance).toLocaleString()}}
-            </v-card-title>
-            <v-card-subtitle class="">
-              As of {{last_retrieved_formatted}}
-            </v-card-subtitle>
+        <v-row aling="center">
+          <v-col class="text-h6">
+            Balance
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="auto">
+            <v-btn 
+              small
+              :to="{name: 'register_balance', params: {account}}">
+              Register
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row align="center" dense>
+          <v-col cols="auto">
+            <v-row dense>
+              <v-col>{{currency}} {{parseFloat(current_balance).toLocaleString()}}</v-col>
+            </v-row>
+            <v-row dense>
+              <v-col>
+                (As of {{last_retrieved_formatted}})
+              </v-col>
+            </v-row>
           </v-col>
           <v-spacer/>
           <v-col
             cols="auto"
-            v-for="button in chartControlButtons"
-            :key="button.value">
+            >
             <v-btn
+              v-for="button in chartControlButtons"
+              :key="button.value"
+              class="mr-2"
               x-small
               :dark="selection===button.value"
               @click="updateData(button.value)">
@@ -33,7 +50,7 @@
           </v-col>
 
         </v-row>
-      </v-toolbar>
+      </v-container>
 
       <v-card-text>
         <apexchart
