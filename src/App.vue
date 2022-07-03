@@ -73,8 +73,8 @@ export default {
     options: {
       title: "Finances",
       skip_greetings: process.env.NODE_ENV === 'development',
-      login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
-      identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
+      login_url: process.env.VUE_APP_LOGIN_URL,
+      identification_url: process.env.VUE_APP_IDENTIFICATION_URL
     },
     nav: [
       {title: 'Home', to: {name: 'accounts'}, icon: 'mdi-home'},
