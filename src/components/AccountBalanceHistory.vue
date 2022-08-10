@@ -132,7 +132,7 @@ export default {
 
       this.series = []
 
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance/history`
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
 
       this.axios.get(url)
       .then( ({data}) => {
@@ -142,11 +142,13 @@ export default {
         const data_length = data.length
         const last_item = data[data_length-1]
 
-        this.current_balance = last_item.balance
-        this.currency = last_item.currency
-        this.last_retrieved = last_item.time
+        console.log(last_item)
 
-        const chart_data = data.map(({balance, time}) => [ new Date(time).getTime(), Math.round(balance)] )
+        this.current_balance = last_item._value
+        this.currency = last_item.currency
+        this.last_retrieved = last_item._time
+
+        const chart_data = data.map(({ _value, _time }) => [new Date(_time).getTime(), Math.round(_value)] )
 
         this.series = [ { name: 'balance', data: chart_data } ]
 
