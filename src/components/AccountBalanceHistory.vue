@@ -142,8 +142,6 @@ export default {
         const data_length = data.length
         const last_item = data[data_length-1]
 
-        console.log(last_item)
-
         this.current_balance = last_item._value
         this.currency = last_item.currency
         this.last_retrieved = last_item._time
