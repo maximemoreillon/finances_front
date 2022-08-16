@@ -9,7 +9,8 @@
       <v-data-table
         :headers="headers"
         :items="transactions"
-        :loading="loading">
+        :loading="loading"
+        @click:row="rowClicked($event)">
 
         <template v-slot:item.date="{ item: {date} }">
           {{new Date(date).toLocaleString('ja-JP', toLocaleStringOptions)}}
@@ -85,6 +86,9 @@ export default {
       })
       .finally(() => { this.loading = false})
     },
+    rowClicked({ _id: transaction_id }){
+      this.$router.push({ name: 'transaction', params: { transaction_id }})
+    }
   },
   computed: {
     account(){

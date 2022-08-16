@@ -41,11 +41,6 @@ const routes = [
     component: () => import('../views/TransactionCategory.vue')
   },
 
-  // {
-  //   path: '/register_balance',
-  //   name: 'register_balance',
-  //   component: () => import('../views/RegisterBalance.vue')
-  // },
 
   {
     path: '/accounts/:account/balance',
@@ -58,14 +53,16 @@ const routes = [
     component: () => import('../views/Transactions.vue')
   },
   {
+    // Is this even used?
     path: '/accounts/:account/monthlytransactions',
     name: 'monthly_transactions',
     component: () => import('../views/MonthlyExpenses.vue')
   },
   {
+
     path: '/accounts/:account/transactions/:transaction_id',
     name: 'transaction',
-    component: () => import('../views/ViewTransaction.vue')
+    component: () => import('../views/Transaction.vue')
   },
 
 ]
