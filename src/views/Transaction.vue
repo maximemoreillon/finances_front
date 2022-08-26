@@ -4,17 +4,22 @@
 
     <v-toolbar flat>
       <v-row align="center">
-        <v-col>
-          <v-btn  icon :to="{name: 'account', params: {account: this.account}}" exact>
+        <v-col cols="auto">
+          <v-btn icon :to="{name: 'account', params: {account: this.account}}" exact>
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-col>
         <v-col>
           <v-toolbar-title>
-            Transaction {{transaction_id}}
+            Transaction
           </v-toolbar-title>
         </v-col>
         <v-spacer></v-spacer>
+        <v-col cols="auto">
+          <v-btn icon @click="update_transaction()">
+            <v-icon>mdi-content-save</v-icon>
+          </v-btn>
+        </v-col>
         <v-col cols="auto">
           <v-btn color="#c00000" icon @click="delete_transaction()">
             <v-icon>mdi-delete</v-icon>
@@ -27,14 +32,29 @@
     <v-card-text v-if="transaction">
       <v-row>
         <v-col>
-          <v-text-field label="Amount" v-model="transaction.description"></v-text-field>
+          <v-text-field label="Description" v-model="transaction.description"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <v-text-field label="Amount" type="number" v-model.number="transaction.amount"></v-text-field>
+          <v-text-field label="ID" v-model="transaction._id" readonly></v-text-field>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field label="Currency" v-model="transaction.currency"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field label="Amount" type="number" v-model.number="transaction.amount"></v-text-field>
+        </v-col>
+
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-checkbox label="Business expense" v-model="transaction.business_expense"></v-checkbox>
+        </v-col>
+      </v-row>
+
     </v-card-text>
 
   </v-card>
@@ -71,9 +91,8 @@ export default {
 
 
     update_transaction(){
-      // UPDATE THIS TO REST API!
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/transaction/${this.transaction_id}`
-      this.axios.put(url, this.transaction)
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/transactions/${this.transaction_id}`
+      this.axios.patch(url, this.transaction)
       .then( () => { this.get_transaction() })
       .catch(error => console.log(error))
     },
