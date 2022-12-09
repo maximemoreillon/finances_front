@@ -3,29 +3,17 @@
   <v-card :loading="loading" max-width="50rem" class="mx-auto">
 
     <v-toolbar flat>
-      <v-row align="center">
-        <v-col cols="auto">
-          <v-btn icon :to="{name: 'account', params: {account: this.account}}" exact>
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-toolbar-title>
-            Transaction
-          </v-toolbar-title>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="auto">
-          <v-btn icon @click="update_transaction()">
-            <v-icon>mdi-content-save</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <v-btn color="#c00000" icon @click="delete_transaction()">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-btn icon :to="{name: 'account', params: {account: this.account}}" exact>
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <v-toolbar-title>Transaction</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon @click="update_transaction()">
+        <v-icon>mdi-content-save</v-icon>
+      </v-btn>
+      <v-btn color="#c00000" icon @click="delete_transaction()">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
     </v-toolbar>
 
 
@@ -37,17 +25,11 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-text-field label="ID" v-model="transaction._id" readonly></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-text-field label="Currency" v-model="transaction.currency"></v-text-field>
+          <v-text-field label="Amount" type="number" v-model.number="transaction.amount" :prefix="transaction.currency"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field label="Amount" type="number" v-model.number="transaction.amount"></v-text-field>
+          <v-text-field label="Date" :value="new Date(transaction.date).toLocaleDateString()" readonly></v-text-field>
         </v-col>
-
       </v-row>
       <v-row>
         <v-col>
