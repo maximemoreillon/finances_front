@@ -93,7 +93,10 @@ export default {
       this.axios
         .get(`/transactions/categories`)
         .then((response) => {
-          this.transactionCategories = response.data
+          this.transactionCategories = [
+            { label: "None", _id: null },
+            ...response.data,
+          ]
         })
         .catch((error) => {
           if (error.response) console.error(error.response.data)
