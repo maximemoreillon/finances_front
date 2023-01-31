@@ -60,10 +60,9 @@ export default {
   data() {
     return {
       months: Array.from(Array(12).keys()).map((m) => m + 1),
-      years: Array.from(Array(10).keys()).map((y) => 2022 - y),
-
-      //year: new Date().getYear() + 1900,
-      // month: new Date().getMonth() + 1,
+      years: Array.from(Array(20).keys()).map(
+        (y) => new Date().getFullYear + 10 - y
+      ),
 
       loading: false,
       transactions: [],
