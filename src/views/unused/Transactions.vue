@@ -1,75 +1,66 @@
+<!-- This might be unused -->
 <template>
-  <v-card :loading="loading" outlined>
-    <v-toolbar flat extended>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>Expenses breakdown</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn :to="{ name: 'transaction_categories' }">
-            Manage categories
-          </v-btn>
-        </v-col>
-      </v-row>
+  <v-card :loading="loading">
+    <h1>{{ account || "Transactions" }}</h1>
 
-      <template v-slot:extension>
-        <v-container>
-          <v-row align="baseline">
-            <v-col cols="auto">
-              <v-select
-                :items="years"
-                :value="year"
-                @change="$emit('yearSelection', $event)"
-                label="Year"
-              />
-            </v-col>
-            <v-col cols="auto">
-              <v-select
-                :items="months"
-                :value="month"
-                @change="$emit('monthSelection', $event)"
-                label="Month"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
-    </v-toolbar>
+    <div class="toolbar">
+      <label for="">From</label>
+      <input type="date" v-model="start_date" @change="populate_graph()" />
 
-    <v-card-text>
+      <label for="">To</label>
+      <input type="date" v-model="end_date" @change="populate_graph()" />
+
+      <button type="button" @click="reset_date_filter()">Reset</button>
+
+      <span class="spacer" />
+
+      <router-link class="button" :to="{ name: 'transaction_categories' }">
+        Manage categories
+      </router-link>
+    </div>
+
+    <div v-if="!loading" class="chart_wrapper">
       <apexchart
         ref="chart"
         width="100%"
-        height="300"
+        height="100%"
         :options="options"
         :series="series"
       />
+    </div>
+
+    <v-card-text>
+      <v-data-table
+        :headers="headers"
+        :items="filtered_transactions"
+        :loading="loading"
+      >
+      </v-data-table>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: "AccountExpenseBreakdown",
-  components: {},
-  props: {
-    month: Number,
-    year: Number,
-  },
+  name: "Transactions",
+
   data() {
     return {
-      months: Array.from(Array(12).keys()).map((m) => m + 1),
-      years: Array.from(Array(10).keys()).map((y) => 2022 - y),
+      start_date: null,
+      end_date: null,
 
-      //year: new Date().getYear() + 1900,
-      // month: new Date().getMonth() + 1,
-
-      loading: false,
       transactions: [],
+      loading: false,
+
       expense_categories: [],
 
-      base_options: {
+      headers: [
+        { text: "Date", value: "date" },
+        { text: "Description", value: "description" },
+        { text: "Amount", value: "amount" },
+      ],
+
+      options: {
         chart: {
           id: "transactions",
           type: "donut",
@@ -102,6 +93,8 @@ export default {
           "#dddddd",
         ],
       },
+
+      series: [],
     }
   },
   watch: {
@@ -110,25 +103,22 @@ export default {
     },
   },
   mounted() {
+    //this.get_transactions(this.$route.query.account)
     this.get_transaction_categories()
   },
   methods: {
     get_transaction_categories() {
       this.loading = true
-      const url = `/transactions/categories`
       this.axios
-        .get(url)
-        .then(({ data }) => {
-          this.expense_categories = data
+        .get(`/transactions/categories`)
+        .then((response) => {
+          this.expense_categories = response.data
           this.get_transactions()
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
           else console.error(error)
           alert("Error")
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     get_transactions() {
@@ -140,6 +130,8 @@ export default {
         .get(url)
         .then(({ data }) => {
           this.transactions = data
+
+          this.populate_graph()
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -177,27 +169,32 @@ export default {
           }, [])
       )
     },
+    populate_graph() {
+      const out = this.generate_graph_data()
+      const chart = this.$refs.chart
+      this.series = out.map((x) => x.amount)
+
+      // NOT NICE BUT CAN'T FIND ANOTHER WAY
+      if (!chart) {
+        this.options.labels = out.map((x) => x.label)
+      } else {
+        chart.updateOptions({ labels: out.map((x) => x.label) }, false, true)
+      }
+    },
+
+    format_date(date) {
+      const options = { year: "2-digit", month: "2-digit", day: "2-digit" }
+      return new Date(date).toLocaleString("ja-JP", options)
+    },
+    reset_date_filter() {
+      this.start_date = null
+      this.end_date = null
+      this.populate_graph()
+    },
   },
   computed: {
     account() {
       return this.$route.params.account
-    },
-    series() {
-      return this.generate_graph_data().map((x) => x.amount)
-    },
-    options() {
-      return {
-        ...this.base_options,
-        labels: this.generate_graph_data().map((x) => x.label),
-      }
-    },
-    start_date() {
-      return new Date(`${this.year}/${this.month}/01`)
-    },
-    end_date() {
-      const end_year = this.month < 12 ? this.year : this.year + 1
-      const end_month = this.month < 12 ? this.month + 1 : 1
-      return new Date(`${end_year}/${end_month}/01`)
     },
     filtered_transactions() {
       if (!this.start_date) return this.transactions
@@ -228,13 +225,11 @@ export default {
       // Add a category to every expense
       return this.non_business_expenses.map((expense) => {
         // Find the correct category from the available categories
-        const category = expense.category
-          ? expense.category
-          : this.expense_categories.find((category) => {
-              return category.keywords.find((keyword) =>
-                expense.description.includes(keyword)
-              )
-            })
+        const category = this.expense_categories.find((category) => {
+          return category.keywords.find((keyword) => {
+            return expense.description.includes(keyword)
+          })
+        })
 
         return {
           ...expense,
@@ -245,3 +240,73 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.chart_wrapper {
+  margin-top: 1em;
+  height: 30vh;
+}
+
+table {
+  width: 100%;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+td:first-child {
+  width: 20%;
+}
+
+.description_column_header {
+  width: 65%;
+}
+
+td:last-child {
+  width: 15%;
+  text-align: right;
+}
+
+td,
+th {
+  padding: 2px;
+
+  white-space: nowrap;
+}
+
+td:not(.amount_cell) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+tr:not(:first-child) {
+  border-top: 1px solid #dddddd;
+  transition: background-color 0.25s;
+  cursor: pointer;
+}
+
+tr:not(:first-child):hover {
+  background-color: #eeeeee;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.toolbar > * {
+  margin: 0.5em 0;
+}
+
+.toolbar > *:not(:last-child) {
+  margin-right: 0.5em;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+</style>
