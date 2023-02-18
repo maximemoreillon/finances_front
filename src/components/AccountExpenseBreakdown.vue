@@ -61,7 +61,7 @@ export default {
     return {
       months: Array.from(Array(12).keys()).map((m) => m + 1),
       years: Array.from(Array(20).keys()).map(
-        (y) => new Date().getFullYear + 10 - y
+        (y) => new Date().getFullYear() + 10 - y
       ),
 
       loading: false,
