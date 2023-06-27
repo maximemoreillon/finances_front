@@ -57,7 +57,7 @@ export default {
         },
 
         xaxis: {
-          categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+          categories: Array.from(Array(12).keys()).map((m) => m + 1),
         },
 
         colors: ["#00c000", "#c00000"],
