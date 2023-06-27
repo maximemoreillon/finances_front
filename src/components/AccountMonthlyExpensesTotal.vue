@@ -56,12 +56,10 @@ export default {
           },
         },
 
-        yaxis: {
-          labels: {
-            formatter: (value) =>
-              value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'"),
-          },
+        xaxis: {
+          categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
         },
+
         colors: ["#00c000", "#c00000"],
         dataLabels: {
           enabled: false,
@@ -81,7 +79,7 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.account}/transactions`
 
       this.axios
         .get(url)
