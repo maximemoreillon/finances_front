@@ -1,206 +1,160 @@
 <template>
-  <v-card
-    :loading="loading"
-    outlined>
+  <v-card :loading="loading" outlined>
+    <v-card-text v-if="loading || series.length">
+      <v-row aling="center">
+        <v-col class="text-h6"> Balance </v-col>
+        <v-spacer></v-spacer>
+        <v-col cols="auto">
+          <v-btn small :to="{ name: 'register_balance', params: { account } }">
+            Register
+          </v-btn>
+        </v-col>
+      </v-row>
 
-
-    <template v-if="!loading && series.length">
-
-
-      <v-container fluid>
-
-        <v-row aling="center">
-          <v-col class="text-h6">
-            Balance
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="auto">
-            <v-btn 
-              small
-              :to="{name: 'register_balance', params: {account}}">
-              Register
-            </v-btn>
-          </v-col>
-        </v-row>
-
-        <v-row align="center" dense>
-          <v-col cols="auto">
-            <v-row dense>
-              <v-col>{{currency}} {{parseFloat(current_balance).toLocaleString()}}</v-col>
-            </v-row>
-            <v-row dense>
-              <v-col>
-                (As of {{last_retrieved_formatted}})
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-spacer/>
-          <v-col
-            cols="auto"
+      <v-row align="center" dense>
+        <v-col cols="auto">
+          <v-row dense>
+            <v-col
+              >{{ currency }}
+              {{ parseFloat(current_balance).toLocaleString() }}</v-col
             >
-            <v-btn
-              v-for="button in chartControlButtons"
-              :key="button.value"
-              class="mr-2"
-              x-small
-              :dark="selection===button.value"
-              @click="updateData(button.value)">
-              {{button.text}}
-            </v-btn>
-          </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
+          </v-row>
+        </v-col>
+        <v-spacer />
+        <v-col cols="auto">
+          <v-btn
+            v-for="button in chartControlButtons"
+            :key="button.value"
+            class="mr-2"
+            x-small
+            :color="rangeStart === button.value ? 'primary' : undefined"
+            @click="rangeStart = button.value"
+          >
+            {{ button.text }}
+          </v-btn>
+        </v-col>
+      </v-row>
 
-        </v-row>
-      </v-container>
-
-      <v-card-text>
-        <apexchart
-          ref="chart"
-          width="100%"
-          height="300px"
-          :options="options"
-          :series="series" />
-      </v-card-text>
-
-    </template>
-
-    <v-card-text v-if="!loading && !series.length">
-      Account {{account}} does not have a balance history
+      <apexchart
+        ref="chart"
+        width="100%"
+        height="300px"
+        :options="options"
+        :series="series"
+      />
     </v-card-text>
 
+    <v-card-text v-if="!loading && !series.length">
+      Account {{ account }} does not have a balance history
+    </v-card-text>
   </v-card>
 </template>
 
 <script>
-
 export default {
-  name: 'AccountBalanceHistory',
-  components: {
-
-  },
-  data(){
+  name: "AccountBalanceHistory",
+  components: {},
+  data() {
     return {
       loading: false,
       current_balance: "loading",
       currency: null,
       last_retrieved: null,
-      selection: 'all',
+      rangeStart: "-6mo",
 
       chartControlButtons: [
-        {text: '1M', value: 'one_month'},
-        {text: '6M', value: 'six_months'},
-        {text: '1Y', value: 'one_year'},
-        {text: 'ALL', value: 'all'},
+        { text: "1M", value: "-1mo" },
+        { text: "6M", value: "-6mo" },
+        { text: "1Y", value: "-1y" },
+        { text: "ALL", value: 0 },
       ],
 
       options: {
         chart: {
-          id: 'area-datetime',
-          type: 'area',
+          id: "area-datetime",
+          type: "area",
           zoom: {
-            autoScaleYaxis: true
+            autoScaleYaxis: true,
           },
         },
         stroke: {
-          curve: 'straight',
+          curve: "straight",
         },
 
-        colors: ['#c00000'],
+        colors: ["#c00000"],
 
         xaxis: {
-          type: 'datetime'
+          type: "datetime",
         },
         dataLabels: {
-          enabled: false
+          enabled: false,
         },
-
       },
       series: [],
     }
   },
   watch: {
-    account(){
+    account() {
       this.get_balance_history()
-    }
+    },
+    rangeStart() {
+      this.get_balance_history()
+    },
   },
-  mounted(){
+  mounted() {
     this.get_balance_history()
   },
   methods: {
-    get_balance_history(){
+    get_balance_history() {
       // Loading history
       this.loading = true
 
       this.series = []
 
       const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
+      const params = { start: this.rangeStart }
 
-      this.axios.get(url)
-      .then( ({data}) => {
+      this.axios
+        .get(url, { params })
+        .then(({ data }) => {
+          if (!data.length) return
 
-        if(!data.length) return
+          const last_item = data[data.length - 1]
 
-        const data_length = data.length
-        const last_item = data[data_length-1]
+          this.current_balance = last_item._value
+          this.currency = last_item.currency
+          this.last_retrieved = last_item._time
 
-        this.current_balance = last_item._value
-        this.currency = last_item.currency
-        this.last_retrieved = last_item._time
+          const chart_data = data.map(({ _value, _time }) => [
+            new Date(_time).getTime(),
+            Math.round(_value),
+          ])
 
-        const chart_data = data.map(({ _value, _time }) => [new Date(_time).getTime(), Math.round(_value)] )
-
-        this.series = [ { name: 'balance', data: chart_data } ]
-
-      })
-      .catch( error => {
-        console.error(error)
-        alert(`Failed to load data`)
-      })
-      .finally(() => {this.loading = false})
+          this.series = [{ name: "balance", data: chart_data }]
+        })
+        .catch((error) => {
+          console.error(error)
+          alert(`Failed to load data`)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
-
-    updateData(timeline){
-      this.selection = timeline
-
-      switch (timeline) {
-        case 'one_month':
-          this.$refs.chart.zoomX(
-            new Date().setMonth(new Date().getMonth() - 1),
-            new Date()
-          )
-          break
-        case 'six_months':
-          this.$refs.chart.zoomX(
-            new Date().setMonth(new Date().getMonth() - 6),
-            new Date()
-          )
-          break
-        case 'one_year':
-          this.$refs.chart.zoomX(
-            new Date().setMonth(new Date().getMonth() - 12),
-            new Date()
-          )
-          break
-        case 'all':
-          this.$refs.chart.zoomX(
-            this.series[0].data[0][0],
-            new Date(),
-          )
-          break
-        default:
-      }
-    }
   },
   computed: {
-    last_retrieved_formatted(){
-      const date =  new Date(this.last_retrieved)
+    last_retrieved_formatted() {
+      const date = new Date(this.last_retrieved)
       const year = date.getYear() + 1900
       const month = date.getMonth() + 1
       const day = date.getDate()
       return `${year}/${month}/${day}`
     },
-    account(){
+    account() {
       return this.$route.params.account
-    }
-  }
+    },
+  },
 }
 </script>
