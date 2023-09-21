@@ -28,6 +28,7 @@ export default {
       this.loading = true
 
       const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
+      const params = { start: "-1mo" }
 
       this.axios
         .get(url, { params })
