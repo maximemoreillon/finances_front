@@ -1,72 +1,52 @@
 <template>
-  <v-card
-    max-width="500px"
-    class="mx-auto"
-    :loading="loading">
-
-    <v-toolbar flat>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>Accounts</v-card-title>
-        </v-col>
-      </v-row>
-    </v-toolbar>
-    <v-divider />
+  <v-card max-width="30rem" class="mx-auto" :loading="loading">
+    <v-card-title>Accounts</v-card-title>
     <v-card-text>
       <v-row>
-        <v-col
-          cols="12"
-          v-for="account in accounts"
-          :key="account">
-          <v-card
-            outlined
-            :to="{name: 'account', params: {account}}">
-            <v-card-title>{{account.toUpperCase()}}</v-card-title>
-          </v-card>
+        <v-col cols="12" v-for="account in accounts" :key="account">
+          <AccountPreview :account="account" />
         </v-col>
       </v-row>
     </v-card-text>
-
   </v-card>
 </template>
 
 <script>
-
+import AccountPreview from "../components/AccountPreview.vue"
 export default {
-  name: 'BalanceHistory',
+  name: "BalanceHistory",
   components: {
-
+    AccountPreview,
   },
-  data(){
+  data() {
     return {
       loading: false,
       accounts: [],
-
     }
   },
 
-  mounted(){
+  mounted() {
     this.get_accounts()
   },
   methods: {
-    get_accounts(){
+    get_accounts() {
       this.loading = true
-      this.axios.get(`${process.env.VUE_APP_FINANCES_API_URL}/accounts`)
-      .then( ({data}) => { this.accounts = data })
-      .catch(error => {
-        if(error.response) console.log(error.response.data)
-        console.error(error)
-      })
-      .finally(() => {this.loading = false})
+      this.axios
+        .get(`${process.env.VUE_APP_FINANCES_API_URL}/accounts`)
+        .then(({ data }) => {
+          this.accounts = data
+        })
+        .catch((error) => {
+          if (error.response) console.log(error.response.data)
+          console.error(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
-  computed: {
-
-  }
+  computed: {},
 }
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

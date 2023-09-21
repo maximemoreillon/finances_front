@@ -1,7 +1,9 @@
 <template>
-  <v-card :loading="loading">
-    <v-card-title> {{ account }} </v-card-title>
-    <v-card-text> </v-card-text>
+  <v-card :loading="loading" outlined>
+    <v-card-title> {{ account.toUpperCase() }} </v-card-title>
+    <v-card-subtitle v-if="balance">
+      {{ currency }} {{ balance }}
+    </v-card-subtitle>
   </v-card>
 </template>
 
@@ -18,5 +20,33 @@ export default {
       loading: false,
     }
   },
+  mounted() {
+    this.get_balance()
+  },
+  methods: {
+    get_balance() {
+      this.loading = true
+
+      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
+
+      this.axios
+        .get(url, { params })
+        .then(({ data }) => {
+          if (!data.length) return
+
+          const last_item = data[data.length - 1]
+
+          this.balance = last_item._value
+          this.currency = last_item.currency
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+  },
+  computed: {},
 }
 </script>
