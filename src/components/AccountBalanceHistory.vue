@@ -3,7 +3,7 @@
     <v-card-text v-if="loading || series.length">
       <v-row aling="center">
         <v-col class="text-h6"> Balance </v-col>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-col cols="auto">
           <v-btn small :to="{ name: 'register_balance', params: { account } }">
             Register
@@ -14,10 +14,10 @@
       <v-row align="center" dense>
         <v-col cols="auto">
           <v-row dense>
-            <v-col
-              >{{ currency }}
-              {{ parseFloat(current_balance).toLocaleString() }}</v-col
-            >
+            <v-col>
+              {{ currency }}
+              {{ parseFloat(current_balance).toLocaleString() }}
+            </v-col>
           </v-row>
           <v-row dense>
             <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       loading: false,
-      current_balance: "loading",
+      current_balance: 0,
       currency: null,
       last_retrieved: null,
       rangeStart: "-6mo",

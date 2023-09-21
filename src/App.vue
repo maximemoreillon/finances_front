@@ -101,4 +101,14 @@ export default {
 .apexcharts-toolbar {
   z-index: 0 !important;
 }
+.apexcharts-svg {
+  background: none !important;
+}
+.apexcharts-zoom-icon.apexcharts-selected svg {
+  fill: #c00000 !important;
+}
+
+.apexcharts-pan-icon.apexcharts-selected svg {
+  stroke: #c00000 !important;
+}
 </style>
