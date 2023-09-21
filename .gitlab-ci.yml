@@ -28,9 +28,6 @@ build:
     # Pushing
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
-    # cleanup
-    - docker image rm ${CONTAINER_IMAGE}
-    - docker image rm ${CONTAINER_IMAGE_TAGGED}
 
 deploy:
   only:
