@@ -27,6 +27,7 @@ export default {
     get_balance() {
       this.loading = true
 
+      // TODO: see if way to get only last point
       const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
       const params = { start: "-1mo" }
 
@@ -37,7 +38,7 @@ export default {
 
           const last_item = data[data.length - 1]
 
-          this.balance = last_item._value
+          this.balance = parseFloat(last_item._value).toLocaleString()
           this.currency = last_item.currency
         })
         .catch((error) => {
