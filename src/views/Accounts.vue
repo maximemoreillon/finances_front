@@ -2,6 +2,7 @@
   <v-card max-width="30rem" class="mx-auto" :loading="loading">
     <v-card-title>Accounts</v-card-title>
     <v-card-text>
+      <!-- TODO: Total assets -->
       <v-row>
         <v-col cols="12" v-for="account in accounts" :key="account">
           <AccountPreview :account="account" />

@@ -1,5 +1,9 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card
+    :loading="loading"
+    outlined
+    :to="{ name: 'account', params: { account } }"
+  >
     <v-card-title> {{ account.toUpperCase() }} </v-card-title>
     <v-card-subtitle v-if="balance">
       {{ currency }} {{ balance }}
