@@ -1,5 +1,6 @@
 <template>
   <v-card max-width="30rem" class="mx-auto" :loading="loading">
+    <TotalWealth />
     <v-card-title>Accounts</v-card-title>
     <v-card-text>
       <!-- TODO: Total assets -->
@@ -14,10 +15,12 @@
 
 <script>
 import AccountPreview from "../components/AccountPreview.vue"
+import TotalWealth from "../components/TotalWealth.vue"
 export default {
   name: "BalanceHistory",
   components: {
     AccountPreview,
+    TotalWealth,
   },
   data() {
     return {

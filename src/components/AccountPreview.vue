@@ -32,8 +32,8 @@ export default {
       this.loading = true
 
       // TODO: see if way to get only last point
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
-      const params = { start: "-1mo" }
+      const url = `/accounts/${this.account}/balance`
+      const params = { start: "-1mo", last: "true" }
 
       this.axios
         .get(url, { params })
