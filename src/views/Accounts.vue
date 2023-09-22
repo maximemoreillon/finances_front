@@ -1,6 +1,7 @@
 <template>
   <v-card max-width="30rem" class="mx-auto" :loading="loading">
     <v-card-title>Accounts</v-card-title>
+    <TotalWealth />
     <v-card-text>
       <v-row>
         <v-col cols="12" v-for="account in accounts" :key="account">
@@ -8,7 +9,6 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <TotalWealth />
   </v-card>
 </template>
 

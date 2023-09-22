@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <v-card v-if="total">
-      <v-card-title> Total wealth </v-card-title>
-      <v-card-text>
-        {{ currency }} {{ parseFloat(total).toLocaleString() }}
-      </v-card-text>
-    </v-card>
-  </div>
+  <v-card-subtitle>
+    <template v-if="total">
+      Total assets: {{ currency }} {{ parseFloat(total).toLocaleString() }}
+    </template>
+  </v-card-subtitle>
 </template>
 
 <script>
