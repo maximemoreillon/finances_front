@@ -1,11 +1,11 @@
 <template>
   <div>
-    <template v-if="total">
+    <v-card v-if="total">
       <v-card-title> Total wealth </v-card-title>
       <v-card-text>
-        {{ total }}
+        {{ currency }} {{ parseFloat(total).toLocaleString() }}
       </v-card-text>
-    </template>
+    </v-card>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ export default {
       total: null,
       loading: false,
       rates: null,
+      currency: "JPY",
     }
   },
   async mounted() {
@@ -29,9 +30,9 @@ export default {
   },
   methods: {
     async getExchangeRate() {
-      // const currency = "JPY"
-      const url = `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/jpy.json`
-      const { data } = await this.axios.get(url)
+      const url = `/rate`
+      const params = { currency: "JPY" }
+      const { data } = await this.axios.get(url, { params })
       this.rates = data.rates
     },
     async getTotal() {
@@ -40,10 +41,9 @@ export default {
       const { data } = await this.axios.get(url, { params })
       this.total = data.reduce((prev, point) => {
         const { currency, _value } = point
-        prev += this.rates[currency] * _value
+        prev += _value / this.rates[currency]
+        return prev
       }, 0)
-
-      console.log(this.total)
     },
   },
   computed: {},
