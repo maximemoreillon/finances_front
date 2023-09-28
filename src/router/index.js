@@ -7,8 +7,8 @@ const routes = [
   {
     path: "/accounts",
     name: "accounts",
-    component: () => import("../views/Accounts.vue"),
     alias: "/",
+    component: () => import("../views/Accounts.vue"),
   },
   {
     path: "/accounts/:account",

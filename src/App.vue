@@ -107,7 +107,6 @@ export default {
 .apexcharts-zoom-icon.apexcharts-selected svg {
   fill: #c00000 !important;
 }
-
 .apexcharts-pan-icon.apexcharts-selected svg {
   stroke: #c00000 !important;
 }
