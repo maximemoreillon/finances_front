@@ -22,7 +22,7 @@
         ref="chart"
         width="100%"
         height="300"
-        :options="chart_options"
+        :options="options"
         :series="series"
       />
     </v-card-text>
@@ -43,28 +43,6 @@ export default {
       years: Array.from(Array(20).keys()).map(
         (y) => new Date().getFullYear() + 10 - y
       ),
-
-      chart_options: {
-        chart: {
-          id: "area-datetime",
-          type: "bar",
-          events: {
-            dataPointSelection: (_, __, config) => {
-              const clicked_month = config.dataPointIndex + 1
-              this.$emit("monthSelection", clicked_month)
-            },
-          },
-        },
-
-        xaxis: {
-          categories: Array.from(Array(12).keys()).map((m) => m + 1),
-        },
-
-        colors: ["#00c000", "#c00000"],
-        dataLabels: {
-          enabled: false,
-        },
-      },
     }
   },
   watch: {
@@ -128,6 +106,36 @@ export default {
     },
   },
   computed: {
+    dark() {
+      return this.$vuetify.theme.dark
+    },
+    options() {
+      return {
+        chart: {
+          id: "area-datetime",
+          type: "bar",
+          events: {
+            dataPointSelection: (_, __, config) => {
+              const clicked_month = config.dataPointIndex + 1
+              this.$emit("monthSelection", clicked_month)
+            },
+          },
+        },
+        theme: {
+          mode: this.dark ? "dark" : "light",
+        },
+        background: "#c00",
+
+        xaxis: {
+          categories: Array.from(Array(12).keys()).map((m) => m + 1),
+        },
+
+        colors: ["#00c000", "#c00000"],
+        dataLabels: {
+          enabled: false,
+        },
+      }
+    },
     account() {
       return this.$route.params.account
     },

@@ -104,6 +104,7 @@ export default {
 .apexcharts-svg {
   background: none !important;
 }
+
 .apexcharts-zoom-icon.apexcharts-selected svg {
   fill: #c00000 !important;
 }

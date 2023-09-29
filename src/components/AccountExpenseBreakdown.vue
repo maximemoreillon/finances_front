@@ -67,40 +67,6 @@ export default {
       loading: false,
       transactions: [],
       expense_categories: [],
-
-      base_options: {
-        chart: {
-          id: "transactions",
-          type: "donut",
-        },
-        labels: [],
-        colors: [
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-        ],
-      },
     }
   },
   watch: {
@@ -181,12 +147,47 @@ export default {
     account() {
       return this.$route.params.account
     },
+    dark() {
+      return this.$vuetify.theme.dark
+    },
     series() {
       return this.generate_graph_data().map((x) => x.amount)
     },
     options() {
       return {
-        ...this.base_options,
+        chart: {
+          id: "transactions",
+          type: "donut",
+        },
+        theme: {
+          mode: this.dark ? "dark" : "light",
+        },
+        colors: [
+          "#c00000",
+          "#aaaaaa",
+          "#bf6d6d",
+          "#444444",
+          "#9e3434",
+          "#dddddd",
+          "#c00000",
+          "#aaaaaa",
+          "#bf6d6d",
+          "#444444",
+          "#9e3434",
+          "#dddddd",
+          "#c00000",
+          "#aaaaaa",
+          "#bf6d6d",
+          "#444444",
+          "#9e3434",
+          "#dddddd",
+          "#c00000",
+          "#aaaaaa",
+          "#bf6d6d",
+          "#444444",
+          "#9e3434",
+          "#dddddd",
+        ],
         labels: this.generate_graph_data().map((x) => x.label),
       }
     },

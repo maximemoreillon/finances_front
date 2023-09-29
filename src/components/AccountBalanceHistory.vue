@@ -72,27 +72,6 @@ export default {
         { text: "ALL", value: 0 },
       ],
 
-      options: {
-        chart: {
-          id: "area-datetime",
-          type: "area",
-          zoom: {
-            autoScaleYaxis: true,
-          },
-        },
-        stroke: {
-          curve: "straight",
-        },
-
-        colors: ["#c00000"],
-
-        xaxis: {
-          type: "datetime",
-        },
-        dataLabels: {
-          enabled: false,
-        },
-      },
       series: [],
     }
   },
@@ -154,6 +133,37 @@ export default {
     },
     account() {
       return this.$route.params.account
+    },
+    dark() {
+      return this.$vuetify.theme.dark
+    },
+    options() {
+      return {
+        theme: {
+          mode: this.dark ? "dark" : "light",
+        },
+        background: "#c00",
+
+        chart: {
+          id: "area-datetime",
+          type: "area",
+          zoom: {
+            autoScaleYaxis: true,
+          },
+        },
+        stroke: {
+          curve: "straight",
+        },
+
+        colors: ["#c00000"],
+
+        xaxis: {
+          type: "datetime",
+        },
+        dataLabels: {
+          enabled: false,
+        },
+      }
     },
   },
 }
