@@ -81,7 +81,7 @@ export default {
     get_accounts() {
       this.loading = true
       this.axios
-        .get(`${process.env.VUE_APP_FINANCES_API_URL}/accounts`)
+        .get(`/accounts`)
         .then(({ data }) => {
           this.accounts = data
         })

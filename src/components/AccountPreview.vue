@@ -31,7 +31,6 @@ export default {
     get_balance() {
       this.loading = true
 
-      // TODO: see if way to get only last point
       const url = `/accounts/${this.account}/balance`
       const params = { start: "-1mo", last: "true" }
 

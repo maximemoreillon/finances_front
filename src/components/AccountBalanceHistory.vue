@@ -93,7 +93,7 @@ export default {
 
       this.series = []
 
-      const url = `${process.env.VUE_APP_FINANCES_API_URL}/accounts/${this.account}/balance`
+      const url = `/accounts/${this.account}/balance`
       const params = { start: this.rangeStart }
 
       this.axios
