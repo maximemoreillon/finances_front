@@ -1,32 +1,20 @@
-
 <template>
-  <v-card
-    max-width="30em"
-    class="mx-auto">
-
+  <v-card max-width="30em" class="mx-auto">
     <v-toolbar flat>
       <v-row align="center">
         <v-col cols="auto">
-          <v-btn
-            icon
-            exact
-            :to="{name: 'account', params: {account}}">
+          <v-btn icon exact :to="{ name: 'account', params: { account } }">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-col>
         <v-col>
-          <v-toolbar-title>
-            Register balance
-          </v-toolbar-title>
+          <v-toolbar-title> Register balance </v-toolbar-title>
         </v-col>
       </v-row>
     </v-toolbar>
-    
 
     <v-card-text>
-      
       <v-form @submit.prevent="submit()">
-
         <v-row>
           <v-col cols="12">
             <v-select
@@ -34,68 +22,58 @@
               :items="currencies"
               v-model="currency"
               label="Currency"
-              />
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
             <v-text-field
               width="100%"
-              v-model="balance"
-              label="Balance" />
+              type="number"
+              v-model.number="balance"
+              label="Balance"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="auto">
-            <v-btn 
-              type="submit"
-              :loading="registering">
-              Register
-            </v-btn>
+            <v-btn type="submit" :loading="registering"> Register </v-btn>
           </v-col>
           <v-spacer></v-spacer>
         </v-row>
-   
       </v-form>
     </v-card-text>
-
-
-
   </v-card>
 </template>
 
 <script>
-
 export default {
-  name: 'ViewTransaction',
+  name: "ViewTransaction",
 
-  data(){
+  data() {
     return {
-      currencies: [
-        'JPY',
-        'USD',
-        'CHF',
-        'EUR',
-      ],
-      currency: '',
-      balance: '',
+      currencies: ["JPY", "USD", "CHF", "EUR"],
+      currency: "",
+      balance: "",
       registering: false,
     }
   },
   methods: {
-    submit(){
+    submit() {
       this.registering = true
-      let url = `${process.env.VUE_APP_FINANCES_API_URL}/balance`
       let body = {
         account: this.account,
         currency: this.currency,
         balance: this.balance,
       }
       this.axios
-        .post(url,body)
+        .post(`/balance`, body)
         .then(() => {
-          this.$router.push({name: 'account', params: {account : this.account}})
+          this.$router.push({
+            name: "account",
+            params: { account: this.account },
+          })
         })
         .catch((error) => {
           console.log(error)
@@ -103,22 +81,18 @@ export default {
         .finally(() => {
           this.registering = false
         })
-    }
+    },
   },
   computed: {
-    account(){
+    account() {
       return this.$route.params.account
-    }
-  }
-
+    },
+  },
 }
 </script>
 
 <style scoped>
-
 label {
   margin-right: 0.5em;
 }
-
-
 </style>
