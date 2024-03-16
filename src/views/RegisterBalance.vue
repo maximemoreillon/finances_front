@@ -82,6 +82,9 @@ export default {
           this.registering = false
         })
     },
+    getCurrency() {
+      // TODO: get currency
+    },
   },
   computed: {
     account() {

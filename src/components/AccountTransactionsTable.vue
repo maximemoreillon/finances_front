@@ -17,8 +17,9 @@
         </template>
 
         <template v-slot:item.amount="{ item: { amount } }">
-          <span class="red--text" v-if="amount < 0">{{ amount }}</span>
-          <span class="green--text" v-else>{{ amount }}</span>
+          <span :class="amount < 0 ? 'red--text' : 'green-text'">
+            {{ new Intl.NumberFormat().format(amount) }}
+          </span>
         </template>
 
         <template v-slot:item.business_expense="{ item: { business_expense } }">

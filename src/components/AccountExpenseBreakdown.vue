@@ -188,7 +188,9 @@ export default {
           "#9e3434",
           "#dddddd",
         ],
-        labels: this.generate_graph_data().map((x) => x.label),
+        labels: this.generate_graph_data().map(
+          (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
+        ),
       }
     },
     start_date() {
