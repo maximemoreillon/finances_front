@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="mx-auto" max-width="60rem">
     <v-toolbar flat>
       <v-row align="baseline">
         <v-col cols="auto">
@@ -7,7 +7,11 @@
         </v-col>
         <v-spacer />
         <v-col cols="auto">
-          <v-btn exact :to="{ name: 'new_transaction_category' }">
+          <v-btn
+            exact
+            :to="{ name: 'new_transaction_category' }"
+            color="primary"
+          >
             New category
           </v-btn>
         </v-col>
@@ -15,29 +19,27 @@
     </v-toolbar>
 
     <v-card-text>
-      <router-link
-        class="category"
-        v-for="category in categories"
-        v-bind:key="category._id"
-        :to="{
-          name: 'transaction_category',
-          params: { category_id: category._id },
-        }"
-      >
-        <span>{{ category.label }}</span>
-
-        <span class="spacer" />
-
-        <div class="keyword_container">
-          <span
-            class="keyword"
-            v-for="(keyword, index) in category.keywords"
-            v-bind:key="`${category._id}_kw_${index}`"
+      <v-data-table :headers="headers" :items="categories">
+        <template v-slot:item.label="{ item }">
+          <router-link
+            :to="{
+              name: 'transaction_category',
+              params: { category_id: item._id },
+            }"
+          >
+            {{ item.label }}
+          </router-link>
+        </template>
+        <template v-slot:item.keywords="{ item }">
+          <v-chip
+            v-for="(keyword, index) in item.keywords"
+            :key="`${item._id}_kw_${index}`"
+            class="ma-2"
           >
             {{ keyword }}
-          </span>
-        </div>
-      </router-link>
+          </v-chip>
+        </template>
+      </v-data-table>
     </v-card-text>
   </v-card>
 </template>
@@ -49,6 +51,10 @@ export default {
   data() {
     return {
       categories: [],
+      headers: [
+        { value: "label", text: "Label" },
+        { value: "keywords", text: "Keywords" },
+      ],
     }
   },
   mounted() {
@@ -70,21 +76,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.category {
-  margin: 0.25em 0;
-  padding: 0.25em;
-  display: flex;
-  color: currentcolor;
-  text-decoration: none;
-  border: 1px solid #dddddd;
-}
-
-.spacer {
-  flex-grow: 1;
-}
-
-.keyword:not(:last-child) {
-  margin-right: 0.25em;
-}
-</style>
+<style scoped></style>
