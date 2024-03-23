@@ -2,18 +2,13 @@
   <AppTemplate @user="get_user($event)" :options="options">
     <template v-slot:nav>
       <v-list dense nav>
-        <v-list-item
-          v-for="(item, index) in nav"
-          :key="`nav_item_${index}`"
-          :to="item.to"
-          exact
-        >
+        <v-list-item :to="{ name: 'accounts' }">
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -39,6 +34,16 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
+
+        <v-list-item :to="{ name: 'about' }">
+          <v-list-item-icon>
+            <v-icon>mdi-information-outline</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>About</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </template>
   </AppTemplate>
@@ -63,14 +68,6 @@ export default {
       login_url: VUE_APP_LOGIN_URL,
       identification_url: VUE_APP_IDENTIFICATION_URL,
     },
-    nav: [
-      { title: "Home", to: { name: "accounts" }, icon: "mdi-home" },
-      {
-        title: "About",
-        to: { name: "about" },
-        icon: "mdi-information-outline",
-      },
-    ],
   }),
 
   methods: {

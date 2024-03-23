@@ -1,33 +1,27 @@
-
 <template>
-  <div class="home">
-    <h1>About</h1>
-    <p>A finance management system</p>
-    <p>Developed and maintained by Maxime MOREILLON</p>
-    <p>Version {{version}}</p>
-
-
-  </div>
+  <v-card class="mx-auto" max-width="50rem">
+    <v-card-title> Finances manager </v-card-title>
+    <v-card-subtitle> Version {{ version }} </v-card-subtitle>
+    <v-card-text
+      >A finance management system developed and maintained by Maxime
+      MOREILLON</v-card-text
+    >
+  </v-card>
 </template>
 
 <script>
 // @ is an alias to /src
-import pjson from '../../package.json'
+import pjson from "../../package.json"
 
 export default {
-  name: 'ViewTransaction',
+  name: "ViewTransaction",
 
-  data(){
+  data() {
     return {
-      version: pjson.version
+      version: pjson.version,
     }
   },
-
 }
 </script>
 
-<style scoped>
-
-
-
-</style>
+<style scoped></style>
