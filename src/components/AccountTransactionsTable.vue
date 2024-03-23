@@ -25,9 +25,9 @@
         <template v-slot:item.category="{ item }">
           <span v-if="categories">
             {{
-              item.category ||
-              categories.find((c) =>
-                c.keywords.find((k) => item.description.includes(k))
+              item.category?.label ||
+              categories.find(({ keywords }) =>
+                keywords.find((k) => item.description.includes(k))
               )?.label
             }}
           </span>
