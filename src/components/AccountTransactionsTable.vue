@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card outlined>
     <v-card-title>Transactions</v-card-title>
 
     <v-card-text>
@@ -19,6 +19,17 @@
         <template v-slot:item.amount="{ item: { amount } }">
           <span :class="amount < 0 ? 'red--text' : 'green-text'">
             {{ new Intl.NumberFormat().format(amount) }}
+          </span>
+        </template>
+
+        <template v-slot:item.category="{ item }">
+          <span v-if="categories">
+            {{
+              item.category ||
+              categories.find((c) =>
+                c.keywords.find((k) => item.description.includes(k))
+              )?.label
+            }}
           </span>
         </template>
 
@@ -42,7 +53,7 @@ export default {
         { text: "Date", value: "date" },
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
-        { text: "Category", value: "category.label" },
+        { text: "Category", value: "category" },
         { text: "Business", value: "business_expense" },
       ],
       toLocaleStringOptions: {
@@ -50,6 +61,7 @@ export default {
         month: "2-digit",
         day: "2-digit",
       },
+      categories: [],
     }
   },
   watch: {
@@ -57,22 +69,14 @@ export default {
       this.get_transactions()
     },
   },
-  mounted() {
-    this.get_transaction_categories()
+  async mounted() {
+    await this.get_transaction_categories()
     this.get_transactions()
   },
   methods: {
-    get_transaction_categories() {
-      this.axios
-        .get(`/transactions/categories`)
-        .then(({ data }) => {
-          this.expense_categories = data
-        })
-        .catch((error) => {
-          if (error.response) console.log(error.response.data)
-          else console.error(error)
-          alert("Error")
-        })
+    async get_transaction_categories() {
+      const { data } = await this.axios.get(`/transactions/categories`)
+      this.categories = data
     },
     get_transactions() {
       this.loading = true

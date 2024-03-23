@@ -208,11 +208,11 @@ export default {
         // Find the correct category from the available categories
         const category = expense.category
           ? expense.category
-          : this.expense_categories.find((category) => {
-              return category.keywords.find((keyword) =>
+          : this.expense_categories.find((category) =>
+              category.keywords.find((keyword) =>
                 expense.description.includes(keyword)
               )
-            })
+            )
 
         return {
           ...expense,

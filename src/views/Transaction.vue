@@ -47,11 +47,19 @@
       <v-row align="baseline">
         <v-col>
           <v-select
-            :items="transactionCategories"
+            :items="categorySelectOptions"
             v-model="transaction.category"
             item-value="_id"
             item-text="label"
             label="Category"
+          />
+        </v-col>
+        <v-col v-if="!transaction.category && foundAutoCategory">
+          <v-text-field
+            readonly
+            filled
+            label="Automatically assigned category"
+            :value="foundAutoCategory"
           />
         </v-col>
         <v-col cols="auto">
@@ -60,12 +68,12 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row dense>
         <v-col>
           <v-checkbox
             label="Business expense"
             v-model="transaction.business_expense"
-          ></v-checkbox>
+          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -80,29 +88,18 @@ export default {
     return {
       transaction: null,
       loading: false,
-      transactionCategories: [],
+      existingCategories: [],
     }
   },
   mounted() {
-    this.get_transaction_categories()
     this.get_transaction()
+    this.get_transaction_categories()
   },
   methods: {
-    get_transaction_categories() {
+    async get_transaction_categories() {
       this.loading = true
-      this.axios
-        .get(`/transactions/categories`)
-        .then((response) => {
-          this.transactionCategories = [
-            { label: "None", _id: null },
-            ...response.data,
-          ]
-        })
-        .catch((error) => {
-          if (error.response) console.error(error.response.data)
-          else console.error(error)
-          alert("Error")
-        })
+      const { data } = await this.axios.get(`/transactions/categories`)
+      this.existingCategories = data
     },
     get_transaction() {
       this.transaction = null
@@ -140,6 +137,14 @@ export default {
     },
   },
   computed: {
+    foundAutoCategory() {
+      return this.existingCategories.find(({ keywords }) =>
+        keywords.find((k) => this.transaction.description.includes(k))
+      )?.label
+    },
+    categorySelectOptions() {
+      return [{ label: "None", _id: null }, ...this.existingCategories]
+    },
     account() {
       return this.$route.params.account
     },
