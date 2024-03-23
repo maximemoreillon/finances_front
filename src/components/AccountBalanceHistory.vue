@@ -1,3 +1,4 @@
+: ["#00c000", "#c00000"]
 <template>
   <v-card :loading="loading" outlined>
     <v-card-text v-if="loading || series.length">
@@ -5,7 +6,14 @@
         <v-col class="text-h6"> Balance </v-col>
         <v-spacer />
         <v-col cols="auto">
-          <v-btn small :to="{ name: 'register_balance', params: { account } }">
+          <v-btn
+            color="primary"
+            :to="{
+              name: 'register_balance',
+              params: { account },
+              query: { currency },
+            }"
+          >
             Register
           </v-btn>
         </v-col>

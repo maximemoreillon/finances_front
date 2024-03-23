@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { colors } from "@/constants"
+
 export default {
   name: "AccountMonthlyExpensesTotal",
   components: {},
@@ -130,7 +132,7 @@ export default {
           categories: Array.from(Array(12).keys()).map((m) => m + 1),
         },
 
-        colors: ["#00c000", "#c00000"],
+        colors,
         dataLabels: {
           enabled: false,
         },
@@ -151,8 +153,8 @@ export default {
     },
     series() {
       return [
-        { name: "Income", data: this.formatted_income },
         { name: "Expenses", data: this.formatted_expenses },
+        { name: "Income", data: this.formatted_income },
       ]
     },
   },

@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       currencies: ["JPY", "USD", "CHF", "EUR"],
-      currency: "",
+      currency: this.$route.query.currency || "",
       balance: "",
       registering: false,
     }

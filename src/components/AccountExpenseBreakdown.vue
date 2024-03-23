@@ -7,7 +7,7 @@
         </v-col>
         <v-spacer />
         <v-col cols="auto">
-          <v-btn :to="{ name: 'transaction_categories' }">
+          <v-btn :to="{ name: 'transaction_categories' }" outlined>
             Manage categories
           </v-btn>
         </v-col>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { colors } from "@/constants"
 export default {
   name: "AccountExpenseBreakdown",
   components: {},
@@ -162,32 +163,7 @@ export default {
         theme: {
           mode: this.dark ? "dark" : "light",
         },
-        colors: [
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-          "#c00000",
-          "#aaaaaa",
-          "#bf6d6d",
-          "#444444",
-          "#9e3434",
-          "#dddddd",
-        ],
+        colors,
         labels: this.generate_graph_data().map(
           (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
         ),
