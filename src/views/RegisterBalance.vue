@@ -55,14 +55,14 @@ export default {
     return {
       currencies: ["JPY", "USD", "CHF", "EUR"],
       currency: this.$route.query.currency || "",
-      balance: "",
+      balance: 0,
       registering: false,
     }
   },
   methods: {
     submit() {
       this.registering = true
-      let body = {
+      const body = {
         account: this.account,
         currency: this.currency,
         balance: this.balance,
@@ -81,9 +81,6 @@ export default {
         .finally(() => {
           this.registering = false
         })
-    },
-    getCurrency() {
-      // TODO: get currency
     },
   },
   computed: {

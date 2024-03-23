@@ -1,6 +1,5 @@
 <template>
   <v-card>
-
     <v-toolbar flat>
       <v-row align="baseline">
         <v-col cols="auto">
@@ -8,7 +7,7 @@
         </v-col>
       </v-row>
     </v-toolbar>
-    <v-divider />
+
     <v-card-text>
       <AccountBalanceHistory />
     </v-card-text>
@@ -19,61 +18,52 @@
       <AccountMonthlyExpensesTotal
         @yearSelection="year = $event"
         @monthSelection="month = $event"
-        :year="year"/>
+        :year="year"
+      />
     </v-card-text>
     <v-card-text>
       <AccountExpenseBreakdown
         @yearSelection="year = $event"
         @monthSelection="month = $event"
         :month="month"
-        :year="year"/>
+        :year="year"
+      />
     </v-card-text>
-
   </v-card>
 </template>
 
 <script>
-import AccountBalanceHistory from '@/components/AccountBalanceHistory.vue'
-import AccountTransactionsTable from '@/components/AccountTransactionsTable.vue'
-import AccountMonthlyExpensesTotal from '@/components/AccountMonthlyExpensesTotal.vue'
-import AccountExpenseBreakdown from '@/components/AccountExpenseBreakdown.vue'
+import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
+import AccountTransactionsTable from "@/components/AccountTransactionsTable.vue"
+import AccountMonthlyExpensesTotal from "@/components/AccountMonthlyExpensesTotal.vue"
+import AccountExpenseBreakdown from "@/components/AccountExpenseBreakdown.vue"
 
 export default {
-  name: 'Account',
+  name: "Account",
   components: {
     AccountBalanceHistory,
     AccountTransactionsTable,
     AccountMonthlyExpensesTotal,
-    AccountExpenseBreakdown
+    AccountExpenseBreakdown,
   },
-  data(){
+  data() {
     return {
       month: new Date().getMonth() + 1,
       year: new Date().getYear() + 1900,
     }
   },
   watch: {
-    account(){
-
-    }
+    account() {},
   },
 
-  mounted(){
-  },
-  methods: {
-
-
-
-  },
+  mounted() {},
+  methods: {},
   computed: {
-    account(){
+    account() {
       return this.$route.params.account
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>
