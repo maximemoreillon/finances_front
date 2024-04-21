@@ -52,16 +52,11 @@
             item-value="_id"
             item-text="label"
             label="Category"
+            :persistent-placeholder="!transaction.category && foundAutoCategory"
+            :placeholder="!transaction.category ? foundAutoCategory : undefined"
           />
         </v-col>
-        <v-col v-if="!transaction.category && foundAutoCategory">
-          <v-text-field
-            readonly
-            filled
-            label="Automatically assigned category"
-            :value="foundAutoCategory"
-          />
-        </v-col>
+
         <v-col cols="auto">
           <v-btn :to="{ name: 'transaction_categories' }">
             Manage categories
