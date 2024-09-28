@@ -51,7 +51,13 @@
 
 <script>
 import AppTemplate from "@moreillon/vue_application_template_vuetify"
-const { VUE_APP_LOGIN_URL, VUE_APP_IDENTIFICATION_URL } = process.env
+const {
+  VUE_APP_LOGIN_URL,
+  VUE_APP_IDENTIFICATION_URL,
+  VUE_APP_OIDC_AUTHORITY,
+  VUE_APP_OIDC_CLIENT_ID,
+  VUE_APP_OIDC_AUDIENCE,
+} = process.env
 export default {
   name: "App",
 
@@ -67,12 +73,24 @@ export default {
       title: "Finances",
       login_url: VUE_APP_LOGIN_URL,
       identification_url: VUE_APP_IDENTIFICATION_URL,
+      oidc: {
+        authority: VUE_APP_OIDC_AUTHORITY,
+        client_id: VUE_APP_OIDC_CLIENT_ID,
+        extraQueryParams: {
+          audience: VUE_APP_OIDC_AUDIENCE,
+        },
+      },
     },
   }),
 
   methods: {
     get_user(user) {
       if (!user) return
+      if (user.access_token)
+        this.axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${user.access_token}`
+
       this.get_accounts()
     },
     get_accounts() {

@@ -9,8 +9,15 @@ do
   echo "Processing $file ...";
 
   sed -i 's|VUE_APP_FINANCES_API_URL_PLACEHOLDER|'${VUE_APP_FINANCES_API_URL}'|g' $file
+  
+  # Legacy auth
   sed -i 's|VUE_APP_IDENTIFICATION_URL_PLACEHOLDER|'${VUE_APP_IDENTIFICATION_URL}'|g' $file
   sed -i 's|VUE_APP_LOGIN_URL_PLACEHOLDER|'${VUE_APP_LOGIN_URL}'|g' $file
+
+  # OIDC Auth
+  sed -i 's|VUE_APP_OIDC_AUTHORITY_PLACEHOLDER|'${VUE_APP_OIDC_AUTHORITY}'|g' $file
+  sed -i 's|VUE_APP_OIDC_CLIENT_ID_PLACEHOLDER|'${VUE_APP_OIDC_CLIENT_ID}'|g' $file
+  sed -i 's|VUE_APP_OIDC_AUDIENCE_PLACEHOLDER|'${VUE_APP_OIDC_AUDIENCE}'|g' $file
 
 
 done
