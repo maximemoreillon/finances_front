@@ -2,9 +2,9 @@
   <v-card
     :loading="loading"
     outlined
-    :to="{ name: 'account', params: { account } }"
+    :to="{ name: 'account', params: { accountId: account.id } }"
   >
-    <v-card-title> {{ account.toUpperCase() }} </v-card-title>
+    <v-card-title> {{ account.name }} </v-card-title>
     <v-card-subtitle v-if="balance">
       {{ currency }} {{ balance }}
     </v-card-subtitle>
@@ -15,7 +15,7 @@
 export default {
   name: "AccountPreview",
   props: {
-    account: String,
+    account: Object,
   },
   data() {
     return {
@@ -25,7 +25,7 @@ export default {
     }
   },
   mounted() {
-    this.get_balance()
+    // this.get_balance()
   },
   methods: {
     get_balance() {

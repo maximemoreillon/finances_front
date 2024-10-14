@@ -59,12 +59,12 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.transactions = data
+          this.transactions = data.records
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -83,7 +83,7 @@ export default {
       const end_date = new Date(`${end_year}/${end_month}/01`)
 
       return this.transactions.filter(
-        (t) => start_date < new Date(t.date) && new Date(t.date) < end_date
+        (t) => start_date < new Date(t.time) && new Date(t.time) < end_date
       )
     },
     income_sum_for_month(year, month) {
@@ -138,8 +138,8 @@ export default {
         },
       }
     },
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     formatted_income() {
       return Array.from(Array(12).keys())

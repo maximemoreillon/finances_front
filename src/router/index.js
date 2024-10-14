@@ -11,12 +11,12 @@ const routes = [
     component: () => import("../views/Accounts.vue"),
   },
   {
-    path: "/accounts/:account",
+    path: "/accounts/:accountId",
     name: "account",
     component: () => import("../views/Account.vue"),
   },
   {
-    path: "/accounts/:account/balance/register",
+    path: "/accounts/:accountId/balance/register",
     name: "register_balance",
     component: () => import("../views/RegisterBalance.vue"),
   },
@@ -42,7 +42,7 @@ const routes = [
   },
 
   {
-    path: "/accounts/:account/balance",
+    path: "/accounts/:accountId/balance",
     name: "balance",
     component: () => import("../views/BalanceHistory.vue"),
   },
@@ -57,7 +57,7 @@ const routes = [
   //   component: () => import("../views/MonthlyExpenses.vue"),
   // },
   {
-    path: "/accounts/:account/transactions/:transaction_id",
+    path: "/accounts/:accountId/transactions/:transactionId",
     name: "transaction",
     component: () => import("../views/Transaction.vue"),
   },

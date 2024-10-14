@@ -10,7 +10,7 @@
             color="primary"
             :to="{
               name: 'register_balance',
-              params: { account },
+              params: { accountId: accountId },
               query: { currency },
             }"
           >
@@ -56,7 +56,7 @@
     </v-card-text>
 
     <v-card-text v-if="!loading && !series.length">
-      Account {{ account }} does not have a balance history
+      This account does not have a balance history
     </v-card-text>
   </v-card>
 </template>
@@ -101,23 +101,24 @@ export default {
 
       this.series = []
 
-      const url = `/accounts/${this.account}/balance`
+      const url = `/accounts/${this.accountId}/balance`
       const params = { start: this.rangeStart }
 
       this.axios
         .get(url, { params })
         .then(({ data }) => {
-          if (!data.length) return
+          const { records } = data
+          if (!records.length) return
 
-          const last_item = data[data.length - 1]
+          const last_item = records.at(-1)
 
-          this.current_balance = last_item._value
+          this.current_balance = last_item.balance
           this.currency = last_item.currency
-          this.last_retrieved = last_item._time
+          this.last_retrieved = last_item.time
 
-          const chart_data = data.map(({ _value, _time }) => [
-            new Date(_time).getTime(),
-            Math.round(_value),
+          const chart_data = records.map(({ balance, time }) => [
+            new Date(time).getTime(),
+            Math.round(balance),
           ])
 
           this.series = [{ name: "balance", data: chart_data }]
@@ -139,8 +140,8 @@ export default {
       const day = date.getDate()
       return `${year}/${month}/${day}`
     },
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     dark() {
       return this.$vuetify.theme.dark

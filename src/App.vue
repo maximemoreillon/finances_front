@@ -18,9 +18,9 @@
           </template>
 
           <v-list-item
-            v-for="(account, account_index) in accounts"
-            :key="`account_${account_index}`"
-            :to="{ name: 'account', params: { account } }"
+            v-for="account in accounts"
+            :key="`account_${account.id}`"
+            :to="{ name: 'account', params: { accountId: account.id } }"
             exact
           >
             <v-list-item-icon>
@@ -29,7 +29,7 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                {{ account.toUpperCase() }}
+                {{ account.name }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -98,7 +98,7 @@ export default {
       this.axios
         .get(`/accounts`)
         .then(({ data }) => {
-          this.accounts = data
+          this.accounts = data.accounts
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)

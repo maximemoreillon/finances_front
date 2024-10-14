@@ -1,11 +1,7 @@
 <template>
   <v-card>
     <v-toolbar flat>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>{{ account.toUpperCase() }}</v-card-title>
-        </v-col>
-      </v-row>
+      <v-toolbar-title>{{ accountId }}</v-toolbar-title>
     </v-toolbar>
 
     <v-card-text>
@@ -21,7 +17,7 @@
         :year="year"
       />
     </v-card-text>
-    <v-card-text>
+    <v-card-text >
       <AccountExpenseBreakdown
         @yearSelection="year = $event"
         @monthSelection="month = $event"
@@ -53,14 +49,14 @@ export default {
     }
   },
   watch: {
-    account() {},
+    accountId() {},
   },
 
   mounted() {},
   methods: {},
   computed: {
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
   },
 }

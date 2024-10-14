@@ -81,11 +81,11 @@ export default {
   methods: {
     get_transaction_categories() {
       this.loading = true
-      const url = `/transactions/categories`
+      const url = `/categories`
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.expense_categories = data
+          this.expense_categories = data.categories
           this.get_transactions()
         })
         .catch((error) => {
@@ -100,12 +100,12 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.transactions = data
+          this.transactions = data.records
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -145,8 +145,8 @@ export default {
     },
   },
   computed: {
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     dark() {
       return this.$vuetify.theme.dark

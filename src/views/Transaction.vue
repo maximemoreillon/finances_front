@@ -39,7 +39,7 @@
         <v-col>
           <v-text-field
             label="Date"
-            :value="new Date(transaction.date).toLocaleDateString()"
+            :value="new Date(transaction.time).toLocaleDateString()"
             readonly
           ></v-text-field>
         </v-col>
@@ -61,14 +61,6 @@
           <v-btn :to="{ name: 'transaction_categories' }">
             Manage categories
           </v-btn>
-        </v-col>
-      </v-row>
-      <v-row dense>
-        <v-col>
-          <v-checkbox
-            label="Business expense"
-            v-model="transaction.business_expense"
-          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -93,14 +85,14 @@ export default {
   methods: {
     async get_transaction_categories() {
       this.loading = true
-      const { data } = await this.axios.get(`/transactions/categories`)
-      this.existingCategories = data
+      const { data } = await this.axios.get(`/categories`)
+      this.existingCategories = data.categories
     },
     get_transaction() {
       this.transaction = null
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions/${this.transaction_id}`
+      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
       this.axios
         .get(url)
         .then(({ data }) => {
@@ -111,7 +103,7 @@ export default {
     },
 
     update_transaction() {
-      const url = `/accounts/${this.account}/transactions/${this.transaction_id}`
+      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
       this.axios
         .patch(url, this.transaction)
         .then(() => {
@@ -122,7 +114,7 @@ export default {
 
     delete_transaction() {
       if (!confirm("Delete transaction? This action is irreversible")) return
-      const url = `/accounts/${this.account}/transactions/${this.transaction_id}`
+      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
       this.axios
         .delete(url)
         .then(() => {
@@ -133,9 +125,10 @@ export default {
   },
   computed: {
     foundAutoCategory() {
-      return this.existingCategories.find(({ keywords }) =>
-        keywords.find((k) => this.transaction.description.includes(k))
-      )?.label
+      return "WIP"
+      // return this.existingCategories.find(({ keywords }) =>
+      //   keywords.find((k) => this.transaction.description.includes(k))
+      // )?.label
     },
     categorySelectOptions() {
       return [{ label: "None", _id: null }, ...this.existingCategories]
@@ -143,8 +136,8 @@ export default {
     account() {
       return this.$route.params.account
     },
-    transaction_id() {
-      return this.$route.params.transaction_id
+    transactionId() {
+      return this.$route.params.transactionId
     },
   },
 }

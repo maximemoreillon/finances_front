@@ -4,7 +4,7 @@
     <TotalWealth />
     <v-card-text>
       <v-row>
-        <v-col cols="12" v-for="account in accounts" :key="account">
+        <v-col cols="12" v-for="account in accounts" :key="account.id">
           <AccountPreview :account="account" />
         </v-col>
       </v-row>
@@ -35,9 +35,9 @@ export default {
     get_accounts() {
       this.loading = true
       this.axios
-        .get(`${process.env.VUE_APP_FINANCES_API_URL}/accounts`)
+        .get(`/accounts`)
         .then(({ data }) => {
-          this.accounts = data
+          this.accounts = data.accounts
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
