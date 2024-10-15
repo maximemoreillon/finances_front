@@ -37,7 +37,7 @@ import CreateCategoryDialog from "../../components/CreateCategoryDialog.vue"
 
 export default {
   name: "TransactionCategories",
-
+  components: { CreateCategoryDialog },
   data() {
     return {
       categories: [],
