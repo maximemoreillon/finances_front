@@ -71,7 +71,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_transactions()
     },
   },

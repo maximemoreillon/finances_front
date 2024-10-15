@@ -1,7 +1,11 @@
 <template>
   <v-card>
     <v-toolbar flat>
-      <v-toolbar-title>{{ accountId }}</v-toolbar-title>
+      <v-toolbar-title>
+        {{ account ? account.name : "Account" }} ({{
+          account ? account.currency : "loading"
+        }})
+      </v-toolbar-title>
     </v-toolbar>
 
     <v-card-text>
@@ -17,7 +21,7 @@
         :year="year"
       />
     </v-card-text>
-    <v-card-text >
+    <v-card-text>
       <AccountExpenseBreakdown
         @yearSelection="year = $event"
         @monthSelection="month = $event"
@@ -46,14 +50,29 @@ export default {
     return {
       month: new Date().getMonth() + 1,
       year: new Date().getYear() + 1900,
+      account: null,
     }
   },
   watch: {
     accountId() {},
   },
 
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.getAccountInfo()
+  },
+  methods: {
+    async getAccountInfo() {
+      this.loading = false
+      try {
+        const { data } = await this.axios.get(`/accounts/${this.accountId}`)
+        this.account = data
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.loading = false
+      }
+    },
+  },
   computed: {
     accountId() {
       return this.$route.params.accountId

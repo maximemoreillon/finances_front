@@ -56,7 +56,7 @@
     </v-card-text>
 
     <v-card-text v-if="!loading && !series.length">
-      This account does not have a balance history
+      This account does not have balance records
     </v-card-text>
   </v-card>
 </template>
@@ -97,7 +97,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_balance_history()
     },
     rangeStart() {

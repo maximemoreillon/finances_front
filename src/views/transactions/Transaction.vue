@@ -21,10 +21,7 @@
     <v-card-text v-if="transaction">
       <v-row>
         <v-col>
-          <v-text-field
-            label="Description"
-            v-model="transaction.description"
-          ></v-text-field>
+          <v-text-field label="Description" v-model="transaction.description" />
         </v-col>
       </v-row>
       <v-row>
@@ -59,7 +56,7 @@
           <!-- TODO: better handling of the categoryAdded event-->
           <AddCategoryDialog
             :transactionId="String(transactionId)"
-            :accountId="accountId"
+            :accountId="String(accountId)"
             @categoryAdded="get_transaction()"
           />
         </v-col>

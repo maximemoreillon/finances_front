@@ -1,5 +1,13 @@
 <template>
   <v-card outlined>
+    <v-toolbar flat>
+      <v-card-title>Transactions</v-card-title>
+      <v-spacer />
+      <TransactionRegisterDialog
+        :accountId="String(accountId)"
+        @transactionRegistered="get_transactions()"
+      />
+    </v-toolbar>
     <v-card-title>Transactions</v-card-title>
 
     <v-card-text>
@@ -48,9 +56,12 @@
 </template>
 
 <script>
+import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
 export default {
   name: "AccountTransactionsTable",
-  components: {},
+  components: {
+    TransactionRegisterDialog,
+  },
   data() {
     return {
       loading: false,
@@ -71,7 +82,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_transactions()
     },
   },
