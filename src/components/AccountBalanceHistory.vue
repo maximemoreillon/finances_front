@@ -34,8 +34,8 @@
         <v-spacer />
         <v-col cols="auto">
           <v-btn
-            v-for="button in chartControlButtons"
-            :key="button.value"
+            v-for="(button, index) in chartControlButtons"
+            :key="index"
             class="mr-2"
             x-small
             :color="rangeStart === button.value ? 'primary' : undefined"
@@ -71,13 +71,27 @@ export default {
       current_balance: 0,
       currency: null,
       last_retrieved: null,
-      rangeStart: "-6mo",
-
+      rangeStart: new Date(
+        new Date().setMonth((new Date().getMonth() - 1) % 12)
+      ),
       chartControlButtons: [
-        { text: "1M", value: "-1mo" },
-        { text: "6M", value: "-6mo" },
-        { text: "1Y", value: "-1y" },
-        { text: "ALL", value: 0 },
+        {
+          text: "1M",
+          value: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        },
+        {
+          text: "6M",
+          value: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+        },
+        {
+          text: "1Y",
+          value: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+        },
+        {
+          text: "2Y",
+          value: new Date(new Date().setMonth(new Date().getMonth() - 24)),
+        },
+        { text: "ALL", value: new Date(0) },
       ],
 
       series: [],
@@ -102,7 +116,7 @@ export default {
       this.series = []
 
       const url = `/accounts/${this.accountId}/balance`
-      const params = { start: this.rangeStart }
+      const params = { from: this.rangeStart }
 
       this.axios
         .get(url, { params })

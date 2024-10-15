@@ -25,7 +25,7 @@ const routes = [
   {
     path: "/accounts/:accountId/transactions/:transactionId",
     name: "transaction",
-    component: () => import("../views/Transaction.vue"),
+    component: () => import("../views/transactions/Transaction.vue"),
   },
   // {
   //   path: "balance",

@@ -58,7 +58,7 @@
         <v-col cols="auto">
           <!-- TODO: better handling of the categoryAdded event-->
           <AddCategoryDialog
-            :transactionId="transactionId"
+            :transactionId="String(transactionId)"
             :accountId="accountId"
             @categoryAdded="get_transaction()"
           />
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import AddCategoryDialog from "../components/AddCategoryDialog.vue"
+import AddCategoryDialog from "@/components/AddCategoryDialog.vue"
 export default {
   name: "Transaction",
   components: {

@@ -26,12 +26,14 @@
         </template>
 
         <template v-slot:item.category="{ item }">
-          <span v-if="categories">
+          <span v-if="categories.length">
             {{
-              item.category?.label ||
-              categories.find(({ keywords }) =>
-                keywords.find((k) => item.description.includes(k))
-              )?.label
+              categories
+                .filter(({ keywords }) =>
+                  keywords.find((k) => item.description.includes(k))
+                )
+                .map((c) => c.name)
+                .join(", ")
             }}
           </span>
         </template>
@@ -56,7 +58,7 @@ export default {
         { text: "Date", value: "time" },
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
-        // { text: "Category", value: "category" },
+        { text: "Category", value: "category" },
         // { text: "Business", value: "business_expense" },
       ],
       toLocaleStringOptions: {
