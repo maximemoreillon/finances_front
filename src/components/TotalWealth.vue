@@ -1,3 +1,4 @@
+<!-- INFO: This is currently not used -->
 <template>
   <v-card-subtitle>
     <template v-if="total">

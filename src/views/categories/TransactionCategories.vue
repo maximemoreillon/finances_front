@@ -20,14 +20,14 @@
 
     <v-card-text>
       <v-data-table :headers="headers" :items="categories">
-        <template v-slot:item.label="{ item }">
+        <template v-slot:item.name="{ item }">
           <router-link
             :to="{
               name: 'transaction_category',
-              params: { category_id: item._id },
+              params: { categoryId: item.id },
             }"
           >
-            {{ item.label }}
+            {{ item.name }}
           </router-link>
         </template>
         <template v-slot:item.keywords="{ item }">
@@ -52,7 +52,7 @@ export default {
     return {
       categories: [],
       headers: [
-        { value: "label", text: "Label" },
+        { value: "name", text: "Name" },
         { value: "keywords", text: "Keywords" },
       ],
     }
@@ -63,9 +63,9 @@ export default {
   methods: {
     get_categories() {
       this.axios
-        .get(`/transactions/categories`)
-        .then((response) => {
-          this.categories = response.data
+        .get(`/categories`)
+        .then(({ data }) => {
+          this.categories = data.categories
         })
         .catch((error) => {
           console.error(error)

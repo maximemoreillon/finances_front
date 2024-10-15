@@ -17,16 +17,6 @@
       <v-form @submit.prevent="submit()">
         <v-row>
           <v-col cols="12">
-            <v-select
-              width="100%"
-              :items="currencies"
-              v-model="currency"
-              label="Currency"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
             <v-text-field
               width="100%"
               type="number"
@@ -53,7 +43,6 @@ export default {
 
   data() {
     return {
-      currencies: ["JPY", "USD", "CHF", "EUR"],
       currency: this.$route.query.currency || "",
       balance: 0,
       registering: false,

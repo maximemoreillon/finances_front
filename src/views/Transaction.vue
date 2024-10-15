@@ -1,9 +1,9 @@
 <template>
-  <v-card :loading="loading" max-width="50rem" class="mx-auto">
+  <v-card :loading="loading" max-width="30rem" class="mx-auto">
     <v-toolbar flat>
       <v-btn
         icon
-        :to="{ name: 'account', params: { account: this.account } }"
+        :to="{ name: 'account', params: { accountId: this.accountId } }"
         exact
       >
         <v-icon>mdi-arrow-left</v-icon>
@@ -44,23 +44,35 @@
           ></v-text-field>
         </v-col>
       </v-row>
-      <v-row align="baseline">
+      <!-- Categories -->
+      <v-row align="center">
         <v-col>
-          <v-select
-            :items="categorySelectOptions"
-            v-model="transaction.category"
-            item-value="_id"
-            item-text="label"
-            label="Category"
-            :persistent-placeholder="!transaction.category && foundAutoCategory"
-            :placeholder="!transaction.category ? foundAutoCategory : undefined"
+          <h3>Categories</h3>
+        </v-col>
+        <v-spacer />
+        <v-col cols="auto">
+          <v-btn :to="{ name: 'transaction_categories' }" outlined>
+            Manage
+          </v-btn>
+        </v-col>
+        <v-col cols="auto">
+          <!-- TODO: better handling of the categoryAdded event-->
+          <AddCategoryDialog
+            :transactionId="transactionId"
+            :accountId="accountId"
+            @categoryAdded="get_transaction()"
           />
         </v-col>
-
-        <v-col cols="auto">
-          <v-btn :to="{ name: 'transaction_categories' }">
-            Manage categories
-          </v-btn>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="auto"
+          v-for="category of transaction.categories"
+          :key="category.id"
+        >
+          <v-chip close @click:close="removeCategory(category.id)">{{
+            category.name
+          }}</v-chip>
         </v-col>
       </v-row>
     </v-card-text>
@@ -68,9 +80,12 @@
 </template>
 
 <script>
+import AddCategoryDialog from "../components/AddCategoryDialog.vue"
 export default {
   name: "Transaction",
-
+  components: {
+    AddCategoryDialog,
+  },
   data() {
     return {
       transaction: null,
@@ -114,13 +129,23 @@ export default {
 
     delete_transaction() {
       if (!confirm("Delete transaction? This action is irreversible")) return
-      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
+      const url = `/accounts/${this.accountId}/transactions/${this.transactionId}`
       this.axios
         .delete(url)
         .then(() => {
           this.$router.go(-1)
         })
         .catch((error) => console.log(error))
+    },
+    async removeCategory(categoryId) {
+      if (!confirm("Remove category?")) return
+      const url = `/accounts/${this.accountId}/transactions/${this.transactionId}/categories/${categoryId}`
+      await this.axios.delete(url)
+
+      const foundIndex = this.transaction.categories.findIndex(
+        (c) => c.id === categoryId
+      )
+      if (foundIndex > -1) this.transaction.categories.splice(foundIndex, 1)
     },
   },
   computed: {
@@ -133,8 +158,8 @@ export default {
     categorySelectOptions() {
       return [{ label: "None", _id: null }, ...this.existingCategories]
     },
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     transactionId() {
       return this.$route.params.transactionId
