@@ -1,14 +1,13 @@
 <template>
   <v-card outlined>
     <v-toolbar flat>
-      <v-card-title>Transactions</v-card-title>
+      <v-toolbar-title>Transactions</v-toolbar-title>
       <v-spacer />
       <TransactionRegisterDialog
         :accountId="String(accountId)"
         @transactionRegistered="get_transactions()"
       />
     </v-toolbar>
-    <v-card-title>Transactions</v-card-title>
 
     <v-card-text>
       <v-data-table :headers="headers" :items="transactions" :loading="loading">

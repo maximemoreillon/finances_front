@@ -3,29 +3,25 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn v-bind="attrs" v-on="on" color="primary">
         <v-icon left>mdi-plus</v-icon>
-        <span>Register</span>
+        <span>New</span>
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title> Register balance </v-card-title>
+      <v-card-title> Create transaction category </v-card-title>
 
-      <v-form @submit.prevent="registerBalance">
+      <v-form @submit.prevent="createCategory">
         <v-card-text>
           <v-row justify="center">
             <v-col>
-              <v-text-field
-                type="number"
-                v-model.number="balance"
-                label="Balance"
-              />
+              <v-text-field v-model="name" label="Category name" />
             </v-col>
             <v-col cols="auto"> </v-col>
           </v-row>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn text @click="dialog = false"> Cancel </v-btn>
           <v-btn type="submit" :loading="registering" color="primary">
             Register
@@ -38,7 +34,7 @@
 
 <script>
 export default {
-  name: "RegisterTransaction",
+  name: "CreateCategoryDialog",
   props: {
     accountId: String,
   },
@@ -46,22 +42,23 @@ export default {
     return {
       dialog: false,
       registering: false,
-      balance: 0,
+      name: "",
     }
   },
   mounted() {},
 
   methods: {
-    async registerBalance() {
+    async createCategory() {
       this.registering = true
       try {
         const url = `/accounts/${this.accountId}/balance/`
         const { data } = await this.axios.post(url, {
-          balance: this.balance,
+          name: this.name,
         })
-        this.$emit("balanceRegistered", data)
-        this.dialog = false
-        this.categoryId = null
+        this.$router.push({
+          name: "transaction_category",
+          params: { categoryId: data.id },
+        })
       } catch (error) {
         console.error(error)
         alert("Error")

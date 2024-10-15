@@ -73,8 +73,7 @@ export default {
         const { data } = await this.axios.post(url, {
           ...this.newTransaction,
         })
-        // WARNING: if already exists, should not emit or push
-        this.$emit("transactionRegistered", data)
+        if (data.id) this.$emit("transactionRegistered", data)
         this.dialog = false
         this.categoryId = null
       } catch (error) {

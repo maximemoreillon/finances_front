@@ -7,23 +7,21 @@
     <v-card>
       <v-card-title> Add keyword </v-card-title>
 
-      <v-card-text>
-        <v-form @submit.prevent="addKeyword">
+      <v-form @submit.prevent="addKeyword">
+        <v-card-text>
           <v-row align="center">
             <v-col>
               <v-text-field label="Word" v-model="word" />
             </v-col>
-            <v-col cols="auto">
-              <v-btn type="submit" :loading="loading">Save</v-btn>
-            </v-col>
           </v-row>
-        </v-form>
-      </v-card-text>
+        </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="dialog = false"> Cancel </v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialog = false"> Cancel </v-btn>
+          <v-btn type="submit" :loading="loading" color="primary">Save</v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>

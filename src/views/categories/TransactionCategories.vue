@@ -1,21 +1,9 @@
 <template>
   <v-card class="mx-auto" max-width="60rem">
     <v-toolbar flat>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>Transaction categories</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            exact
-            :to="{ name: 'new_transaction_category' }"
-            color="primary"
-          >
-            New category
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-toolbar-title>Transaction categories</v-toolbar-title>
+      <v-spacer />
+      <CreateCategoryDialog />
     </v-toolbar>
 
     <v-card-text>
@@ -45,6 +33,8 @@
 </template>
 
 <script>
+import CreateCategoryDialog from "../../components/CreateCategoryDialog.vue"
+
 export default {
   name: "TransactionCategories",
 

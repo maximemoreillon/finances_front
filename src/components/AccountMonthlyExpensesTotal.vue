@@ -86,20 +86,18 @@ export default {
         (t) => start_date < new Date(t.time) && new Date(t.time) < end_date
       )
     },
-    income_sum_for_month(year, month) {
+    incomeTotalForMonth(year, month) {
       return this.transactions_of_month(year, month).reduce(
         (acc, { amount }) => {
-          // Only expenses
           if (amount > 0) acc += amount
           return acc
         },
         0
       )
     },
-    expenses_sum_for_month(year, month) {
+    expensesTotalForMonth(year, month) {
       return this.transactions_of_month(year, month).reduce(
         (acc, { amount }) => {
-          // Only expenses
           if (amount < 0) acc += -amount
           return acc
         },
@@ -144,12 +142,12 @@ export default {
     formatted_income() {
       return Array.from(Array(12).keys())
         .map((m) => m + 1)
-        .map((month) => this.income_sum_for_month(this.year, month))
+        .map((month) => this.incomeTotalForMonth(this.year, month))
     },
     formatted_expenses() {
       return Array.from(Array(12).keys())
         .map((m) => m + 1)
-        .map((month) => this.expenses_sum_for_month(this.year, month))
+        .map((month) => this.expensesTotalForMonth(this.year, month))
     },
     series() {
       return [

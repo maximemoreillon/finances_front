@@ -1,51 +1,44 @@
-: ["#00c000", "#c00000"]
 <template>
   <v-card :loading="loading" outlined>
-    <v-card-text v-if="loading || series.length">
-      <v-row aling="center">
-        <v-col class="text-h6"> Balance </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            color="primary"
-            :to="{
-              name: 'register_balance',
-              params: { accountId: accountId },
-              query: { currency },
-            }"
-          >
-            Register
-          </v-btn>
-        </v-col>
-      </v-row>
+    <v-toolbar flat extended>
+      <v-toolbar-title>Balance</v-toolbar-title>
+      <v-spacer />
+      <BalanceRegisterDialog
+        :accountId="String(accountId)"
+        @balanceRegistered="get_transactions()"
+      />
 
-      <v-row align="center" dense>
-        <v-col cols="auto">
-          <v-row dense>
-            <v-col>
-              {{ currency }}
-              {{ parseFloat(current_balance).toLocaleString() }}
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
-          </v-row>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            v-for="(button, index) in chartControlButtons"
-            :key="index"
-            class="mr-2"
-            x-small
-            :color="rangeStart === button.value ? 'primary' : undefined"
-            @click="rangeStart = button.value"
-          >
-            {{ button.text }}
-          </v-btn>
-        </v-col>
-      </v-row>
+      <template v-slot:extension v-if="series.length">
+        <v-row align="center" dense>
+          <v-col cols="auto">
+            <v-row dense>
+              <v-col>
+                {{ currency }}
+                {{ parseFloat(current_balance).toLocaleString() }}
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
+            </v-row>
+          </v-col>
+          <v-spacer />
+          <v-col cols="auto">
+            <v-btn
+              v-for="(button, index) in graphTimeRanges"
+              :key="index"
+              class="mr-2"
+              x-small
+              :color="rangeStart === button.value ? 'primary' : undefined"
+              @click="rangeStart = button.value"
+            >
+              {{ button.text }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </v-toolbar>
 
+    <v-card-text v-if="series.length">
       <apexchart
         ref="chart"
         width="100%"
@@ -62,37 +55,21 @@
 </template>
 
 <script>
-const chartControlButtons = [
-  {
-    text: "1M",
-    value: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-  },
-  {
-    text: "6M",
-    value: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-  },
-  {
-    text: "1Y",
-    value: new Date(new Date().setMonth(new Date().getMonth() - 12)),
-  },
-  {
-    text: "2Y",
-    value: new Date(new Date().setMonth(new Date().getMonth() - 24)),
-  },
-  { text: "ALL", value: new Date(0) },
-]
-
+import BalanceRegisterDialog from "./BalanceRegisterDialog.vue"
+import { graphTimeRanges } from "../constants"
 export default {
   name: "AccountBalanceHistory",
-  components: {},
+  components: {
+    BalanceRegisterDialog,
+  },
   data() {
     return {
       loading: false,
       current_balance: 0,
       currency: null,
       last_retrieved: null,
-      rangeStart: chartControlButtons[0].value,
-      chartControlButtons,
+      rangeStart: graphTimeRanges[0].value,
+      graphTimeRanges,
       series: [],
     }
   },
@@ -109,9 +86,7 @@ export default {
   },
   methods: {
     get_balance_history() {
-      // Loading history
       this.loading = true
-
       this.series = []
 
       const url = `/accounts/${this.accountId}/balance`
@@ -148,7 +123,7 @@ export default {
   computed: {
     last_retrieved_formatted() {
       const date = new Date(this.last_retrieved)
-      const year = date.getYear() + 1900
+      const year = date.getFullYear()
       const month = date.getMonth() + 1
       const day = date.getDate()
       return `${year}/${month}/${day}`

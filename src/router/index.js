@@ -17,11 +17,11 @@ const routes = [
     component: () => import("../views/Account.vue"),
   },
 
-  {
-    path: "/accounts/:accountId/balance/register",
-    name: "register_balance",
-    component: () => import("../views/RegisterBalance.vue"),
-  },
+  // {
+  //   path: "/accounts/:accountId/balance/register",
+  //   name: "register_balance",
+  //   component: () => import("../views/RegisterBalance.vue"),
+  // },
   {
     path: "/accounts/:accountId/transactions/:transactionId",
     name: "transaction",
@@ -39,11 +39,11 @@ const routes = [
     name: "transaction_categories",
     component: () => import("../views/categories/TransactionCategories.vue"),
   },
-  {
-    path: "/transaction_categories/new",
-    name: "new_transaction_category",
-    component: () => import("../views/categories/NewTransactionCategory.vue"),
-  },
+  // {
+  //   path: "/transaction_categories/new",
+  //   name: "new_transaction_category",
+  //   component: () => import("../views/categories/NewTransactionCategory.vue"),
+  // },
   {
     path: "/transaction_categories/:categoryId",
     name: "transaction_category",
