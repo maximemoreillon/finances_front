@@ -28,6 +28,7 @@
         <template v-slot:item.category="{ item }">
           <span v-if="categories.length">
             {{
+              item.categories?.map((c) => c.name).join(", ") ||
               categories
                 .filter(({ keywords }) =>
                   keywords.find((k) => item.description.includes(k))

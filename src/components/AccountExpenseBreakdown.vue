@@ -200,14 +200,15 @@ export default {
 
     categorized_expenses() {
       // Add a category to every expense
+      // WARNING: transactions can now have multiple categories
       return this.expenses.map((expense) => {
         // Find the correct category from the available categories
 
         let category = expense.description
 
-        // PROBLEM: comes from another table (transaction_category)
-        if (expense.category) {
-          console.log(expense.category)
+        if (expense.categories && expense.categories.length) {
+          // For now, just the first category
+          category = expense.categories[0].name
         } else {
           // Category attributed client-side
           const foundCategory = this.expense_categories.find((category) =>

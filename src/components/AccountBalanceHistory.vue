@@ -62,6 +62,26 @@
 </template>
 
 <script>
+const chartControlButtons = [
+  {
+    text: "1M",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+  },
+  {
+    text: "6M",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+  },
+  {
+    text: "1Y",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+  },
+  {
+    text: "2Y",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 24)),
+  },
+  { text: "ALL", value: new Date(0) },
+]
+
 export default {
   name: "AccountBalanceHistory",
   components: {},
@@ -71,29 +91,8 @@ export default {
       current_balance: 0,
       currency: null,
       last_retrieved: null,
-      rangeStart: new Date(
-        new Date().setMonth((new Date().getMonth() - 1) % 12)
-      ),
-      chartControlButtons: [
-        {
-          text: "1M",
-          value: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-        },
-        {
-          text: "6M",
-          value: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-        },
-        {
-          text: "1Y",
-          value: new Date(new Date().setMonth(new Date().getMonth() - 12)),
-        },
-        {
-          text: "2Y",
-          value: new Date(new Date().setMonth(new Date().getMonth() - 24)),
-        },
-        { text: "ALL", value: new Date(0) },
-      ],
-
+      rangeStart: chartControlButtons[0].value,
+      chartControlButtons,
       series: [],
     }
   },
