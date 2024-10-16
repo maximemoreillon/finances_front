@@ -1,51 +1,45 @@
-: ["#00c000", "#c00000"]
 <template>
   <v-card :loading="loading" outlined>
-    <v-card-text v-if="loading || series.length">
-      <v-row aling="center">
-        <v-col class="text-h6"> Balance </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            color="primary"
-            :to="{
-              name: 'register_balance',
-              params: { account },
-              query: { currency },
-            }"
-          >
-            Register
-          </v-btn>
-        </v-col>
-      </v-row>
+    <v-toolbar flat extended>
+      <v-toolbar-title>Balance</v-toolbar-title>
+      <v-spacer />
+      <BalanceRegisterDialog
+        :accountId="String(accountId)"
+        @balanceRegistered="get_balance_history()"
+        :currecy="currency"
+      />
 
-      <v-row align="center" dense>
-        <v-col cols="auto">
-          <v-row dense>
-            <v-col>
-              {{ currency }}
-              {{ parseFloat(current_balance).toLocaleString() }}
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
-          </v-row>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn
-            v-for="button in chartControlButtons"
-            :key="button.value"
-            class="mr-2"
-            x-small
-            :color="rangeStart === button.value ? 'primary' : undefined"
-            @click="rangeStart = button.value"
-          >
-            {{ button.text }}
-          </v-btn>
-        </v-col>
-      </v-row>
+      <template v-slot:extension>
+        <v-row align="center" dense>
+          <v-col cols="auto">
+            <v-row dense>
+              <v-col>
+                {{ currency }}
+                {{ parseFloat(current_balance).toLocaleString() }}
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
+            </v-row>
+          </v-col>
+          <v-spacer />
+          <v-col cols="auto">
+            <v-btn
+              v-for="(button, index) in graphTimeRanges"
+              :key="index"
+              class="mr-2"
+              x-small
+              :color="rangeStart === button.value ? 'primary' : undefined"
+              @click="rangeStart = button.value"
+            >
+              {{ button.text }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </v-toolbar>
 
+    <v-card-text v-if="series.length">
       <apexchart
         ref="chart"
         width="100%"
@@ -56,35 +50,34 @@
     </v-card-text>
 
     <v-card-text v-if="!loading && !series.length">
-      Account {{ account }} does not have a balance history
+      No data for given range
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import BalanceRegisterDialog from "./BalanceRegisterDialog.vue"
+import { graphTimeRanges } from "../constants"
 export default {
   name: "AccountBalanceHistory",
-  components: {},
+  components: {
+    BalanceRegisterDialog,
+  },
+  props: {
+    currency: String,
+  },
   data() {
     return {
       loading: false,
       current_balance: 0,
-      currency: null,
       last_retrieved: null,
-      rangeStart: "-6mo",
-
-      chartControlButtons: [
-        { text: "1M", value: "-1mo" },
-        { text: "6M", value: "-6mo" },
-        { text: "1Y", value: "-1y" },
-        { text: "ALL", value: 0 },
-      ],
-
+      rangeStart: graphTimeRanges[0].value,
+      graphTimeRanges,
       series: [],
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_balance_history()
     },
     rangeStart() {
@@ -96,28 +89,26 @@ export default {
   },
   methods: {
     get_balance_history() {
-      // Loading history
       this.loading = true
-
       this.series = []
 
-      const url = `/accounts/${this.account}/balance`
-      const params = { start: this.rangeStart }
+      const url = `/accounts/${this.accountId}/balance`
+      const params = { from: this.rangeStart }
 
       this.axios
         .get(url, { params })
         .then(({ data }) => {
-          if (!data.length) return
+          const { records } = data
+          if (!records.length) return
 
-          const last_item = data[data.length - 1]
+          const last_item = records.at(0)
 
-          this.current_balance = last_item._value
-          this.currency = last_item.currency
-          this.last_retrieved = last_item._time
+          this.current_balance = last_item.balance
+          this.last_retrieved = last_item.time
 
-          const chart_data = data.map(({ _value, _time }) => [
-            new Date(_time).getTime(),
-            Math.round(_value),
+          const chart_data = records.map(({ balance, time }) => [
+            new Date(time).getTime(),
+            Math.round(balance),
           ])
 
           this.series = [{ name: "balance", data: chart_data }]
@@ -134,13 +125,13 @@ export default {
   computed: {
     last_retrieved_formatted() {
       const date = new Date(this.last_retrieved)
-      const year = date.getYear() + 1900
+      const year = date.getFullYear()
       const month = date.getMonth() + 1
       const day = date.getDate()
       return `${year}/${month}/${day}`
     },
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     dark() {
       return this.$vuetify.theme.dark

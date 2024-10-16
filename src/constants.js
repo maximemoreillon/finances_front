@@ -24,3 +24,23 @@ export const colors = [
   "#9e3434",
   "#dddddd",
 ]
+
+export const graphTimeRanges = [
+  {
+    text: "1M",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+  },
+  {
+    text: "6M",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+  },
+  {
+    text: "1Y",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+  },
+  {
+    text: "2Y",
+    value: new Date(new Date().setMonth(new Date().getMonth() - 24)),
+  },
+  { text: "ALL", value: new Date(0) },
+]

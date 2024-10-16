@@ -10,42 +10,46 @@ const routes = [
     alias: "/",
     component: () => import("../views/Accounts.vue"),
   },
+
   {
-    path: "/accounts/:account",
+    path: "/accounts/:accountId",
     name: "account",
     component: () => import("../views/Account.vue"),
   },
+
+  // {
+  //   path: "/accounts/:accountId/balance/register",
+  //   name: "register_balance",
+  //   component: () => import("../views/RegisterBalance.vue"),
+  // },
   {
-    path: "/accounts/:account/balance/register",
-    name: "register_balance",
-    component: () => import("../views/RegisterBalance.vue"),
+    path: "/accounts/:accountId/transactions/:transactionId",
+    name: "transaction",
+    component: () => import("../views/transactions/Transaction.vue"),
   },
-  {
-    path: "/about",
-    name: "about",
-    component: () => import("../views/About.vue"),
-  },
+  // {
+  //   path: "balance",
+  //   name: "balance",
+  //   component: () => import("../views/BalanceHistory.vue"),
+  // },
+
+  // Categories
   {
     path: "/transaction_categories",
     name: "transaction_categories",
-    component: () => import("../views/TransactionCategories.vue"),
+    component: () => import("../views/categories/TransactionCategories.vue"),
   },
+  // {
+  //   path: "/transaction_categories/new",
+  //   name: "new_transaction_category",
+  //   component: () => import("../views/categories/NewTransactionCategory.vue"),
+  // },
   {
-    path: "/transaction_categories/new",
-    name: "new_transaction_category",
-    component: () => import("../views/NewTransactionCategory.vue"),
-  },
-  {
-    path: "/transaction_categories/:category_id",
+    path: "/transaction_categories/:categoryId",
     name: "transaction_category",
-    component: () => import("../views/TransactionCategory.vue"),
+    component: () => import("../views/categories/TransactionCategory.vue"),
   },
 
-  {
-    path: "/accounts/:account/balance",
-    name: "balance",
-    component: () => import("../views/BalanceHistory.vue"),
-  },
   // {
   //   path: '/accounts/:account/transactions',
   //   name: 'transactions',
@@ -56,10 +60,12 @@ const routes = [
   //   name: "monthly_transactions",
   //   component: () => import("../views/MonthlyExpenses.vue"),
   // },
+
+  // Misc
   {
-    path: "/accounts/:account/transactions/:transaction_id",
-    name: "transaction",
-    component: () => import("../views/Transaction.vue"),
+    path: "/about",
+    name: "about",
+    component: () => import("../views/About.vue"),
   },
 ]
 

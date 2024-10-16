@@ -1,19 +1,29 @@
 <template>
   <v-card outlined>
-    <v-card-title>Transactions</v-card-title>
+    <v-toolbar flat>
+      <v-toolbar-title>Transactions</v-toolbar-title>
+      <v-spacer />
+      <TransactionRegisterDialog
+        :accountId="String(accountId)"
+        @transactionRegistered="get_transactions()"
+      />
+    </v-toolbar>
 
     <v-card-text>
       <v-data-table :headers="headers" :items="transactions" :loading="loading">
         <template v-slot:item.description="{ item }">
           <router-link
-            :to="{ name: 'transaction', params: { transaction_id: item._id } }"
+            :to="{
+              name: 'transaction',
+              params: { accountId: accountId, transactionId: item.id },
+            }"
           >
             {{ item.description }}
           </router-link>
         </template>
 
-        <template v-slot:item.date="{ item: { date } }">
-          {{ new Date(date).toLocaleString("ja-JP", toLocaleStringOptions) }}
+        <template v-slot:item.time="{ item: { time } }">
+          {{ new Date(time).toLocaleString("ja-JP", toLocaleStringOptions) }}
         </template>
 
         <template v-slot:item.amount="{ item: { amount } }">
@@ -23,18 +33,18 @@
         </template>
 
         <template v-slot:item.category="{ item }">
-          <span v-if="categories">
+          <!-- TODO: chips -->
+          <span v-if="categories.length">
             {{
-              item.category?.label ||
-              categories.find(({ keywords }) =>
-                keywords.find((k) => item.description.includes(k))
-              )?.label
+              item.categories?.map((c) => c.name).join(", ") ||
+              categories
+                .filter(({ keywords }) =>
+                  keywords.find((k) => item.description.includes(k))
+                )
+                .map((c) => c.name)
+                .join(", ")
             }}
           </span>
-        </template>
-
-        <template v-slot:item.business_expense="{ item: { business_expense } }">
-          <v-icon v-if="business_expense">mdi-check</v-icon>
         </template>
       </v-data-table>
     </v-card-text>
@@ -42,19 +52,21 @@
 </template>
 
 <script>
+import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
 export default {
   name: "AccountTransactionsTable",
-  components: {},
+  components: {
+    TransactionRegisterDialog,
+  },
   data() {
     return {
       loading: false,
       transactions: [],
       headers: [
-        { text: "Date", value: "date" },
+        { text: "Date", value: "time" },
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
         { text: "Category", value: "category" },
-        { text: "Business", value: "business_expense" },
       ],
       toLocaleStringOptions: {
         year: "numeric",
@@ -65,7 +77,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_transactions()
     },
   },
@@ -75,18 +87,18 @@ export default {
   },
   methods: {
     async get_transaction_categories() {
-      const { data } = await this.axios.get(`/transactions/categories`)
-      this.categories = data
+      const { data } = await this.axios.get(`/categories`)
+      this.categories = data.categories
     },
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.transactions = data
+          this.transactions = data.records
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -98,8 +110,8 @@ export default {
     },
   },
   computed: {
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
   },
 }

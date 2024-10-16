@@ -48,7 +48,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_transactions()
     },
   },
@@ -59,12 +59,12 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.transactions = data
+          this.transactions = data.records
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -83,23 +83,21 @@ export default {
       const end_date = new Date(`${end_year}/${end_month}/01`)
 
       return this.transactions.filter(
-        (t) => start_date < new Date(t.date) && new Date(t.date) < end_date
+        (t) => start_date < new Date(t.time) && new Date(t.time) < end_date
       )
     },
-    income_sum_for_month(year, month) {
+    incomeTotalForMonth(year, month) {
       return this.transactions_of_month(year, month).reduce(
         (acc, { amount }) => {
-          // Only expenses
           if (amount > 0) acc += amount
           return acc
         },
         0
       )
     },
-    expenses_sum_for_month(year, month) {
+    expensesTotalForMonth(year, month) {
       return this.transactions_of_month(year, month).reduce(
         (acc, { amount }) => {
-          // Only expenses
           if (amount < 0) acc += -amount
           return acc
         },
@@ -138,18 +136,18 @@ export default {
         },
       }
     },
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     formatted_income() {
       return Array.from(Array(12).keys())
         .map((m) => m + 1)
-        .map((month) => this.income_sum_for_month(this.year, month))
+        .map((month) => this.incomeTotalForMonth(this.year, month))
     },
     formatted_expenses() {
       return Array.from(Array(12).keys())
         .map((m) => m + 1)
-        .map((month) => this.expenses_sum_for_month(this.year, month))
+        .map((month) => this.expensesTotalForMonth(this.year, month))
     },
     series() {
       return [

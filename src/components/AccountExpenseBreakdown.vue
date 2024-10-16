@@ -71,7 +71,7 @@ export default {
     }
   },
   watch: {
-    account() {
+    accountId() {
       this.get_transactions()
     },
   },
@@ -81,11 +81,11 @@ export default {
   methods: {
     get_transaction_categories() {
       this.loading = true
-      const url = `/transactions/categories`
+      const url = `/categories`
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.expense_categories = data
+          this.expense_categories = data.categories
           this.get_transactions()
         })
         .catch((error) => {
@@ -100,12 +100,12 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions`
+      const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.transactions = data
+          this.transactions = data.records
         })
         .catch((error) => {
           if (error.response) console.log(error.response.data)
@@ -145,8 +145,8 @@ export default {
     },
   },
   computed: {
-    account() {
-      return this.$route.params.account
+    accountId() {
+      return this.$route.params.accountId
     },
     dark() {
       return this.$vuetify.theme.dark
@@ -187,7 +187,7 @@ export default {
       const start_date = new Date(this.start_date)
 
       return this.transactions.filter((transaction) => {
-        const transaction_time = new Date(transaction.date)
+        const transaction_time = new Date(transaction.time)
 
         return end_date > transaction_time && transaction_time > start_date
       })
@@ -197,26 +197,32 @@ export default {
         return transaction.amount < 0
       })
     },
-    non_business_expenses() {
-      return this.filtered_transactions.filter((transaction) => {
-        return transaction.amount < 0 && !transaction.business_expense
-      })
-    },
+
     categorized_expenses() {
       // Add a category to every expense
-      return this.non_business_expenses.map((expense) => {
+      // WARNING: transactions can now have multiple categories
+      return this.expenses.map((expense) => {
         // Find the correct category from the available categories
-        const category = expense.category
-          ? expense.category
-          : this.expense_categories.find((category) =>
-              category.keywords.find((keyword) =>
-                expense.description.includes(keyword)
-              )
+
+        let category = expense.description
+
+        if (expense.categories && expense.categories.length) {
+          // For now, just the first category
+          category = expense.categories[0].name
+        } else {
+          // Category attributed client-side
+          const foundCategory = this.expense_categories.find((category) =>
+            category.keywords.find((keyword) =>
+              expense.description.includes(keyword)
             )
+          )
+
+          if (foundCategory) category = foundCategory.name
+        }
 
         return {
           ...expense,
-          category: category ? category.label : expense.description,
+          category,
         }
       })
     },
