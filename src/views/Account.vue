@@ -1,33 +1,46 @@
 <template>
   <v-card>
     <v-toolbar flat>
-      <v-toolbar-title>
-        {{ account ? account.name : "Account" }} ({{
-          account ? account.currency : "loading"
-        }})
+      <v-toolbar-title v-if="account">
+        {{ account.name }} ({{ account.currency }})
       </v-toolbar-title>
+      <v-progress-circular indeterminate v-else />
+      <v-spacer />
+      <v-btn @click="deleteAccount()" icon color="#c00000">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-card-text>
-      <AccountBalanceHistory />
-    </v-card-text>
-    <v-card-text>
-      <AccountTransactionsTable />
-    </v-card-text>
-    <v-card-text>
-      <AccountMonthlyExpensesTotal
-        @yearSelection="year = $event"
-        @monthSelection="month = $event"
-        :year="year"
-      />
-    </v-card-text>
-    <v-card-text>
-      <AccountExpenseBreakdown
-        @yearSelection="year = $event"
-        @monthSelection="month = $event"
-        :month="month"
-        :year="year"
-      />
+      <v-row>
+        <v-col>
+          <AccountBalanceHistory :currency="account?.currency" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <AccountTransactionsTable />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <AccountMonthlyExpensesTotal
+            @yearSelection="year = $event"
+            @monthSelection="month = $event"
+            :year="year"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <AccountExpenseBreakdown
+            @yearSelection="year = $event"
+            @monthSelection="month = $event"
+            :month="month"
+            :year="year"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -51,6 +64,8 @@ export default {
       month: new Date().getMonth() + 1,
       year: new Date().getYear() + 1900,
       account: null,
+      deleting: false,
+      loading: false,
     }
   },
   watch: {
@@ -70,6 +85,18 @@ export default {
         console.error(error)
       } finally {
         this.loading = false
+      }
+    },
+    async deleteAccount() {
+      if(!confirm(`Delete account?`)) return
+      this.deleting = false
+      try {
+        await this.axios.delete(`/accounts/${this.accountId}`)
+        this.$router.push("/accounts")
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.deleting = false
       }
     },
   },

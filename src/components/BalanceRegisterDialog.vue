@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="50rem">
+  <v-dialog v-model="dialog" width="30rem">
     <template v-slot:activator="{ on, attrs }">
       <v-btn v-bind="attrs" v-on="on" color="primary">
         <v-icon left>mdi-plus</v-icon>
@@ -18,19 +18,22 @@
                 type="number"
                 v-model.number="balance"
                 label="Balance"
+                :prefix="currency"
               />
             </v-col>
             <v-col cols="auto"> </v-col>
           </v-row>
+          <v-row justify="end">
+            <v-col cols="auto">
+              <v-btn @click="dialog = false" text> cancel </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn type="submit" :loading="registering" color="primary">
+                Save
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="dialog = false"> Cancel </v-btn>
-          <v-btn type="submit" :loading="registering" color="primary">
-            Register
-          </v-btn>
-        </v-card-actions>
       </v-form>
     </v-card>
   </v-dialog>
@@ -41,6 +44,7 @@ export default {
   name: "RegisterTransaction",
   props: {
     accountId: String,
+    currency: String,
   },
   data() {
     return {

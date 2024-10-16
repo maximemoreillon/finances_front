@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="50rem">
+  <v-dialog v-model="dialog" max-width="30rem">
     <template v-slot:activator="{ on, attrs }">
       <v-btn v-bind="attrs" v-on="on" color="primary">
         <v-icon left>mdi-plus</v-icon>
@@ -14,9 +14,13 @@
         <v-form @submit.prevent="registerTransaction">
           <v-row>
             <v-col>
-              <v-text-field v-model="newTransaction.description" label="Name" />
+              <v-text-field
+                v-model="newTransaction.description"
+                label="Description"
+              />
             </v-col>
-
+          </v-row>
+          <v-row>
             <v-col>
               <v-text-field
                 v-model.number="newTransaction.amount"
@@ -27,21 +31,24 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="auto">
-              <v-date-picker v-model="newTransaction.date"></v-date-picker>
+              <v-date-picker
+                width="auto"
+                v-model="newTransaction.date"
+              ></v-date-picker>
             </v-col>
           </v-row>
-          <v-row justify="center">
+          <v-row justify="end">
             <v-col cols="auto">
-              <v-btn type="submit" :loading="registering">Save</v-btn>
+              <v-btn @click="dialog = false" text> cancel </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn type="submit" :loading="registering" color="primary">
+                Save
+              </v-btn>
             </v-col>
           </v-row>
         </v-form>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="dialog = false"> Cancel </v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

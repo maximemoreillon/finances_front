@@ -33,6 +33,7 @@
         </template>
 
         <template v-slot:item.category="{ item }">
+          <!-- TODO: chips -->
           <span v-if="categories.length">
             {{
               item.categories?.map((c) => c.name).join(", ") ||
@@ -44,10 +45,6 @@
                 .join(", ")
             }}
           </span>
-        </template>
-
-        <template v-slot:item.business_expense="{ item: { business_expense } }">
-          <v-icon v-if="business_expense">mdi-check</v-icon>
         </template>
       </v-data-table>
     </v-card-text>
@@ -70,7 +67,6 @@ export default {
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
         { text: "Category", value: "category" },
-        // { text: "Business", value: "business_expense" },
       ],
       toLocaleStringOptions: {
         year: "numeric",

@@ -5,10 +5,11 @@
       <v-spacer />
       <BalanceRegisterDialog
         :accountId="String(accountId)"
-        @balanceRegistered="get_transactions()"
+        @balanceRegistered="get_balance_history()"
+        :currecy="currency"
       />
 
-      <template v-slot:extension v-if="series.length">
+      <template v-slot:extension>
         <v-row align="center" dense>
           <v-col cols="auto">
             <v-row dense>
@@ -49,7 +50,7 @@
     </v-card-text>
 
     <v-card-text v-if="!loading && !series.length">
-      This account does not have balance records
+      No data for given range
     </v-card-text>
   </v-card>
 </template>
@@ -62,11 +63,13 @@ export default {
   components: {
     BalanceRegisterDialog,
   },
+  props: {
+    currency: String,
+  },
   data() {
     return {
       loading: false,
       current_balance: 0,
-      currency: null,
       last_retrieved: null,
       rangeStart: graphTimeRanges[0].value,
       graphTimeRanges,
@@ -98,10 +101,9 @@ export default {
           const { records } = data
           if (!records.length) return
 
-          const last_item = records.at(-1)
+          const last_item = records.at(0)
 
           this.current_balance = last_item.balance
-          this.currency = last_item.currency
           this.last_retrieved = last_item.time
 
           const chart_data = records.map(({ balance, time }) => [

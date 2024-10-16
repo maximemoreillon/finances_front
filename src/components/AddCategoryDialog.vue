@@ -1,7 +1,10 @@
 <template>
   <v-dialog v-model="dialog" width="50rem">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" color="primary"> Add </v-btn>
+      <v-btn v-bind="attrs" v-on="on" color="primary">
+        <v-icon left>mdi-plus</v-icon>
+        <span>Add</span>
+      </v-btn>
     </template>
 
     <v-card>
@@ -20,13 +23,17 @@
               />
             </v-col>
           </v-row>
+          <v-row justify="end">
+            <v-col cols="auto">
+              <v-btn @click="dialog = false" text> cancel </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn type="submit" :loading="adding" color="primary">
+                Save
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="dialog = false"> Cancel </v-btn>
-          <v-btn type="submit" :loading="adding" color="primary">Save</v-btn>
-        </v-card-actions>
       </v-form>
     </v-card>
   </v-dialog>

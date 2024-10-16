@@ -8,13 +8,16 @@
     </template>
 
     <v-card>
-      <v-card-title> Create transaction category </v-card-title>
+      <v-card-title> Create account </v-card-title>
 
       <v-form @submit.prevent="createCategory">
         <v-card-text>
           <v-row justify="center">
             <v-col>
-              <v-text-field v-model="name" label="Category name" />
+              <v-text-field v-model="newAccount.name" label="Account name" />
+            </v-col>
+            <v-col>
+              <v-text-field v-model="newAccount.currency" label="Currency" />
             </v-col>
           </v-row>
           <v-row justify="end">
@@ -23,7 +26,7 @@
             </v-col>
             <v-col cols="auto">
               <v-btn type="submit" :loading="registering" color="primary">
-                Register
+                Save
               </v-btn>
             </v-col>
           </v-row>
@@ -35,7 +38,7 @@
 
 <script>
 export default {
-  name: "CreateCategoryDialog",
+  name: "CreateAccountDialog",
   props: {
     accountId: String,
   },
@@ -43,7 +46,10 @@ export default {
     return {
       dialog: false,
       registering: false,
-      name: "",
+      newAccount: {
+        name: "",
+        currency: "JPY",
+      },
     }
   },
   mounted() {},
@@ -52,13 +58,13 @@ export default {
     async createCategory() {
       this.registering = true
       try {
-        const url = `/accounts/${this.accountId}/balance/`
+        const url = `/accounts`
         const { data } = await this.axios.post(url, {
-          name: this.name,
+          ...this.newAccount,
         })
         this.$router.push({
-          name: "transaction_category",
-          params: { categoryId: data.id },
+          name: "account",
+          params: { accountId: data.id },
         })
       } catch (error) {
         console.error(error)

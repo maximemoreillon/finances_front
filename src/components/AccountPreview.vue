@@ -5,9 +5,7 @@
     :to="{ name: 'account', params: { accountId: account.id } }"
   >
     <v-card-title> {{ account.name }} </v-card-title>
-    <v-card-subtitle v-if="balance">
-      {{ currency }} {{ balance }}
-    </v-card-subtitle>
+    <v-card-subtitle> Currency: {{ account.currency }} </v-card-subtitle>
   </v-card>
 </template>
 
