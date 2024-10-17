@@ -1,37 +1,29 @@
 <template>
   <v-card :loading="loading" flat>
     <v-toolbar flat extended>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>Expenses breakdown</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn :to="{ name: 'transaction_categories' }" outlined>
-            Manage categories
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-toolbar-title>Expenses breakdown</v-toolbar-title>
+      <v-spacer />
+      <v-btn :to="{ name: 'transaction_categories' }" outlined>
+        Manage categories
+      </v-btn>
 
       <template v-slot:extension>
-        <v-container>
-          <v-row align="baseline">
-            <v-col cols="auto">
-              <YearSelect
-                @yearSelection="$emit('yearSelection', $event)"
-                :year="year"
-              />
-            </v-col>
-            <v-col cols="auto">
-              <v-select
-                :items="months"
-                :value="month"
-                @change="$emit('monthSelection', $event)"
-                label="Month"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-row align="baseline">
+          <v-col cols="auto">
+            <YearSelect
+              @yearSelection="$emit('yearSelection', $event)"
+              :year="year"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <v-select
+              :items="months"
+              :value="month"
+              @change="$emit('monthSelection', $event)"
+              label="Month"
+            />
+          </v-col>
+        </v-row>
       </template>
     </v-toolbar>
 
@@ -60,7 +52,10 @@ export default {
   },
   data() {
     return {
-      months: Array.from(Array(12).keys()).map((m) => m + 1),
+      months: [
+        { value: 0, text: "Any" },
+        ...Array.from(Array(12).keys()).map((m) => m + 1),
+      ],
       years: Array.from(Array(20).keys()).map(
         (y) => new Date().getFullYear() + 10 - y
       ),
@@ -163,28 +158,17 @@ export default {
       }
     },
     start_date() {
+      if (this.month === 0) return new Date(`${this.year}/01/01`)
       return new Date(`${this.year}/${this.month}/01`)
     },
     end_date() {
+      if (this.month === 0) return new Date(`${this.year}/12/31`)
+
       const end_year = this.month < 12 ? this.year : this.year + 1
       const end_month = this.month < 12 ? this.month + 1 : 1
       return new Date(`${end_year}/${end_month}/01`)
     },
-    // filtered_transactions() {
-    //   if (!this.start_date) return this.transactions
 
-    //   let end_date
-    //   if (this.end_date) end_date = new Date(this.end_date)
-    //   else end_date = new Date()
-
-    //   const start_date = new Date(this.start_date)
-
-    //   return this.transactions.filter((transaction) => {
-    //     const transaction_time = new Date(transaction.time)
-
-    //     return end_date > transaction_time && transaction_time > start_date
-    //   })
-    // },
     expenses() {
       return this.transactions.filter((transaction) => {
         return transaction.amount < 0
