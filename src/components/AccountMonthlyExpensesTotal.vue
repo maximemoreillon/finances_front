@@ -1,20 +1,12 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card :loading="loading" flat>
     <v-toolbar flat>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-card-title>Monthly expenses</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-select
-            :items="years"
-            :value="year"
-            @change="$emit('yearSelection', $event)"
-            label="Year"
-          />
-        </v-col>
-      </v-row>
+      <v-card-title>Monthly transactions</v-card-title>
+      <v-spacer />
+      <YearSelect
+        :year="year"
+        @yearSelection="$emit('yearSelection', $event)"
+      />
     </v-toolbar>
 
     <v-card-text>
@@ -31,10 +23,10 @@
 
 <script>
 import { colors } from "@/constants"
-
+import YearSelect from "./YearSelect.vue"
 export default {
   name: "AccountMonthlyExpensesTotal",
-  components: {},
+  components: { YearSelect },
   props: {
     year: Number,
   },
@@ -42,8 +34,8 @@ export default {
     return {
       loading: false,
       transactions: [],
-      years: Array.from(Array(20).keys()).map(
-        (y) => new Date().getFullYear() + 10 - y
+      years: Array.from(Array(10).keys()).map(
+        (y) => new Date().getFullYear() - y
       ),
     }
   },

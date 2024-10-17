@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card :loading="loading" flat>
     <v-toolbar flat extended>
       <v-row align="baseline">
         <v-col cols="auto">
@@ -100,6 +100,8 @@ export default {
     get_transactions() {
       this.loading = true
 
+      // TODO: query parameters for querying only selected time period
+
       const url = `/accounts/${this.accountId}/transactions`
 
       this.axios
@@ -115,34 +117,6 @@ export default {
           this.loading = false
         })
     },
-    generate_graph_data() {
-      const max_categories = 8
-      return (
-        this.categorized_expenses
-          .reduce((acc, expense) => {
-            const entry = acc.find((entry) => entry.label === expense.category)
-            const amount = Math.abs(expense.amount)
-
-            // if label not found, create it
-            if (!entry) acc.push({ label: expense.category, amount })
-            else entry.amount += amount
-
-            return acc
-          }, [])
-          // Further reduce to remove categories that are too small
-          .sort((a, b) => b.amount - a.amount)
-          // Remove categories that are too small
-          .reduce((acc, item, index) => {
-            if (index < max_categories) acc.push(item)
-            else {
-              if (!acc[max_categories])
-                acc.push({ label: "Other", amount: item.amount })
-              else acc[max_categories].amount += item.amount
-            }
-            return acc
-          }, [])
-      )
-    },
   },
   computed: {
     accountId() {
@@ -152,19 +126,27 @@ export default {
       return this.$vuetify.theme.dark
     },
     series() {
-      return this.generate_graph_data().map((x) => x.amount)
+      return this.generatedGraphData.map((x) => x.amount)
     },
     options() {
       return {
         chart: {
           id: "transactions",
           type: "donut",
+          events: {
+            dataPointSelection: (_, __, config) => {
+              // TODO: consider name instead, for display purposes
+              const categoryId =
+                this.generatedGraphData[config.dataPointIndex].id
+              if (categoryId != null) this.$emit("categorySelected", categoryId)
+            },
+          },
         },
         theme: {
           mode: this.dark ? "dark" : "light",
         },
         colors,
-        labels: this.generate_graph_data().map(
+        labels: this.generatedGraphData.map(
           (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
         ),
       }
@@ -198,33 +180,77 @@ export default {
       })
     },
 
-    categorized_expenses() {
-      // Add a category to every expense
+    implicitylyCategorizedExpenses() {
+      // UNUSED FOR THE TIME BEING
       // WARNING: transactions can now have multiple categories
+      // WARNING: This needs refactoring
       return this.expenses.map((expense) => {
-        // Find the correct category from the available categories
-
         let category = expense.description
 
-        if (expense.categories && expense.categories.length) {
-          // For now, just the first category
-          category = expense.categories[0].name
-        } else {
-          // Category attributed client-side
-          const foundCategory = this.expense_categories.find((category) =>
-            category.keywords.find((keyword) =>
-              expense.description.includes(keyword)
-            )
+        const foundCategory = this.expense_categories.find((category) =>
+          category.keywords.find((keyword) =>
+            expense.description.includes(keyword)
           )
+        )
 
-          if (foundCategory) category = foundCategory.name
-        }
+        if (foundCategory) category = foundCategory.name
 
+        // TODO: categories plural
         return {
           ...expense,
           category,
         }
       })
+    },
+
+    explicitlyCategorizedExpenses() {
+      return this.expenses.map((expense) => {
+        const categories = expense.categories
+          ? expense.categories
+          : [{ name: expense.description, id: null }]
+
+        return {
+          ...expense,
+          categories,
+        }
+      })
+    },
+
+    generatedGraphData() {
+      const max_categories = 8
+      return (
+        this.explicitlyCategorizedExpenses
+          .reduce((acc, expense) => {
+            for (const expenseCategory of expense.categories) {
+              const entry = acc.find(
+                (entry) => entry.label === expenseCategory.name
+              )
+              const amount = Math.abs(expense.amount)
+
+              if (!entry)
+                acc.push({
+                  label: expenseCategory.name,
+                  amount,
+                  id: expenseCategory.id,
+                })
+              else entry.amount += amount
+            }
+
+            return acc
+          }, [])
+          // Further reduce to remove categories that are too small
+          .sort((a, b) => b.amount - a.amount)
+          // Remove categories that are too small
+          .reduce((acc, item, index) => {
+            if (index < max_categories) acc.push(item)
+            else {
+              if (!acc[max_categories])
+                acc.push({ label: "Other", amount: item.amount })
+              else acc[max_categories].amount += item.amount
+            }
+            return acc
+          }, [])
+      )
     },
   },
 }

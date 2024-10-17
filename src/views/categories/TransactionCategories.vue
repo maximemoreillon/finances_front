@@ -22,7 +22,9 @@
           <v-chip
             v-for="(keyword, index) in item.keywords"
             :key="`${item._id}_kw_${index}`"
-            class="ma-2"
+            class="ma-1"
+            label
+            outlined
           >
             {{ keyword }}
           </v-chip>

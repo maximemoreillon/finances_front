@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card :loading="loading" flat>
     <v-toolbar flat extended>
       <v-toolbar-title>Balance</v-toolbar-title>
       <v-spacer />

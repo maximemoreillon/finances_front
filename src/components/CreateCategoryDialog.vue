@@ -52,7 +52,7 @@ export default {
     async createCategory() {
       this.registering = true
       try {
-        const url = `/accounts/${this.accountId}/balance/`
+        const url = `/categories`
         const { data } = await this.axios.post(url, {
           name: this.name,
         })

@@ -17,11 +17,7 @@
           <AccountBalanceHistory :currency="account?.currency" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <AccountTransactionsTable />
-        </v-col>
-      </v-row>
+
       <v-row>
         <v-col>
           <AccountMonthlyExpensesTotal
@@ -36,8 +32,19 @@
           <AccountExpenseBreakdown
             @yearSelection="year = $event"
             @monthSelection="month = $event"
+            @categorySelected="category = $event"
             :month="month"
             :year="year"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <AccountTransactionsTable
+            :month="month"
+            :year="year"
+            :category="category"
+            @categoryChanged="category = $event"
           />
         </v-col>
       </v-row>
@@ -61,8 +68,10 @@ export default {
   },
   data() {
     return {
+      // Those chould be query params
       month: new Date().getMonth() + 1,
       year: new Date().getYear() + 1900,
+      category: undefined,
       account: null,
       deleting: false,
       loading: false,
@@ -88,7 +97,7 @@ export default {
       }
     },
     async deleteAccount() {
-      if(!confirm(`Delete account?`)) return
+      if (!confirm(`Delete account?`)) return
       this.deleting = false
       try {
         await this.axios.delete(`/accounts/${this.accountId}`)

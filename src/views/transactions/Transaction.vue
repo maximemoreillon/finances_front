@@ -31,14 +31,14 @@
             type="number"
             v-model.number="transaction.amount"
             :prefix="transaction.currency"
-          ></v-text-field>
+          />
         </v-col>
         <v-col>
           <v-text-field
             label="Date"
             :value="new Date(transaction.time).toLocaleDateString()"
             readonly
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
       <!-- Categories -->
@@ -62,14 +62,16 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col
-          cols="auto"
-          v-for="category of transaction.categories"
-          :key="category.id"
-        >
-          <v-chip close @click:close="removeCategory(category.id)">{{
-            category.name
-          }}</v-chip>
+        <v-col>
+          <v-chip
+            cols="auto"
+            v-for="category of transaction.categories"
+            :key="category.id"
+            class="ma-2"
+            close
+            @click:close="removeCategory(category.id)"
+            >{{ category.name }}</v-chip
+          >
         </v-col>
       </v-row>
     </v-card-text>

@@ -1,40 +1,28 @@
 <template>
-  <v-card max-width="50rem" class="mx-auto" :loading="loading">
+  <v-card max-width="40rem" class="mx-auto" :loading="loading">
     <v-toolbar flat>
-      <v-row align="baseline">
-        <v-col cols="auto">
-          <v-btn icon exact :to="{ name: 'transaction_categories' }">
-            <v-icon>mdi-arrow-left</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <v-card-title>Category edit</v-card-title>
-        </v-col>
-        <v-spacer />
-        <v-col cols="auto">
-          <v-btn icon @click="update_category()" disabled>
-            <v-icon>mdi-content-save</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <v-btn
-            icon
-            @click="deleteCategory()"
-            color="#c00000"
-            :loading="deleting"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-btn icon exact :to="{ name: 'transaction_categories' }">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+
+      <v-toolbar-title>Category</v-toolbar-title>
+      <v-spacer />
+      <v-btn icon @click="update_category()" disabled>
+        <v-icon>mdi-content-save</v-icon>
+      </v-btn>
+      <v-btn icon @click="deleteCategory()" color="#c00000" :loading="deleting">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
     </v-toolbar>
 
-    <template v-if="category">
-      <v-card-text>
-        <v-text-field v-model="category.name" label="Name"></v-text-field>
-      </v-card-text>
+    <v-card-text>
+      <template v-if="category">
+        <v-row>
+          <v-col>
+            <v-text-field v-model="category.name" label="Name"></v-text-field>
+          </v-col>
+        </v-row>
 
-      <v-card-text>
         <v-row align="center">
           <v-col cols="auto">
             <h3 class="my-4">Keywords</h3>
@@ -42,30 +30,25 @@
           <v-spacer />
           <v-col cols="auto">
             <AddKeywordDialog
-              :categoryId="categoryId"
+              :categoryId="String(categoryId)"
               @keywordAdded="category.keywords.push($event)"
             />
           </v-col>
         </v-row>
-        <v-row
-          align="baseline"
-          v-for="(keyword, index) in category.keywords"
-          :key="`keyword_${keyword.id}`"
+
+        <v-chip
+          v-for="keyword in category.keywords"
+          :key="keyword.id"
+          label
+          outlined
+          close
+          class="ma-1"
+          @click:close="deleteKeyword(keyword.id)"
         >
-          <v-col>
-            <v-text-field
-              v-model="category.keywords[index].word"
-              label="Keyword"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <v-btn icon @click="deleteKeyword(keyword.id)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </template>
+          {{ keyword.word }}
+        </v-chip>
+      </template>
+    </v-card-text>
   </v-card>
 </template>
 

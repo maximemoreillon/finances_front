@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="dialog" width="50rem">
+  <v-dialog v-model="dialog" width="30rem">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on">
+      <v-btn v-bind="attrs" v-on="on" color="primary">
         <v-icon left>mdi-plus</v-icon>
         <span>Add</span>
       </v-btn>
@@ -37,7 +37,7 @@
 export default {
   name: "AddKeyword",
   props: {
-    categoryId: Number,
+    categoryId: String,
   },
   data() {
     return {
