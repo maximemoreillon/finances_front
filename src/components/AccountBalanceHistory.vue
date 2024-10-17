@@ -12,15 +12,17 @@
       <template v-slot:extension>
         <v-row align="center" dense>
           <v-col cols="auto">
-            <v-row dense>
-              <v-col>
-                {{ currency }}
-                {{ parseFloat(current_balance).toLocaleString() }}
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
-            </v-row>
+            <template v-if="parseFloat(current_balance)">
+              <v-row dense>
+                <v-col>
+                  {{ currency }}
+                  {{ parseFloat(current_balance).toLocaleString() }}
+                </v-col>
+              </v-row>
+              <v-row dense>
+                <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
+              </v-row>
+            </template>
           </v-col>
           <v-spacer />
           <v-col cols="auto">
@@ -50,7 +52,7 @@
     </v-card-text>
 
     <v-card-text v-if="!loading && !series.length">
-      No data for given range
+      No data available
     </v-card-text>
   </v-card>
 </template>
@@ -71,7 +73,7 @@ export default {
       loading: false,
       current_balance: 0,
       last_retrieved: null,
-      rangeStart: graphTimeRanges[0].value,
+      rangeStart: graphTimeRanges[2].value,
       graphTimeRanges,
       series: [],
     }

@@ -27,7 +27,7 @@
       </template>
     </v-toolbar>
 
-    <v-card-text>
+    <v-card-text v-if="transactions.length">
       <apexchart
         ref="chart"
         width="100%"
@@ -36,6 +36,7 @@
         :series="series"
       />
     </v-card-text>
+    <v-card-text v-else-if="!loading"> No Data available </v-card-text>
   </v-card>
 </template>
 

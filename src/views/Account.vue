@@ -1,15 +1,20 @@
 <template>
   <v-card>
     <v-toolbar flat>
-      <v-toolbar-title v-if="account">
-        {{ account.name }} ({{ account.currency }})
-      </v-toolbar-title>
+      <v-row v-if="account">
+        <v-col>
+          <v-card-title>{{ account.name }}</v-card-title>
+          <v-card-subtitle> Currency: {{ account.currency }} </v-card-subtitle>
+        </v-col>
+      </v-row>
+
       <v-progress-circular indeterminate v-else />
       <v-spacer />
       <v-btn @click="deleteAccount()" icon color="#c00000">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-toolbar>
+    <v-divider />
 
     <v-card-text>
       <v-row>
@@ -43,7 +48,6 @@
         <v-col>
           <AccountTransactionsTable
             :month="month"
-            @monthSelection="month = $event"
             :year="year"
             @yearSelection="year = $event"
             :category="category"
