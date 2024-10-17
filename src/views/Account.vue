@@ -44,6 +44,7 @@
           <AccountTransactionsTable
             :month="month"
             :year="year"
+            @yearSelection="year = $event"
             :category="category"
             @categoryChanged="category = $event"
           />
@@ -70,7 +71,7 @@ export default {
   data() {
     return {
       // Those chould be query params
-      month: new Date().getMonth() + 1,
+      month: 0, // 0 Means all
       year: new Date().getYear() + 1900,
       category: undefined,
       account: null,

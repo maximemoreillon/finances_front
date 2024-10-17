@@ -1,12 +1,19 @@
 <template>
   <v-card :loading="loading" flat>
     <v-toolbar flat>
-      <v-card-title>Monthly transactions</v-card-title>
+      <v-toolbar-title>Monthly transactions</v-toolbar-title>
       <v-spacer />
-      <YearSelect
-        :year="year"
-        @yearSelection="$emit('yearSelection', $event)"
-      />
+
+      <template v-slot:extension>
+        <v-row>
+          <v-col cols="auto">
+            <YearSelect
+              :year="year"
+              @yearSelection="$emit('yearSelection', $event)"
+            />
+          </v-col>
+        </v-row>
+      </template>
     </v-toolbar>
 
     <v-card-text>
@@ -34,9 +41,6 @@ export default {
     return {
       loading: false,
       transactions: [],
-      years: Array.from(Array(10).keys()).map(
-        (y) => new Date().getFullYear() - y
-      ),
     }
   },
   watch: {

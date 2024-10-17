@@ -9,6 +9,12 @@
       />
       <template v-slot:extension>
         <v-row>
+          <v-col cols="auto">
+            <YearSelect
+              :year="year"
+              @yearSelection="$emit('yearSelection', $event)"
+            />
+          </v-col>
           <v-col cols="5">
             <v-text-field
               label="Search"
@@ -85,10 +91,12 @@
 
 <script>
 import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
+import YearSelect from "./YearSelect.vue"
 export default {
   name: "AccountTransactionsTable",
   components: {
     TransactionRegisterDialog,
+    YearSelect,
   },
   props: {
     // Those could be query params?
