@@ -4,7 +4,8 @@
       <v-toolbar-title>Expenses breakdown</v-toolbar-title>
       <v-spacer />
       <v-btn :to="{ name: 'transaction_categories' }" outlined>
-        Manage categories
+        <v-icon left>mdi-pencil</v-icon>
+        <span>Manage categories</span>
       </v-btn>
 
       <template v-slot:extension>

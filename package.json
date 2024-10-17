@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@moreillon/vue_application_template_vuetify": "^3.1.1",
-    "apexcharts": "^3.33.1",
+    "apexcharts": "^3.54.1",
     "axios": "^1.4.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.21.0",

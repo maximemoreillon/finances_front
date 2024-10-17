@@ -31,6 +31,7 @@
               :key="index"
               class="mr-2"
               x-small
+              outlined
               :color="rangeStart === button.value ? 'primary' : undefined"
               @click="rangeStart = button.value"
             >
