@@ -6,7 +6,7 @@
 
       <template v-slot:extension>
         <v-row>
-          <v-col cols="auto">
+          <v-col cols="1">
             <YearSelect
               :year="year"
               @yearSelection="$emit('yearSelection', $event)"

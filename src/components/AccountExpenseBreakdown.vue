@@ -9,20 +9,20 @@
 
       <template v-slot:extension>
         <v-row align="baseline">
-          <v-col cols="auto">
+          <v-col cols="1">
             <YearSelect
               @yearSelection="$emit('yearSelection', $event)"
               :year="year"
             />
           </v-col>
-          <v-col cols="auto">
-            <v-select
-              :items="months"
-              :value="month"
-              @change="$emit('monthSelection', $event)"
-              label="Month"
+          <v-col cols="1">
+            <MonthSelect
+              :month="month"
+              @monthSelection="$emit('monthSelection', $event)"
             />
           </v-col>
+          <v-spacer />
+          <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
         </v-row>
       </template>
     </v-toolbar>
@@ -42,9 +42,11 @@
 <script>
 import { colors } from "@/constants"
 import YearSelect from "./YearSelect.vue"
+import MonthSelect from "./MonthSelect.vue"
+
 export default {
   name: "AccountExpenseBreakdown",
-  components: { YearSelect },
+  components: { YearSelect, MonthSelect },
   props: {
     month: Number,
     year: Number,
@@ -52,14 +54,6 @@ export default {
   },
   data() {
     return {
-      months: [
-        { value: 0, text: "Any" },
-        ...Array.from(Array(12).keys()).map((m) => m + 1),
-      ],
-      years: Array.from(Array(20).keys()).map(
-        (y) => new Date().getFullYear() + 10 - y
-      ),
-
       loading: false,
       transactions: [],
       expense_categories: [],

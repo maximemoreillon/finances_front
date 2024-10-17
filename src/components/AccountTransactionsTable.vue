@@ -9,10 +9,16 @@
       />
       <template v-slot:extension>
         <v-row>
-          <v-col cols="auto">
+          <v-col cols="1">
             <YearSelect
               :year="year"
               @yearSelection="$emit('yearSelection', $event)"
+            />
+          </v-col>
+          <v-col cols="1">
+            <MonthSelect
+              :month="month"
+              @monthSelection="$emit('monthSelection', $event)"
             />
           </v-col>
           <v-col cols="5">
@@ -28,7 +34,8 @@
               close
               v-if="category"
               @click:close="$emit('categoryChanged', null)"
-              >Category: {{ category }}</v-chip
+            >
+              {{ categories.find((c) => c.id === category)?.name }}</v-chip
             >
           </v-col>
         </v-row>
@@ -90,13 +97,15 @@
 </template>
 
 <script>
-import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
+import MonthSelect from "./MonthSelect.vue"
 import YearSelect from "./YearSelect.vue"
+import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
 export default {
   name: "AccountTransactionsTable",
   components: {
     TransactionRegisterDialog,
     YearSelect,
+    MonthSelect,
   },
   props: {
     // Those could be query params?
@@ -131,6 +140,9 @@ export default {
     year() {
       this.get_transactions()
     },
+    month() {
+      this.get_transactions()
+    },
   },
   async mounted() {
     await this.get_transaction_categories()
@@ -145,11 +157,7 @@ export default {
       this.loading = true
 
       const url = `/accounts/${this.accountId}/transactions`
-
-      const params = {
-        to: new Date(`${this.year}-12-31`),
-        from: new Date(`${this.year}-01-01`),
-      }
+      const params = { from: this.start_date, to: this.end_date }
 
       this.axios
         .get(url, { params })
@@ -175,6 +183,17 @@ export default {
       return this.transactions.filter((t) =>
         t.categories.some((c) => c.id === this.category)
       )
+    },
+    start_date() {
+      if (this.month === 0) return new Date(`${this.year}/01/01`)
+      return new Date(`${this.year}/${this.month}/01`)
+    },
+    end_date() {
+      if (this.month === 0) return new Date(`${this.year}/12/31`)
+
+      const end_year = this.month < 12 ? this.year : this.year + 1
+      const end_month = this.month < 12 ? this.month + 1 : 1
+      return new Date(`${end_year}/${end_month}/01`)
     },
   },
 }

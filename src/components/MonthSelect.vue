@@ -1,7 +1,7 @@
 <template>
   <v-select
-    :items="years"
-    :value="year"
+    :items="months"
+    :value="month"
     @change="handleSelection"
     label="year"
   />
@@ -9,24 +9,25 @@
 
 <script>
 export default {
-  name: "YearSelect",
+  name: "MonthSelect",
   components: {},
   props: {
-    year: Number,
+    month: Number,
   },
   data() {
     return {
-      years: Array.from(Array(10).keys()).map(
-        (y) => new Date().getFullYear() - y
-      ),
+      months: [
+        { text: "Any", valueL: 0 },
+        ...Array.from(Array(12).keys()).map((m) => m + 1),
+      ],
     }
   },
   watch: {},
   mounted() {},
   methods: {
-    handleSelection(year) {
+    handleSelection(month) {
       // TODO: query parameter
-      this.$emit("yearSelection", year)
+      this.$emit("monthSelection", month)
     },
   },
   computed: {},
