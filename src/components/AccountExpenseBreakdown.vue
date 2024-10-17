@@ -17,11 +17,9 @@
         <v-container>
           <v-row align="baseline">
             <v-col cols="auto">
-              <v-select
-                :items="years"
-                :value="year"
-                @change="$emit('yearSelection', $event)"
-                label="Year"
+              <YearSelect
+                @yearSelection="$emit('yearSelection', $event)"
+                :year="year"
               />
             </v-col>
             <v-col cols="auto">
@@ -51,12 +49,14 @@
 
 <script>
 import { colors } from "@/constants"
+import YearSelect from "./YearSelect.vue"
 export default {
   name: "AccountExpenseBreakdown",
-  components: {},
+  components: { YearSelect },
   props: {
     month: Number,
     year: Number,
+    category: Number,
   },
   data() {
     return {
@@ -72,6 +72,12 @@ export default {
   },
   watch: {
     accountId() {
+      this.get_transactions()
+    },
+    year() {
+      this.get_transactions()
+    },
+    month() {
       this.get_transactions()
     },
   },
@@ -103,9 +109,10 @@ export default {
       // TODO: query parameters for querying only selected time period
 
       const url = `/accounts/${this.accountId}/transactions`
+      const params = { from: this.start_date, to: this.end_date }
 
       this.axios
-        .get(url)
+        .get(url, { params })
         .then(({ data }) => {
           this.transactions = data.records
         })
@@ -138,7 +145,11 @@ export default {
               // TODO: consider name instead, for display purposes
               const categoryId =
                 this.generatedGraphData[config.dataPointIndex].id
-              if (categoryId != null) this.$emit("categorySelected", categoryId)
+
+              if (categoryId === null) return
+              if (categoryId === this.category)
+                this.$emit("categorySelected", null)
+              else this.$emit("categorySelected", categoryId)
             },
           },
         },
@@ -159,23 +170,23 @@ export default {
       const end_month = this.month < 12 ? this.month + 1 : 1
       return new Date(`${end_year}/${end_month}/01`)
     },
-    filtered_transactions() {
-      if (!this.start_date) return this.transactions
+    // filtered_transactions() {
+    //   if (!this.start_date) return this.transactions
 
-      let end_date
-      if (this.end_date) end_date = new Date(this.end_date)
-      else end_date = new Date()
+    //   let end_date
+    //   if (this.end_date) end_date = new Date(this.end_date)
+    //   else end_date = new Date()
 
-      const start_date = new Date(this.start_date)
+    //   const start_date = new Date(this.start_date)
 
-      return this.transactions.filter((transaction) => {
-        const transaction_time = new Date(transaction.time)
+    //   return this.transactions.filter((transaction) => {
+    //     const transaction_time = new Date(transaction.time)
 
-        return end_date > transaction_time && transaction_time > start_date
-      })
-    },
+    //     return end_date > transaction_time && transaction_time > start_date
+    //   })
+    // },
     expenses() {
-      return this.filtered_transactions.filter((transaction) => {
+      return this.transactions.filter((transaction) => {
         return transaction.amount < 0
       })
     },

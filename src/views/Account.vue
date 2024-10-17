@@ -35,6 +35,7 @@
             @categorySelected="category = $event"
             :month="month"
             :year="year"
+            :category="category"
           />
         </v-col>
       </v-row>
