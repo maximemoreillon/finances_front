@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import CreateCategoryDialog from "../../components/CreateCategoryDialog.vue"
+import CreateCategoryDialog from "@/components/categories/CreateCategoryDialog.vue"
 
 export default {
   name: "TransactionCategories",

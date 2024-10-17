@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="40rem" class="mx-auto" :loading="loading">
+  <v-card max-width="50rem" class="mx-auto" :loading="loading">
     <v-toolbar flat>
       <v-btn icon exact :to="{ name: 'transaction_categories' }">
         <v-icon>mdi-arrow-left</v-icon>
@@ -23,41 +23,30 @@
           </v-col>
         </v-row>
 
-        <v-row align="center">
-          <v-col cols="auto">
-            <h3 class="my-4">Keywords</h3>
-          </v-col>
-          <v-spacer />
-          <v-col cols="auto">
-            <AddKeywordDialog
-              :categoryId="String(categoryId)"
-              @keywordAdded="category.keywords.push($event)"
-            />
+        <v-row>
+          <v-col>
+            <CategoryKeywords />
           </v-col>
         </v-row>
-
-        <v-chip
-          v-for="keyword in category.keywords"
-          :key="keyword.id"
-          label
-          outlined
-          close
-          class="ma-1"
-          @click:close="deleteKeyword(keyword.id)"
-        >
-          {{ keyword.word }}
-        </v-chip>
+        <v-row>
+          <v-col>
+            <CategoryTransactionsTable :category="String(this.categoryId)" />
+          </v-col>
+        </v-row>
       </template>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import AddKeywordDialog from "../../components/AddKeywordDialog.vue"
+import CategoryTransactionsTable from "@/components/categories/CategoryTransactionsTable.vue"
+import CategoryKeywords from "@/components/categories/CategoryKeywords.vue"
+
 export default {
   name: "CreateTransactionCategory",
   components: {
-    AddKeywordDialog,
+    CategoryTransactionsTable,
+    CategoryKeywords,
   },
 
   data() {
@@ -131,13 +120,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-input:not(:first-child) {
-  margin-left: 0.5em;
-}
-
-input:not(:last-child) {
-  margin-right: 0.5em;
-}
-</style>

@@ -23,7 +23,7 @@ const routes = [
   //   component: () => import("../views/RegisterBalance.vue"),
   // },
   {
-    path: "/accounts/:accountId/transactions/:transactionId",
+    path: "/transactions/:transactionId",
     name: "transaction",
     component: () => import("../views/transactions/Transaction.vue"),
   },

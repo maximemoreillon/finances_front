@@ -1,11 +1,7 @@
 <template>
   <v-card :loading="loading" max-width="30rem" class="mx-auto">
     <v-toolbar flat>
-      <v-btn
-        icon
-        :to="{ name: 'account', params: { accountId: this.accountId } }"
-        exact
-      >
+      <v-btn icon @click="$router.back()" exact>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <v-toolbar-title>Transaction</v-toolbar-title>
@@ -95,6 +91,7 @@ export default {
   mounted() {
     this.get_transaction()
     this.get_transaction_categories()
+    // TODO: get accounts
   },
   methods: {
     async get_transaction_categories() {
@@ -106,7 +103,7 @@ export default {
       this.transaction = null
       this.loading = true
 
-      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
+      const url = `/transactions/${this.transactionId}`
       this.axios
         .get(url)
         .then(({ data }) => {
@@ -117,7 +114,7 @@ export default {
     },
 
     update_transaction() {
-      const url = `/accounts/${this.account}/transactions/${this.transactionId}`
+      const url = `/transactions/${this.transactionId}`
       this.axios
         .patch(url, this.transaction)
         .then(() => {
@@ -128,7 +125,7 @@ export default {
 
     delete_transaction() {
       if (!confirm("Delete transaction? This action is irreversible")) return
-      const url = `/accounts/${this.accountId}/transactions/${this.transactionId}`
+      const url = `/transactions/${this.transactionId}`
       this.axios
         .delete(url)
         .then(() => {
@@ -138,7 +135,7 @@ export default {
     },
     async removeCategory(categoryId) {
       if (!confirm("Remove category?")) return
-      const url = `/accounts/${this.accountId}/transactions/${this.transactionId}/categories/${categoryId}`
+      const url = `/transactions/${this.transactionId}/categories/${categoryId}`
       await this.axios.delete(url)
 
       const foundIndex = this.transaction.categories.findIndex(

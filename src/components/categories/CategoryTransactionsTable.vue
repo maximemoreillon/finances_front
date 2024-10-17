@@ -1,13 +1,6 @@
 <template>
-  <v-card>
-    <v-toolbar flat>
-      <v-toolbar-title>Transactions </v-toolbar-title>
-      <v-spacer />
-      <TransactionRegisterDialog
-        :accountId="String(accountId)"
-        @transactionRegistered="get_transactions()"
-      />
-    </v-toolbar>
+  <v-card outlined>
+    <v-card-title> Transactions </v-card-title>
 
     <v-card-text>
       <v-row dense align="center">
@@ -31,16 +24,6 @@
             v-model="search"
             prepend-inner-icon="mdi-magnify"
           />
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="auto">
-          <v-chip
-            close
-            v-if="category"
-            @click:close="$emit('categoryChanged', null)"
-          >
-            {{ categories.find((c) => c.id === category)?.name }}</v-chip
-          >
         </v-col>
       </v-row>
       <v-data-table
@@ -69,56 +52,28 @@
             {{ new Intl.NumberFormat().format(amount) }}
           </span>
         </template>
-
-        <template v-slot:item.categories="{ item }">
-          <v-chip
-            v-for="category of item.categories"
-            :key="category.id"
-            class="mx-1"
-            :to="{
-              name: 'transaction_category',
-              params: { categoryId: category.id },
-            }"
-          >
-            {{ category.name }}
-          </v-chip>
-        </template>
-
-        <!-- <template v-slot:item.inferredCategories="{ item }">
-          <v-chip
-            v-for="category of categories.filter(({ keywords }) =>
-              keywords.find((k) => item.description.includes(k))
-            )"
-            :key="category.id"
-            class="mx-1"
-          >
-            {{ category.name }}
-          </v-chip>
-        </template> -->
       </v-data-table>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import MonthSelect from "./MonthSelect.vue"
-import YearSelect from "./YearSelect.vue"
-import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
+import MonthSelect from "@/components/MonthSelect.vue"
+import YearSelect from "@/components/YearSelect.vue"
 export default {
-  name: "AccountTransactionsTable",
+  name: "CategoryTransactionsTable",
   components: {
-    TransactionRegisterDialog,
     YearSelect,
     MonthSelect,
   },
   props: {
     // Those could be query params?
-    year: Number,
-    month: Number,
-    category: Number,
+    category: String,
   },
   data() {
     return {
+      year: new Date().getFullYear(),
+      month: 0,
       loading: false,
       search: "",
       transactions: [],
@@ -126,7 +81,7 @@ export default {
         { text: "Date", value: "time" },
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
-        { text: "Categories", value: "categories" },
+        // { text: "Categories", value: "categories" },
         // { text: "Inferred Categories", value: "inferredCategories" },
       ],
       toLocaleStringOptions: {
@@ -147,9 +102,6 @@ export default {
     month() {
       this.get_transactions()
     },
-    category() {
-      this.get_transactions()
-    },
   },
   async mounted() {
     await this.get_transaction_categories()
@@ -163,12 +115,8 @@ export default {
     get_transactions() {
       this.loading = true
 
-      const url = `/accounts/${this.accountId}/transactions`
-      const params = {
-        from: this.start_date,
-        to: this.end_date,
-        category: this.category,
-      }
+      const url = `/categories/${this.category}/transactions`
+      const params = { from: this.start_date, to: this.end_date }
 
       this.axios
         .get(url, { params })
