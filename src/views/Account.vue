@@ -48,6 +48,7 @@
         <v-col>
           <AccountTransactionsTable
             :month="month"
+            @monthSelection="month = $event"
             :year="year"
             @yearSelection="year = $event"
             :category="category"
