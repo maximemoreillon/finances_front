@@ -1,37 +1,37 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat extended>
+    <v-toolbar flat>
       <v-toolbar-title>Expenses breakdown</v-toolbar-title>
       <v-spacer />
       <v-btn :to="{ name: 'transaction_categories' }" outlined>
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-
-      <template v-slot:extension>
-        <v-row align="baseline">
-          <v-col cols="1">
-            <YearSelect
-              @yearSelection="$emit('yearSelection', $event)"
-              :year="year"
-            />
-          </v-col>
-          <v-col cols="1">
-            <MonthSelect
-              :month="month"
-              @monthSelection="$emit('monthSelection', $event)"
-            />
-          </v-col>
-          <v-spacer />
-          <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
-        </v-row>
-      </template>
     </v-toolbar>
 
-    <v-card-text v-if="transactions.length">
-      <apexchart height="300" :options="options" :series="series" />
-    </v-card-text>
-    <v-card-text v-else-if="!loading" class="text-center">
-      No Data available
+    <v-card-text>
+      <v-row align="baseline">
+        <v-col cols="auto">
+          <YearSelect
+            @yearSelection="$emit('yearSelection', $event)"
+            :year="year"
+          />
+        </v-col>
+        <v-col cols="auto">
+          <MonthSelect
+            :month="month"
+            @monthSelection="$emit('monthSelection', $event)"
+          />
+        </v-col>
+        <v-spacer />
+        <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
+      </v-row>
+      <apexchart
+        v-if="transactions.length"
+        height="300"
+        :options="options"
+        :series="series"
+      />
+      <div v-else-if="!loading" class="text-center">No Data available</div>
     </v-card-text>
   </v-card>
 </template>

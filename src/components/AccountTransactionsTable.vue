@@ -7,42 +7,42 @@
         :accountId="String(accountId)"
         @transactionRegistered="get_transactions()"
       />
-      <template v-slot:extension>
-        <v-row>
-          <v-col cols="1">
-            <YearSelect
-              :year="year"
-              @yearSelection="$emit('yearSelection', $event)"
-            />
-          </v-col>
-          <v-col cols="1">
-            <MonthSelect
-              :month="month"
-              @monthSelection="$emit('monthSelection', $event)"
-            />
-          </v-col>
-          <v-col cols="5">
-            <v-text-field
-              label="Search"
-              v-model="search"
-              prepend-inner-icon="mdi-magnify"
-            />
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="auto">
-            <v-chip
-              close
-              v-if="category"
-              @click:close="$emit('categoryChanged', null)"
-            >
-              {{ categories.find((c) => c.id === category)?.name }}</v-chip
-            >
-          </v-col>
-        </v-row>
-      </template>
     </v-toolbar>
 
     <v-card-text>
+      <v-row dense align="center">
+        <v-col cols="auto">
+          <YearSelect
+            :year="year"
+            @yearSelection="$emit('yearSelection', $event)"
+          />
+        </v-col>
+        <v-col cols="auto">
+          <MonthSelect
+            :month="month"
+            @monthSelection="$emit('monthSelection', $event)"
+          />
+        </v-col>
+        <!-- </v-row>
+      <v-row> -->
+        <v-col cols="auto">
+          <v-text-field
+            label="Search"
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+          />
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col cols="auto">
+          <v-chip
+            close
+            v-if="category"
+            @click:close="$emit('categoryChanged', null)"
+          >
+            {{ categories.find((c) => c.id === category)?.name }}</v-chip
+          >
+        </v-col>
+      </v-row>
       <v-data-table
         :headers="headers"
         :items="filteredTransactions"

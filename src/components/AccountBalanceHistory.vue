@@ -1,6 +1,6 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat extended>
+    <v-toolbar flat>
       <v-toolbar-title>Balance</v-toolbar-title>
       <v-spacer />
       <BalanceRegisterDialog
@@ -8,54 +8,49 @@
         @balanceRegistered="get_balance_history()"
         :currecy="currency"
       />
-
-      <template v-slot:extension>
-        <v-row align="center" dense>
-          <v-col cols="auto">
-            <template v-if="current_balance">
-              <v-row dense>
-                <v-col>
-                  {{ currency }}
-                  {{ parseFloat(current_balance).toLocaleString() }}
-                </v-col>
-              </v-row>
-              <v-row dense>
-                <v-col class="text-caption">
-                  Last retrieved on {{ last_retrieved_formatted }}
-                </v-col>
-              </v-row>
-            </template>
-          </v-col>
-          <v-spacer />
-          <v-col cols="auto">
-            <v-btn
-              v-for="(button, index) in graphTimeRanges"
-              :key="index"
-              class="mr-2"
-              x-small
-              outlined
-              :color="rangeStart === button.value ? 'primary' : undefined"
-              @click="rangeStart = button.value"
-            >
-              {{ button.text }}
-            </v-btn>
-          </v-col>
-        </v-row>
-      </template>
     </v-toolbar>
 
-    <v-card-text v-if="series.length">
+    <v-card-text>
+      <v-row align="center" dense>
+        <v-col cols="auto">
+          <template v-if="current_balance">
+            <v-row dense>
+              <v-col>
+                {{ currency }}
+                {{ parseFloat(current_balance).toLocaleString() }}
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col class="text-caption">
+                Last retrieved on {{ last_retrieved_formatted }}
+              </v-col>
+            </v-row>
+          </template>
+        </v-col>
+        <v-spacer />
+        <v-col cols="auto">
+          <v-btn
+            v-for="(button, index) in graphTimeRanges"
+            :key="index"
+            class="mr-2"
+            x-small
+            outlined
+            :color="rangeStart === button.value ? 'primary' : undefined"
+            @click="rangeStart = button.value"
+          >
+            {{ button.text }}
+          </v-btn>
+        </v-col>
+      </v-row>
       <apexchart
+        v-if="series.length"
         ref="chart"
         width="100%"
         height="300px"
         :options="options"
         :series="series"
       />
-    </v-card-text>
-
-    <v-card-text v-else-if="!loading" class="text-center">
-      No data available
+      <div v-else-if="!loading" class="text-center">No data available</div>
     </v-card-text>
   </v-card>
 </template>

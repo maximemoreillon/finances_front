@@ -3,30 +3,26 @@
     <v-toolbar flat>
       <v-toolbar-title>Monthly transactions</v-toolbar-title>
       <v-spacer />
-
-      <template v-slot:extension>
-        <v-row>
-          <v-col cols="1">
-            <YearSelect
-              :year="year"
-              @yearSelection="$emit('yearSelection', $event)"
-            />
-          </v-col>
-        </v-row>
-      </template>
     </v-toolbar>
 
-    <v-card-text v-if="transactions.length">
+    <v-card-text>
+      <v-row>
+        <v-col cols="auto">
+          <YearSelect
+            :year="year"
+            @yearSelection="$emit('yearSelection', $event)"
+          />
+        </v-col>
+      </v-row>
       <apexchart
+        v-if="transactions.length"
         ref="chart"
         width="100%"
         height="300"
         :options="options"
         :series="series"
       />
-    </v-card-text>
-    <v-card-text v-else-if="!loading" class="text-center">
-      No Data available
+      <div v-else-if="!loading" class="text-center">No Data available</div>
     </v-card-text>
   </v-card>
 </template>
