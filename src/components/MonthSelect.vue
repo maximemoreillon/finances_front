@@ -3,7 +3,7 @@
     :items="months"
     :value="month"
     @change="handleSelection"
-    label="year"
+    label="Month"
   />
 </template>
 
@@ -11,13 +11,14 @@
 export default {
   name: "MonthSelect",
   components: {},
+
   props: {
     month: Number,
   },
   data() {
     return {
       months: [
-        { text: "Any", valueL: 0 },
+        { text: "Any", value: 0 },
         ...Array.from(Array(12).keys()).map((m) => m + 1),
       ],
     }
@@ -26,7 +27,6 @@ export default {
   mounted() {},
   methods: {
     handleSelection(month) {
-      // TODO: query parameter
       this.$emit("monthSelection", month)
     },
   },

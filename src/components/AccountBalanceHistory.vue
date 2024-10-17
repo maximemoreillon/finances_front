@@ -51,9 +51,7 @@
       />
     </v-card-text>
 
-    <v-card-text v-if="!loading && !series.length">
-      No data available
-    </v-card-text>
+    <v-card-text v-else-if="!loading"> No data available </v-card-text>
   </v-card>
 </template>
 
@@ -92,7 +90,6 @@ export default {
   methods: {
     get_balance_history() {
       this.loading = true
-      this.series = []
 
       const url = `/accounts/${this.accountId}/balance`
       const params = { from: this.rangeStart }
@@ -101,7 +98,7 @@ export default {
         .get(url, { params })
         .then(({ data }) => {
           const { records } = data
-          if (!records.length) return
+          if (!records.length) return (this.series = [])
 
           const last_item = records.at(0)
 

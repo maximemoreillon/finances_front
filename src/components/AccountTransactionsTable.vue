@@ -25,7 +25,7 @@
             <v-text-field
               label="Search"
               v-model="search"
-              prepend-icon="mdi-magnify"
+              prepend-inner-icon="mdi-magnify"
             />
           </v-col>
           <v-spacer></v-spacer>

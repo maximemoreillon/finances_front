@@ -3,7 +3,7 @@
     <v-toolbar flat>
       <v-row v-if="account">
         <v-col>
-          <v-card-title>{{ account.name }}</v-card-title>
+          <v-card-title class="">{{ account.name }}</v-card-title>
           <v-card-subtitle> Currency: {{ account.currency }} </v-card-subtitle>
         </v-col>
       </v-row>
@@ -64,7 +64,7 @@ import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
 import AccountTransactionsTable from "@/components/AccountTransactionsTable.vue"
 import AccountMonthlyExpensesTotal from "@/components/AccountMonthlyExpensesTotal.vue"
 import AccountExpenseBreakdown from "@/components/AccountExpenseBreakdown.vue"
-
+import queryParamsUtils from "../mixins/queryParamsUtils"
 export default {
   name: "Account",
   components: {
@@ -73,19 +73,35 @@ export default {
     AccountMonthlyExpensesTotal,
     AccountExpenseBreakdown,
   },
+  mixins: [queryParamsUtils],
   data() {
     return {
       // Those chould be query params
-      month: 0, // 0 Means all
-      year: new Date().getYear() + 1900,
-      category: undefined,
+      month: this.$route.query.month ? Number(this.$route.query.month) : 0, // 0 Means all
+      year: this.$route.query.year
+        ? Number(this.$route.query.year)
+        : new Date().getFullYear(),
+      category: this.$route.query.category
+        ? Number(this.$route.query.category)
+        : 0,
       account: null,
       deleting: false,
       loading: false,
     }
   },
   watch: {
-    accountId() {},
+    accountId() {
+      this.getAccountInfo()
+    },
+    year(newVal) {
+      this.setQueryParam("year", newVal)
+    },
+    month(newVal) {
+      this.setQueryParam("month", newVal)
+    },
+    category(newVal) {
+      this.setQueryParam("category", newVal)
+    },
   },
 
   mounted() {

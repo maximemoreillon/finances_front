@@ -25,7 +25,6 @@ export default {
   mounted() {},
   methods: {
     handleSelection(year) {
-      // TODO: query parameter
       this.$emit("yearSelection", year)
     },
   },
