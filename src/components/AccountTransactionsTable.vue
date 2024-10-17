@@ -1,7 +1,7 @@
 <template>
-  <v-card flat>
-    <v-toolbar flat extended>
-      <v-toolbar-title>Transactions ({{ year }})</v-toolbar-title>
+  <v-card>
+    <v-toolbar flat>
+      <v-toolbar-title>Transactions </v-toolbar-title>
       <v-spacer />
       <TransactionRegisterDialog
         :accountId="String(accountId)"

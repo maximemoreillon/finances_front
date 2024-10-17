@@ -1,63 +1,65 @@
 <template>
-  <v-card>
-    <v-toolbar flat>
-      <v-row v-if="account">
-        <v-col>
-          <v-card-title class="">{{ account.name }}</v-card-title>
-          <v-card-subtitle> Currency: {{ account.currency }} </v-card-subtitle>
-        </v-col>
-      </v-row>
+  <div>
+    <v-row>
+      <v-col>
+        <v-toolbar elevation="1" extended>
+          <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
+          <v-progress-circular indeterminate v-else />
 
-      <v-progress-circular indeterminate v-else />
-      <v-spacer />
-      <v-btn @click="deleteAccount()" icon color="#c00000">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-divider />
+          <v-spacer />
+          <v-btn @click="deleteAccount()" outlined color="#c00000">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
 
-    <v-card-text>
-      <v-row>
-        <v-col>
-          <AccountBalanceHistory :currency="account?.currency" />
-        </v-col>
-      </v-row>
+          <template v-slot:extension>
+            <v-row v-if="account">
+              <v-col> Currency: {{ account.currency }} </v-col>
+            </v-row>
+          </template>
+        </v-toolbar>
+      </v-col>
+    </v-row>
 
-      <v-row>
-        <v-col>
-          <AccountMonthlyExpensesTotal
-            @yearSelection="year = $event"
-            @monthSelection="month = $event"
-            :year="year"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <AccountExpenseBreakdown
-            @yearSelection="year = $event"
-            @monthSelection="month = $event"
-            @categorySelected="category = $event"
-            :month="month"
-            :year="year"
-            :category="category"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <AccountTransactionsTable
-            :month="month"
-            @monthSelection="month = $event"
-            :year="year"
-            @yearSelection="year = $event"
-            :category="category"
-            @categoryChanged="category = $event"
-          />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+    <v-row>
+      <v-col>
+        <AccountBalanceHistory :currency="account?.currency" />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+        <AccountMonthlyExpensesTotal
+          @yearSelection="year = $event"
+          @monthSelection="month = $event"
+          :year="year"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <AccountExpenseBreakdown
+          @yearSelection="year = $event"
+          @monthSelection="month = $event"
+          @categorySelected="category = $event"
+          :month="month"
+          :year="year"
+          :category="category"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <AccountTransactionsTable
+          :month="month"
+          @monthSelection="month = $event"
+          :year="year"
+          @yearSelection="year = $event"
+          :category="category"
+          @categoryChanged="category = $event"
+        />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>

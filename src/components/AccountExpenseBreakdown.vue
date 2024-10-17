@@ -1,11 +1,10 @@
 <template>
-  <v-card :loading="loading" flat>
+  <v-card :loading="loading">
     <v-toolbar flat extended>
       <v-toolbar-title>Expenses breakdown</v-toolbar-title>
       <v-spacer />
       <v-btn :to="{ name: 'transaction_categories' }" outlined>
-        <v-icon left>mdi-pencil</v-icon>
-        <span>Manage categories</span>
+        <v-icon>mdi-pencil</v-icon>
       </v-btn>
 
       <template v-slot:extension>
@@ -29,13 +28,7 @@
     </v-toolbar>
 
     <v-card-text v-if="transactions.length">
-      <apexchart
-        ref="chart"
-        width="100%"
-        height="300"
-        :options="options"
-        :series="series"
-      />
+      <apexchart height="300" :options="options" :series="series" />
     </v-card-text>
     <v-card-text v-else-if="!loading" class="text-center">
       No Data available
@@ -131,11 +124,9 @@ export default {
     options() {
       return {
         chart: {
-          id: "transactions",
           type: "donut",
           events: {
             dataPointSelection: (_, __, config) => {
-              // TODO: consider name instead, for display purposes
               const categoryId =
                 this.generatedGraphData[config.dataPointIndex].id
 

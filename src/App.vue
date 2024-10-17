@@ -81,6 +81,7 @@ export default {
 
     options: {
       title: "Finances",
+      fluid: false,
       login_url: VUE_APP_LOGIN_URL,
       identification_url: VUE_APP_IDENTIFICATION_URL,
       oidc: {

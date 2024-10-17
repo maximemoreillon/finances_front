@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" flat>
+  <v-card :loading="loading">
     <v-toolbar flat extended>
       <v-toolbar-title>Balance</v-toolbar-title>
       <v-spacer />
@@ -20,7 +20,9 @@
                 </v-col>
               </v-row>
               <v-row dense>
-                <v-col> (As of {{ last_retrieved_formatted }}) </v-col>
+                <v-col class="text-caption">
+                  Last retrieved on {{ last_retrieved_formatted }}
+                </v-col>
               </v-row>
             </template>
           </v-col>

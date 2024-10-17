@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading">
+  <v-card :loading="loading" class="mx-auto" max-width="30rem">
     <v-toolbar flat>
       <v-toolbar-title>Accounts</v-toolbar-title>
       <v-spacer />
@@ -8,7 +8,7 @@
     <!-- <TotalWealth /> -->
     <v-card-text>
       <v-row>
-        <v-col cols="3" v-for="account in accounts" :key="account.id">
+        <v-col cols="12" v-for="account in accounts" :key="account.id">
           <AccountPreview :account="account" />
         </v-col>
       </v-row>
