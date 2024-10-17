@@ -12,7 +12,7 @@
       <template v-slot:extension>
         <v-row align="center" dense>
           <v-col cols="auto">
-            <template v-if="parseFloat(current_balance)">
+            <template v-if="current_balance">
               <v-row dense>
                 <v-col>
                   {{ currency }}
@@ -51,7 +51,9 @@
       />
     </v-card-text>
 
-    <v-card-text v-else-if="!loading"> No data available </v-card-text>
+    <v-card-text v-else-if="!loading" class="text-center">
+      No data available
+    </v-card-text>
   </v-card>
 </template>
 
@@ -98,7 +100,11 @@ export default {
         .get(url, { params })
         .then(({ data }) => {
           const { records } = data
-          if (!records.length) return (this.series = [])
+          if (!records.length) {
+            this.series = []
+            this.current_balance = 0
+            return
+          }
 
           const last_item = records.at(0)
 

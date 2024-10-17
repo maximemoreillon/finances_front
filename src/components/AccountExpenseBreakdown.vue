@@ -36,7 +36,9 @@
         :series="series"
       />
     </v-card-text>
-    <v-card-text v-else-if="!loading"> No Data available </v-card-text>
+    <v-card-text v-else-if="!loading" class="text-center">
+      No Data available
+    </v-card-text>
   </v-card>
 </template>
 
@@ -136,7 +138,7 @@ export default {
               const categoryId =
                 this.generatedGraphData[config.dataPointIndex].id
 
-              if (categoryId === null) return
+              if (categoryId === undefined) return
               if (categoryId === this.category)
                 this.$emit("categorySelected", null)
               else this.$emit("categorySelected", categoryId)

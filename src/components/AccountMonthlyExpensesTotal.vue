@@ -25,7 +25,9 @@
         :series="series"
       />
     </v-card-text>
-    <v-card-text v-else-if="!loading"> No Data available </v-card-text>
+    <v-card-text v-else-if="!loading" class="text-center">
+      No Data available
+    </v-card-text>
   </v-card>
 </template>
 
