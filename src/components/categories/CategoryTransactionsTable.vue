@@ -52,6 +52,14 @@
             {{ new Intl.NumberFormat().format(amount) }}
           </span>
         </template>
+
+        <template v-slot:item.account_id="{ item: { account_id } }">
+          <router-link
+            :to="{ name: 'account', params: { accountId: account_id } }"
+          >
+            {{ accounts.find((a) => a.id === account_id)?.name }}
+          </router-link>
+        </template>
       </v-data-table>
     </v-card-text>
   </v-card>
@@ -81,6 +89,8 @@ export default {
         { text: "Date", value: "time" },
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
+        { text: "Account", value: "account_id" },
+
         // { text: "Categories", value: "categories" },
         // { text: "Inferred Categories", value: "inferredCategories" },
       ],
@@ -89,7 +99,7 @@ export default {
         month: "2-digit",
         day: "2-digit",
       },
-      categories: [],
+      accounts: [],
     }
   },
   watch: {
@@ -104,13 +114,13 @@ export default {
     },
   },
   async mounted() {
-    await this.get_transaction_categories()
+    await this.getAccounts()
     this.get_transactions()
   },
   methods: {
-    async get_transaction_categories() {
-      const { data } = await this.axios.get(`/categories`)
-      this.categories = data.categories
+    async getAccounts() {
+      const { data } = await this.axios.get(`/accounts`)
+      this.accounts = data.accounts
     },
     get_transactions() {
       this.loading = true
