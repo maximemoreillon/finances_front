@@ -1,33 +1,26 @@
 <template>
   <v-card :loading="loading" outlined>
-    <v-card-title> Keywords </v-card-title>
-    <v-card-text>
-      <template>
-        <v-row align="center">
-          <v-col cols="auto">
-            <h3 class="my-4">Keywords</h3>
-          </v-col>
-          <v-spacer />
-          <v-col cols="auto">
-            <AddKeywordDialog
-              :categoryId="String(categoryId)"
-              @keywordAdded="keywords.push($event)"
-            />
-          </v-col>
-        </v-row>
+    <v-toolbar flat>
+      <v-toolbar-title> Keywords </v-toolbar-title>
+      <v-spacer />
 
-        <v-chip
-          v-for="keyword in keywords"
-          :key="keyword.id"
-          label
-          outlined
-          close
-          class="ma-1"
-          @click:close="deleteKeyword(keyword.id)"
-        >
-          {{ keyword.word }}
-        </v-chip>
-      </template>
+      <AddKeywordDialog
+        :categoryId="String(categoryId)"
+        @keywordAdded="keywords.push($event)"
+      />
+    </v-toolbar>
+    <v-card-text>
+      <v-chip
+        v-for="keyword in keywords"
+        :key="keyword.id"
+        label
+        outlined
+        close
+        class="ma-1"
+        @click:close="deleteKeyword(keyword.id)"
+      >
+        {{ keyword.word }}
+      </v-chip>
     </v-card-text>
   </v-card>
 </template>
