@@ -5,16 +5,10 @@
     <v-card-text>
       <v-row dense align="center">
         <v-col cols="auto">
-          <YearSelect
-            :year="year"
-            @yearSelection="$emit('yearSelection', $event)"
-          />
+          <YearSelect :year="year" @yearSelection="year = $event" />
         </v-col>
         <v-col cols="auto">
-          <MonthSelect
-            :month="month"
-            @monthSelection="$emit('monthSelection', $event)"
-          />
+          <MonthSelect :month="month" @monthSelection="monbth = $event" />
         </v-col>
         <!-- </v-row>
       <v-row> -->
@@ -107,6 +101,7 @@ export default {
       this.get_transactions()
     },
     year() {
+      console.log(this.year)
       this.get_transactions()
     },
     month() {
