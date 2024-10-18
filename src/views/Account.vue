@@ -86,7 +86,7 @@ export default {
         : new Date().getFullYear(),
       category: this.$route.query.category
         ? Number(this.$route.query.category)
-        : 0,
+        : undefined,
       account: null,
       deleting: false,
       loading: false,
