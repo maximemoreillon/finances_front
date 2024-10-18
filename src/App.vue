@@ -35,7 +35,7 @@
           </v-list-item>
         </v-list-group>
 
-        <!-- <v-list-item :to="{ name: 'transaction_categories' }">
+        <v-list-item :to="{ name: 'transaction_categories' }">
           <v-list-item-icon>
             <v-icon>mdi-chart-pie</v-icon>
           </v-list-item-icon>
@@ -43,7 +43,7 @@
           <v-list-item-content>
             <v-list-item-title>Categories</v-list-item-title>
           </v-list-item-content>
-        </v-list-item> -->
+        </v-list-item>
 
         <v-list-item :to="{ name: 'about' }">
           <v-list-item-icon>
