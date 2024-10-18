@@ -8,7 +8,7 @@
           <YearSelect :year="year" @yearSelection="year = $event" />
         </v-col>
         <v-col cols="auto">
-          <MonthSelect :month="month" @monthSelection="monbth = $event" />
+          <MonthSelect :month="month" @monthSelection="month = $event" />
         </v-col>
         <!-- </v-row>
       <v-row> -->
