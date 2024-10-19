@@ -46,7 +46,7 @@
 
 <script>
 import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
-import AccountTransactionsTable from "@/components/AccountTransactionsTable.vue"
+import AccountTransactionsTable from "@/components/TransactionsTable.vue"
 import AccountMonthlyExpensesTotal from "@/components/TransactionsBarChart.vue"
 import ExpensesBreakdown from "@/components/ExpensesBreakdown.vue"
 import queryParamsUtils from "../mixins/queryParamsUtils"
