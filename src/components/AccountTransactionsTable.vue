@@ -37,10 +37,10 @@
           <v-chip
             close
             v-if="category"
-            @click:close="$emit('categoryChanged', null)"
+            @click:close="setQueryParam('category', null)"
           >
-            {{ categories.find((c) => c.id === category)?.name }}</v-chip
-          >
+            {{ categories.find((c) => c.id.toString() === category)?.name }}
+          </v-chip>
         </v-col>
       </v-row>
       <v-data-table
@@ -83,18 +83,6 @@
             {{ category.name }}
           </v-chip>
         </template>
-
-        <!-- <template v-slot:item.inferredCategories="{ item }">
-          <v-chip
-            v-for="category of categories.filter(({ keywords }) =>
-              keywords.find((k) => item.description.includes(k))
-            )"
-            :key="category.id"
-            class="mx-1"
-          >
-            {{ category.name }}
-          </v-chip>
-        </template> -->
       </v-data-table>
     </v-card-text>
   </v-card>
@@ -104,6 +92,7 @@
 import MonthSelect from "./MonthSelect.vue"
 import YearSelect from "./YearSelect.vue"
 import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
+import queryParamsUtils from "../mixins/queryParamsUtils"
 export default {
   name: "AccountTransactionsTable",
   components: {
@@ -111,11 +100,12 @@ export default {
     YearSelect,
     MonthSelect,
   },
+  mixins: [queryParamsUtils],
   props: {
     // Those could be query params?
-    year: Number,
-    month: Number,
-    category: Number,
+    // year: Number,
+    // month: Number,
+    // category: Number,
   },
   data() {
     return {
@@ -127,7 +117,6 @@ export default {
         { text: "Description", value: "description" },
         { text: "Amount", value: "amount" },
         { text: "Categories", value: "categories" },
-        // { text: "Inferred Categories", value: "inferredCategories" },
       ],
       toLocaleStringOptions: {
         year: "numeric",
@@ -141,9 +130,9 @@ export default {
     accountId() {
       this.get_transactions()
     },
-    year() {
-      this.get_transactions()
-    },
+    // year() {
+    //   this.get_transactions()
+    // },
     month() {
       this.get_transactions()
     },
@@ -190,11 +179,11 @@ export default {
     },
 
     start_date() {
-      if (this.month === 0) return new Date(`${this.year}/01/01`)
+      if (this.month === -1) return new Date(`${this.year}/01/01`)
       return new Date(`${this.year}/${this.month}/01`)
     },
     end_date() {
-      if (this.month === 0) return new Date(`${this.year}/12/31`)
+      if (this.month === -1) return new Date(`${this.year}/12/31`)
 
       const end_year = this.month < 12 ? this.year : this.year + 1
       const end_month = this.month < 12 ? this.month + 1 : 1

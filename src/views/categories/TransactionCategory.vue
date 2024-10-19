@@ -1,52 +1,72 @@
 <template>
-  <v-card max-width="50rem" class="mx-auto" :loading="loading">
-    <v-toolbar flat>
-      <v-btn icon exact :to="{ name: 'transaction_categories' }">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
+  <div>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-toolbar flat>
+            <v-btn icon exact :to="{ name: 'transaction_categories' }">
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
 
-      <v-toolbar-title>Category</v-toolbar-title>
-      <v-spacer />
-      <v-btn icon @click="update_category()" disabled>
-        <v-icon>mdi-content-save</v-icon>
-      </v-btn>
-      <v-btn icon @click="deleteCategory()" color="#c00000" :loading="deleting">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-toolbar>
+            <v-toolbar-title>Category</v-toolbar-title>
+            <v-spacer />
+            <v-btn icon @click="update_category()" disabled>
+              <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              @click="deleteCategory()"
+              color="#c00000"
+              :loading="deleting"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-toolbar>
 
-    <v-card-text>
-      <template v-if="category">
-        <v-row>
-          <v-col>
-            <v-text-field v-model="category.name" label="Name"></v-text-field>
-          </v-col>
-        </v-row>
+          <v-card-text>
+            <template v-if="category">
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="category.name"
+                    label="Name"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </template>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-        <v-row>
-          <v-col>
-            <CategoryKeywords />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <CategoryTransactionsTable :category="String(this.categoryId)" />
-          </v-col>
-        </v-row>
-      </template>
-    </v-card-text>
-  </v-card>
+    <v-row>
+      <v-col>
+        <CategoryKeywords />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <TransactionsBarChart />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <CategoryTransactionsTable :category="String(this.categoryId)" />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
 import CategoryTransactionsTable from "@/components/categories/CategoryTransactionsTable.vue"
 import CategoryKeywords from "@/components/categories/CategoryKeywords.vue"
-
+import TransactionsBarChart from "../../components/TransactionsBarChart.vue"
 export default {
   name: "CreateTransactionCategory",
   components: {
     CategoryTransactionsTable,
     CategoryKeywords,
+    TransactionsBarChart,
   },
 
   data() {

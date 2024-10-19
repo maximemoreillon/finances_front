@@ -8,4 +8,18 @@ export default {
       this.$router.replace({ query })
     },
   },
+  computed: {
+    year() {
+      if (!this.$route.query.year) return new Date().getFullYear()
+
+      return Number(this.$route.query.year)
+    },
+    month() {
+      if (!this.$route.query.month) return -1
+      return Number(this.$route.query.month)
+    },
+    category() {
+      return this.$route.params.categoryId || this.$route.query.category
+    },
+  },
 }

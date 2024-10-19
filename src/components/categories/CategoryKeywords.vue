@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" outlined>
+  <v-card :loading="loading">
     <v-toolbar flat>
       <v-toolbar-title> Keywords </v-toolbar-title>
       <v-spacer />

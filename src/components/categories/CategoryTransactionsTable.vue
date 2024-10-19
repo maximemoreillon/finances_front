@@ -1,14 +1,14 @@
 <template>
-  <v-card outlined>
+  <v-card>
     <v-card-title> Transactions </v-card-title>
 
     <v-card-text>
       <v-row dense align="center">
         <v-col cols="auto">
-          <YearSelect :year="year" @yearSelection="year = $event" />
+          <YearSelect />
         </v-col>
         <v-col cols="auto">
-          <MonthSelect :month="month" @monthSelection="month = $event" />
+          <MonthSelect />
         </v-col>
         <!-- </v-row>
       <v-row> -->
@@ -62,20 +62,21 @@
 <script>
 import MonthSelect from "@/components/MonthSelect.vue"
 import YearSelect from "@/components/YearSelect.vue"
+import queryParamsUtils from "@/mixins/queryParamsUtils"
+
 export default {
   name: "CategoryTransactionsTable",
   components: {
     YearSelect,
     MonthSelect,
   },
+  mixins: [queryParamsUtils],
   props: {
     // Those could be query params?
-    category: String,
+    // category: String,
   },
   data() {
     return {
-      year: new Date().getFullYear(),
-      month: 0,
       loading: false,
       search: "",
       transactions: [],
@@ -101,7 +102,6 @@ export default {
       this.get_transactions()
     },
     year() {
-      console.log(this.year)
       this.get_transactions()
     },
     month() {
@@ -143,11 +143,11 @@ export default {
     },
 
     start_date() {
-      if (this.month === 0) return new Date(`${this.year}/01/01`)
+      if (this.month === -1) return new Date(`${this.year}/01/01`)
       return new Date(`${this.year}/${this.month}/01`)
     },
     end_date() {
-      if (this.month === 0) return new Date(`${this.year}/12/31`)
+      if (this.month === -1) return new Date(`${this.year}/12/31`)
 
       const end_year = this.month < 12 ? this.year : this.year + 1
       const end_month = this.month < 12 ? this.month + 1 : 1

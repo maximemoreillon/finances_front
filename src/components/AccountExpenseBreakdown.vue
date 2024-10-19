@@ -1,7 +1,7 @@
 <template>
   <v-card :loading="loading">
     <v-toolbar flat>
-      <v-toolbar-title>Expenses breakdown</v-toolbar-title>
+      <v-toolbar-title>Expenses breakdown </v-toolbar-title>
       <v-spacer />
       <v-btn :to="{ name: 'transaction_categories' }" outlined>
         <v-icon>mdi-pencil</v-icon>
@@ -11,16 +11,10 @@
     <v-card-text>
       <v-row align="baseline">
         <v-col cols="auto">
-          <YearSelect
-            @yearSelection="$emit('yearSelection', $event)"
-            :year="year"
-          />
+          <YearSelect />
         </v-col>
         <v-col cols="auto">
-          <MonthSelect
-            :month="month"
-            @monthSelection="$emit('monthSelection', $event)"
-          />
+          <MonthSelect />
         </v-col>
         <v-spacer />
         <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
@@ -40,14 +34,17 @@
 import { colors } from "@/constants"
 import YearSelect from "./YearSelect.vue"
 import MonthSelect from "./MonthSelect.vue"
+import queryParamsUtils from "../mixins/queryParamsUtils"
 
 export default {
   name: "AccountExpenseBreakdown",
   components: { YearSelect, MonthSelect },
+  mixins: [queryParamsUtils],
+
   props: {
-    month: Number,
-    year: Number,
-    category: Number,
+    // month: Number,
+    // year: Number,
+    // category: Number,
   },
   data() {
     return {
@@ -132,8 +129,8 @@ export default {
 
               if (categoryId === undefined) return
               if (categoryId === this.category)
-                this.$emit("categorySelected", null)
-              else this.$emit("categorySelected", categoryId)
+                this.setQueryParam("category", null)
+              else this.setQueryParam("category", categoryId)
             },
           },
         },
@@ -147,11 +144,11 @@ export default {
       }
     },
     start_date() {
-      if (this.month === 0) return new Date(`${this.year}/01/01`)
+      if (this.month === -1) return new Date(`${this.year}/01/01`)
       return new Date(`${this.year}/${this.month}/01`)
     },
     end_date() {
-      if (this.month === 0) return new Date(`${this.year}/12/31`)
+      if (this.month === -1) return new Date(`${this.year}/12/31`)
 
       const end_year = this.month < 12 ? this.year : this.year + 1
       const end_month = this.month < 12 ? this.month + 1 : 1

@@ -28,35 +28,17 @@
 
     <v-row>
       <v-col>
-        <AccountMonthlyExpensesTotal
-          @yearSelection="year = $event"
-          @monthSelection="month = $event"
-          :year="year"
-        />
+        <AccountMonthlyExpensesTotal />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <AccountExpenseBreakdown
-          @yearSelection="year = $event"
-          @monthSelection="month = $event"
-          @categorySelected="category = $event"
-          :month="month"
-          :year="year"
-          :category="category"
-        />
+        <AccountExpenseBreakdown />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <AccountTransactionsTable
-          :month="month"
-          @monthSelection="month = $event"
-          :year="year"
-          @yearSelection="year = $event"
-          :category="category"
-          @categoryChanged="category = $event"
-        />
+        <AccountTransactionsTable />
       </v-col>
     </v-row>
   </div>
@@ -65,7 +47,7 @@
 <script>
 import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
 import AccountTransactionsTable from "@/components/AccountTransactionsTable.vue"
-import AccountMonthlyExpensesTotal from "@/components/AccountMonthlyExpensesTotal.vue"
+import AccountMonthlyExpensesTotal from "@/components/TransactionsBarChart.vue"
 import AccountExpenseBreakdown from "@/components/AccountExpenseBreakdown.vue"
 import queryParamsUtils from "../mixins/queryParamsUtils"
 export default {
@@ -79,14 +61,6 @@ export default {
   mixins: [queryParamsUtils],
   data() {
     return {
-      // Those chould be query params
-      month: this.$route.query.month ? Number(this.$route.query.month) : 0, // 0 Means all
-      year: this.$route.query.year
-        ? Number(this.$route.query.year)
-        : new Date().getFullYear(),
-      category: this.$route.query.category
-        ? Number(this.$route.query.category)
-        : undefined,
       account: null,
       deleting: false,
       loading: false,
@@ -95,15 +69,6 @@ export default {
   watch: {
     accountId() {
       this.getAccountInfo()
-    },
-    year(newVal) {
-      this.setQueryParam("year", newVal)
-    },
-    month(newVal) {
-      this.setQueryParam("month", newVal)
-    },
-    category(newVal) {
-      this.setQueryParam("category", newVal)
     },
   },
 

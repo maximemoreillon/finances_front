@@ -30,12 +30,13 @@
 <script>
 import { colors } from "@/constants"
 import YearSelect from "./YearSelect.vue"
+import queryParamsUtils from "../mixins/queryParamsUtils"
+
 export default {
-  name: "AccountMonthlyExpensesTotal",
+  name: "TransactionsBarChart",
   components: { YearSelect },
-  props: {
-    year: Number,
-  },
+  mixins: [queryParamsUtils],
+
   data() {
     return {
       loading: false,
@@ -46,28 +47,35 @@ export default {
     accountId() {
       this.get_transactions()
     },
+    year() {
+      this.get_transactions()
+    },
   },
   mounted() {
     this.get_transactions()
   },
   methods: {
-    get_transactions() {
+    async get_transactions() {
       this.loading = true
+      try {
+        let url
+        if (this.categoryId) url = `/categories/${this.categoryId}/transactions`
+        else if (this.accountId)
+          url = `/accounts/${this.accountId}/transactions`
 
-      const url = `/accounts/${this.accountId}/transactions`
+        const params = {
+          from: new Date(`${this.year}/1/1`),
+          to: new Date(`${this.year}/12/1`),
+        }
 
-      this.axios
-        .get(url)
-        .then(({ data }) => {
-          this.transactions = data.records
-        })
-        .catch((error) => {
-          if (error.response) console.log(error.response.data)
-          else console.error(error)
-        })
-        .finally(() => {
-          this.loading = false
-        })
+        const { data } = await this.axios.get(url, { params })
+        this.transactions = data.records
+      } catch (error) {
+        if (error.response) console.log(error.response.data)
+        else console.error(error)
+      } finally {
+        this.loading = false
+      }
     },
 
     transactions_of_month(year, month) {
@@ -78,7 +86,7 @@ export default {
       const end_date = new Date(`${end_year}/${end_month}/01`)
 
       return this.transactions.filter(
-        (t) => start_date < new Date(t.time) && new Date(t.time) < end_date
+        (t) => start_date <= new Date(t.time) && new Date(t.time) < end_date
       )
     },
     incomeTotalForMonth(year, month) {
@@ -134,6 +142,10 @@ export default {
     accountId() {
       return this.$route.params.accountId
     },
+    categoryId() {
+      return this.$route.params.categoryId
+    },
+
     formatted_income() {
       return Array.from(Array(12).keys())
         .map((m) => m + 1)

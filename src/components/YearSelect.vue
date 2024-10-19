@@ -2,17 +2,20 @@
   <v-select
     :items="years"
     :value="year"
-    @change="handleSelection"
+    @change="setQueryParam('year', $event)"
     label="year"
   />
 </template>
 
 <script>
+import queryParamsUtils from "@/mixins/queryParamsUtils"
+
 export default {
   name: "YearSelect",
   components: {},
+  mixins: [queryParamsUtils],
   props: {
-    year: Number,
+    // year: Number,
   },
   data() {
     return {
@@ -23,11 +26,7 @@ export default {
   },
   watch: {},
   mounted() {},
-  methods: {
-    handleSelection(year) {
-      this.$emit("yearSelection", year)
-    },
-  },
+  methods: {},
   computed: {},
 }
 </script>

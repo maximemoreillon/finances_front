@@ -9,7 +9,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import pjson from "../../package.json"
 
 export default {
