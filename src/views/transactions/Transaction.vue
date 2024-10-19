@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" max-width="30rem" class="mx-auto">
+  <v-card :loading="loading" max-width="40rem" class="mx-auto">
     <v-toolbar flat>
       <v-btn icon @click="$router.back()" exact>
         <v-icon>mdi-arrow-left</v-icon>
@@ -15,7 +15,7 @@
     </v-toolbar>
 
     <v-card-text v-if="transaction">
-      <v-row>
+      <v-row align="center">
         <v-col>
           <v-text-field label="Description" v-model="transaction.description" />
         </v-col>
@@ -37,37 +37,58 @@
           />
         </v-col>
       </v-row>
-      <!-- Categories -->
-      <v-row align="center">
-        <v-col>
-          <h3>Categories</h3>
-        </v-col>
-        <v-spacer />
+      <v-row>
         <v-col cols="auto">
-          <v-btn :to="{ name: 'transaction_categories' }" outlined>
-            Manage
-          </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <!-- TODO: better handling of the categoryAdded event-->
-          <AddCategoryDialog
-            :transactionId="String(transactionId)"
-            :accountId="String(accountId)"
-            @categoryAdded="get_transaction()"
-          />
+          Account:
+          <router-link
+            :to="{
+              name: 'account',
+              params: { accountId: transaction.account_id },
+            }"
+          >
+            {{
+              accounts.find((a) => a.id === transaction.account_id)?.name ||
+              transaction.account_id
+            }}
+          </router-link>
         </v-col>
       </v-row>
-      <v-row>
+
+      <!-- Categories -->
+      <!-- TODO: external component -->
+      <v-row align="center">
         <v-col>
-          <v-chip
-            cols="auto"
-            v-for="category of transaction.categories"
-            :key="category.id"
-            class="ma-2"
-            close
-            @click:close="removeCategory(category.id)"
-            >{{ category.name }}</v-chip
-          >
+          <v-card outlined>
+            <v-toolbar flat>
+              <v-toolbar-title>Categories</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn
+                :to="{ name: 'transaction_categories' }"
+                outlined
+                class="mr-2"
+              >
+                Manage
+              </v-btn>
+              <!-- TODO: better handling of the categoryAdded event-->
+
+              <AddCategoryDialog
+                :transactionId="String(transactionId)"
+                :accountId="String(accountId)"
+                @categoryAdded="get_transaction()"
+              />
+            </v-toolbar>
+            <v-card-text>
+              <v-chip
+                cols="auto"
+                v-for="category of transaction.categories"
+                :key="category.id"
+                class="mb-2 mr-2"
+                close
+                @click:close="removeCategory(category.id)"
+                >{{ category.name }}</v-chip
+              >
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </v-card-text>
@@ -86,16 +107,22 @@ export default {
       transaction: null,
       loading: false,
       existingCategories: [],
+      accounts: [],
     }
   },
   mounted() {
     this.get_transaction()
     this.get_transaction_categories()
+    this.getAccounts()
+
     // TODO: get accounts
   },
   methods: {
+    async getAccounts() {
+      const { data } = await this.axios.get(`/accounts`)
+      this.accounts = data.accounts
+    },
     async get_transaction_categories() {
-      this.loading = true
       const { data } = await this.axios.get(`/categories`)
       this.existingCategories = data.categories
     },
