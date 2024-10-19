@@ -121,7 +121,7 @@ export default {
           events: {
             dataPointSelection: (_, __, config) => {
               const clicked_month = config.dataPointIndex + 1
-              this.$emit("monthSelection", clicked_month)
+              this.setQueryParam("month", clicked_month)
             },
           },
         },
