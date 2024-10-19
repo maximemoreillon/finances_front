@@ -84,6 +84,10 @@
                 :key="category.id"
                 class="mb-2 mr-2"
                 close
+                :to="{
+                  name: 'transaction_category',
+                  params: { categoryId: category.id },
+                }"
                 @click:close="removeCategory(category.id)"
                 >{{ category.name }}</v-chip
               >
