@@ -4,6 +4,7 @@
       <v-toolbar-title>Transactions </v-toolbar-title>
       <v-spacer />
       <TransactionRegisterDialog
+        v-if="accountId"
         :accountId="String(accountId)"
         @transactionRegistered="get_transactions()"
       />
