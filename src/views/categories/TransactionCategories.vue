@@ -46,6 +46,7 @@ export default {
       headers: [
         { value: "name", text: "Name" },
         { value: "keywords", text: "Keywords" },
+        { value: "transaction_count", text: "Transactions" },
       ],
     }
   },
