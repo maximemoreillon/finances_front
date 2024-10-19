@@ -1,5 +1,6 @@
 <template>
   <v-card
+    height="100%"
     :loading="loading"
     outlined
     :to="{ name: 'account', params: { accountId: account.id } }"
