@@ -2,7 +2,7 @@
   <AppTemplate @user="get_user($event)" :options="options">
     <template v-slot:nav>
       <v-list dense nav>
-        <v-list-item :to="{ name: 'accounts' }" exact>
+        <v-list-item :to="{ name: 'accounts' }">
           <v-list-item-icon>
             <v-icon>mdi-chart-line</v-icon>
           </v-list-item-icon>
