@@ -86,9 +86,9 @@ export default {
     get_transactions() {
       this.loading = true
 
-      // TODO: query parameters for querying only selected time period
-
-      const url = `/accounts/${this.accountId}/transactions`
+      let url
+      if (this.accountId) url = `/accounts/${this.accountId}/transactions`
+      else url = `/transactions`
       const params = { from: this.start_date, to: this.end_date }
 
       this.axios

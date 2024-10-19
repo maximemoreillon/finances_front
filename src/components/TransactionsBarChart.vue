@@ -62,6 +62,7 @@ export default {
         if (this.categoryId) url = `/categories/${this.categoryId}/transactions`
         else if (this.accountId)
           url = `/accounts/${this.accountId}/transactions`
+        else url = `/transactions`
 
         const params = {
           from: new Date(`${this.year}/1/1`),

@@ -33,7 +33,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <AccountExpenseBreakdown />
+        <ExpensesBreakdown />
       </v-col>
     </v-row>
     <v-row>
@@ -48,7 +48,7 @@
 import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
 import AccountTransactionsTable from "@/components/AccountTransactionsTable.vue"
 import AccountMonthlyExpensesTotal from "@/components/TransactionsBarChart.vue"
-import AccountExpenseBreakdown from "@/components/AccountExpenseBreakdown.vue"
+import ExpensesBreakdown from "@/components/ExpensesBreakdown.vue"
 import queryParamsUtils from "../mixins/queryParamsUtils"
 export default {
   name: "Account",
@@ -56,7 +56,7 @@ export default {
     AccountBalanceHistory,
     AccountTransactionsTable,
     AccountMonthlyExpensesTotal,
-    AccountExpenseBreakdown,
+    ExpensesBreakdown,
   },
   mixins: [queryParamsUtils],
   data() {

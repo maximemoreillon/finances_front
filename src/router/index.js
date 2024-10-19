@@ -23,6 +23,11 @@ const routes = [
   //   component: () => import("../views/RegisterBalance.vue"),
   // },
   {
+    path: "/transactions",
+    name: "transactions",
+    component: () => import("../views/transactions/Transactions.vue"),
+  },
+  {
     path: "/transactions/:transactionId",
     name: "transaction",
     component: () => import("../views/transactions/Transaction.vue"),

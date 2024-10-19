@@ -12,9 +12,19 @@
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :to="{ name: 'transactions' }">
+          <v-list-item-icon>
+            <v-icon>mdi-swap-horizontal</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>Transactions</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :to="{ name: 'transaction_categories' }">
           <v-list-item-icon>
-            <v-icon>mdi-chart-pie</v-icon>
+            <v-icon>mdi-shape</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>

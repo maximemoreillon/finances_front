@@ -51,20 +51,20 @@
     </v-row>
     <v-row>
       <v-col>
-        <CategoryTransactionsTable :category="String(this.categoryId)" />
+        <TransactionsTable />
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import CategoryTransactionsTable from "@/components/categories/CategoryTransactionsTable.vue"
+import TransactionsTable from "@/components/TransactionsTable.vue"
 import CategoryKeywords from "@/components/categories/CategoryKeywords.vue"
 import TransactionsBarChart from "../../components/TransactionsBarChart.vue"
 export default {
   name: "CreateTransactionCategory",
   components: {
-    CategoryTransactionsTable,
+    TransactionsTable,
     CategoryKeywords,
     TransactionsBarChart,
   },

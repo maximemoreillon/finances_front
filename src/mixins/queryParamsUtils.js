@@ -19,7 +19,7 @@ export default {
       return Number(this.$route.query.month)
     },
     category() {
-      return this.$route.params.categoryId || this.$route.query.category
+      return this.$route.query.category
     },
   },
 }
