@@ -23,8 +23,7 @@
             @monthSelection="$emit('monthSelection', $event)"
           />
         </v-col>
-        <!-- </v-row>
-      <v-row> -->
+
         <v-col cols="auto">
           <v-text-field
             label="Search"
@@ -93,6 +92,7 @@ import MonthSelect from "./MonthSelect.vue"
 import YearSelect from "./YearSelect.vue"
 import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
 import queryParamsUtils from "../mixins/queryParamsUtils"
+import dateUtils from "../mixins/dateUtils"
 export default {
   name: "AccountTransactionsTable",
   components: {
@@ -100,13 +100,8 @@ export default {
     YearSelect,
     MonthSelect,
   },
-  mixins: [queryParamsUtils],
-  props: {
-    // Those could be query params?
-    // year: Number,
-    // month: Number,
-    // category: Number,
-  },
+  mixins: [queryParamsUtils, dateUtils],
+  props: {},
   data() {
     return {
       loading: false,
@@ -176,18 +171,6 @@ export default {
   computed: {
     accountId() {
       return this.$route.params.accountId
-    },
-
-    start_date() {
-      if (this.month === -1) return new Date(`${this.year}/01/01`)
-      return new Date(`${this.year}/${this.month}/01`)
-    },
-    end_date() {
-      if (this.month === -1) return new Date(`${this.year}/12/31`)
-
-      const end_year = this.month < 12 ? this.year : this.year + 1
-      const end_month = this.month < 12 ? this.month + 1 : 1
-      return new Date(`${end_year}/${end_month}/01`)
     },
   },
 }

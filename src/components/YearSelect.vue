@@ -14,9 +14,7 @@ export default {
   name: "YearSelect",
   components: {},
   mixins: [queryParamsUtils],
-  props: {
-    // year: Number,
-  },
+
   data() {
     return {
       years: Array.from(Array(10).keys()).map(

@@ -2,38 +2,15 @@
   <AppTemplate @user="get_user($event)" :options="options">
     <template v-slot:nav>
       <v-list dense nav>
-        <v-list-item :to="{ name: 'accounts' }">
+        <v-list-item :to="{ name: 'accounts' }" exact>
           <v-list-item-icon>
-            <v-icon>mdi-home</v-icon>
+            <v-icon>mdi-chart-line</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
+            <v-list-item-title>Accounts</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-
-        <v-list-group :value="false" no-action prepend-icon="mdi-chart-line">
-          <template v-slot:activator>
-            <v-list-item-title>Accounts</v-list-item-title>
-          </template>
-
-          <v-list-item
-            v-for="account in accounts"
-            :key="`account_${account.id}`"
-            :to="{ name: 'account', params: { accountId: account.id } }"
-            exact
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-chart-line</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ account.name }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
 
         <v-list-item :to="{ name: 'transaction_categories' }">
           <v-list-item-icon>
@@ -41,7 +18,7 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>Categories</v-list-item-title>
+            <v-list-item-title>Transaction categories</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -76,9 +53,6 @@ export default {
   },
 
   data: () => ({
-    accounts: [],
-    loading: false,
-
     options: {
       title: "Finances",
       login_url: VUE_APP_LOGIN_URL,
@@ -100,23 +74,6 @@ export default {
         this.axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${user.access_token}`
-
-      this.get_accounts()
-    },
-    get_accounts() {
-      this.loading = true
-      this.axios
-        .get(`/accounts`)
-        .then(({ data }) => {
-          this.accounts = data.accounts
-        })
-        .catch((error) => {
-          if (error.response) console.log(error.response.data)
-          console.error(error)
-        })
-        .finally(() => {
-          this.loading = false
-        })
     },
   },
 }

@@ -6,6 +6,17 @@
   >
     <v-card-title> {{ account.name }} </v-card-title>
     <v-card-subtitle> Currency: {{ account.currency }} </v-card-subtitle>
+    <!-- <v-card-text>
+      <v-row dense>
+        <v-col> Currency: {{ account.currency }} </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col> Balance: {{ account.balance }} </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col> Transactions: {{ account.transaction_count }} </v-col>
+      </v-row> 
+    </v-card-text>-->
   </v-card>
 </template>
 

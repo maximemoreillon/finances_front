@@ -63,6 +63,7 @@
 import MonthSelect from "@/components/MonthSelect.vue"
 import YearSelect from "@/components/YearSelect.vue"
 import queryParamsUtils from "@/mixins/queryParamsUtils"
+import dateUtils from "../../mixins/dateUtils"
 
 export default {
   name: "CategoryTransactionsTable",
@@ -70,7 +71,7 @@ export default {
     YearSelect,
     MonthSelect,
   },
-  mixins: [queryParamsUtils],
+  mixins: [queryParamsUtils, dateUtils],
   props: {
     // Those could be query params?
     // category: String,
@@ -140,18 +141,6 @@ export default {
   computed: {
     accountId() {
       return this.$route.params.accountId
-    },
-
-    start_date() {
-      if (this.month === -1) return new Date(`${this.year}/01/01`)
-      return new Date(`${this.year}/${this.month}/01`)
-    },
-    end_date() {
-      if (this.month === -1) return new Date(`${this.year}/12/31`)
-
-      const end_year = this.month < 12 ? this.year : this.year + 1
-      const end_month = this.month < 12 ? this.month + 1 : 1
-      return new Date(`${end_year}/${end_month}/01`)
     },
   },
 }
