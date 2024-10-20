@@ -10,7 +10,7 @@
 
             <v-toolbar-title>Category</v-toolbar-title>
             <v-spacer />
-            <v-btn icon @click="update_category()" disabled>
+            <v-btn icon @click="update_category()" :loading="saving">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
             <v-btn
@@ -73,6 +73,7 @@ export default {
     return {
       loading: false,
       deleting: false,
+      saving: false,
       category: null,
     }
   },
@@ -91,10 +92,7 @@ export default {
           alert("Error")
         })
     },
-    add_keyword() {
-      alert("WIP")
-      // this.category.keywords.push("")
-    },
+
     async deleteKeyword(keywordId) {
       if (!confirm("Delete keyword?")) return
 
@@ -106,18 +104,19 @@ export default {
       )
       if (foundIndex > -1) this.category.keywords.splice(foundIndex, 1)
     },
-    update_category() {
-      alert("WIP")
-      // let categoryId = this.$route.params.categoryId
-      // this.axios
-      //   .put(`/transactions/categories/${categoryId}`, this.category)
-      //   .then(() => {
-      //     this.$router.push({ name: "transaction_categories" })
-      //   })
-      //   .catch((error) => {
-      //     console.error(error)
-      //     alert("Error")
-      //   })
+    async update_category() {
+      this.saving = true
+      try {
+        await this.axios.put(`/categories/${this.categoryId}`, {
+          name: this.category.name,
+        })
+        alert("Category saved")
+      } catch (error) {
+        console.error(error)
+        alert("Error")
+      } finally {
+        this.saving = false
+      }
     },
     async deleteCategory() {
       if (!confirm("Delete category?")) return
