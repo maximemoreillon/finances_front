@@ -107,10 +107,8 @@ export default {
     async update_category() {
       this.saving = true
       try {
-        await this.axios.put(`/categories/${this.categoryId}`, {
-          name: this.category.name,
-        })
-        alert("Category saved")
+        await this.axios.put(`/categories/${this.categoryId}`, this.category)
+        // alert("Category saved")
       } catch (error) {
         console.error(error)
         alert("Error")

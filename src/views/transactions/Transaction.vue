@@ -6,10 +6,15 @@
       </v-btn>
       <v-toolbar-title>Transaction</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click="update_transaction()">
+      <v-btn icon @click="update_transaction()" :loading="saving">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
-      <v-btn color="#c00000" icon @click="delete_transaction()">
+      <v-btn
+        color="#c00000"
+        icon
+        @click="delete_transaction()"
+        :loading="deleting"
+      >
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-toolbar>
@@ -110,6 +115,8 @@ export default {
     return {
       transaction: null,
       loading: false,
+      saving: false,
+      deleting: false,
       existingCategories: [],
       accounts: [],
     }
@@ -139,23 +146,28 @@ export default {
         .get(url)
         .then(({ data }) => {
           this.transaction = data
-          this.loading = false
         })
         .catch((error) => console.log(error))
+        .finally(() => {
+          this.loading = false
+        })
     },
 
     update_transaction() {
       const url = `/transactions/${this.transactionId}`
+      this.saving = true
       this.axios
-        .patch(url, this.transaction)
-        .then(() => {
-          this.get_transaction()
-        })
+        .put(url, this.transaction)
+        // .then(() => {})
         .catch((error) => console.log(error))
+        .finally(() => {
+          this.saving = false
+        })
     },
 
     delete_transaction() {
       if (!confirm("Delete transaction? This action is irreversible")) return
+      this.deleting = true
       const url = `/transactions/${this.transactionId}`
       this.axios
         .delete(url)
@@ -163,6 +175,9 @@ export default {
           this.$router.go(-1)
         })
         .catch((error) => console.log(error))
+        .finally(() => {
+          this.deleting = false
+        })
     },
     async removeCategory(categoryId) {
       if (!confirm("Remove category?")) return

@@ -32,7 +32,7 @@
             <v-col cols="auto">
               <v-date-picker
                 width="auto"
-                v-model="newTransaction.date"
+                v-model="newTransaction.time"
               ></v-date-picker>
             </v-col>
           </v-row>
@@ -64,7 +64,7 @@ export default {
       registering: false,
       newTransaction: {
         description: "",
-        date: undefined,
+        time: undefined,
         amount: 0,
       },
     }
