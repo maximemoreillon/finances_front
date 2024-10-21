@@ -142,9 +142,11 @@ export default {
     },
 
     expenses() {
-      return this.transactions.filter((transaction) => {
-        return transaction.amount < 0
-      })
+      return this.transactions.filter((transaction) => transaction.amount < 0)
+    },
+
+    income() {
+      return this.transactions.filter((transaction) => transaction.amount > 0)
     },
 
     implicitylyCategorizedExpenses() {
