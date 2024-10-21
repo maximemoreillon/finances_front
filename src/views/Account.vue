@@ -2,21 +2,31 @@
   <div>
     <v-row>
       <v-col>
-        <v-toolbar elevation="1" extended>
-          <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
-          <v-progress-circular indeterminate v-else />
+        <v-card :loading="loading">
+          <v-toolbar elevation="1">
+            <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
+            <v-progress-circular indeterminate v-else />
 
-          <v-spacer />
-          <v-btn @click="deleteAccount()" outlined color="#c00000">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
+            <v-spacer />
+            <v-btn @click="deleteAccount()" outlined color="#c00000">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+            <v-btn @click="updateAccount()" outlined>
+              <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+          </v-toolbar>
 
-          <template v-slot:extension>
-            <v-row v-if="account">
-              <v-col> Currency: {{ account.currency }} </v-col>
+          <v-card-text v-if="account">
+            <v-row>
+              <v-col>
+                <v-text-field label="Name" />
+              </v-col>
+              <v-col>
+                <v-text-field v-model="account.currency" label="Currency" />
+              </v-col>
             </v-row>
-          </template>
-        </v-toolbar>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -64,6 +74,7 @@ export default {
       account: null,
       deleting: false,
       loading: false,
+      saving: false,
     }
   },
   watch: {
@@ -85,6 +96,17 @@ export default {
         console.error(error)
       } finally {
         this.loading = false
+      }
+    },
+    async updateAccount() {
+      this.saving = false
+      try {
+        await this.axios.put(`/accounts/${this.accountId}`, this.account)
+      } catch (error) {
+        alert("Update failed")
+        console.error(error)
+      } finally {
+        this.saving = false
       }
     },
     async deleteAccount() {
