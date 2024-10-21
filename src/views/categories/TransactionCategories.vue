@@ -3,11 +3,15 @@
     <v-toolbar flat>
       <v-toolbar-title>Transaction categories</v-toolbar-title>
       <v-spacer />
+      <v-btn outlined class="mr-2" :loading="applying" @click="applyCategories">
+        <v-icon left>mdi-reload</v-icon>
+        <span>Apply</span>
+      </v-btn>
       <CreateCategoryDialog />
     </v-toolbar>
 
     <v-card-text>
-      <v-data-table :headers="headers" :items="categories">
+      <v-data-table :headers="headers" :items="categories" :loading="loading">
         <template v-slot:item.name="{ item }">
           <router-link
             :to="{
@@ -43,6 +47,8 @@ export default {
   data() {
     return {
       categories: [],
+      loading: false,
+      applying: false,
       headers: [
         { value: "name", text: "Name" },
         { value: "keywords", text: "Keywords" },
@@ -55,6 +61,7 @@ export default {
   },
   methods: {
     get_categories() {
+      this.loading = true
       this.axios
         .get(`/categories`)
         .then(({ data }) => {
@@ -64,6 +71,22 @@ export default {
           console.error(error)
           alert("Error")
         })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    async applyCategories() {
+      try {
+        this.applying = true
+        await this.axios.patch("/categories")
+        alert("Categories applied")
+        this.get_categories()
+      } catch (error) {
+        alert("Applying categories failed")
+        console.error(error)
+      } finally {
+        this.applying = false
+      }
     },
   },
 }
