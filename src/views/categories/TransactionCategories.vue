@@ -23,6 +23,7 @@
           </router-link>
         </template>
         <template v-slot:item.keywords="{ item }">
+          <!-- TODO: make a link, requires knowing id -->
           <v-chip
             v-for="(keyword, index) in item.keywords"
             :key="`${item._id}_kw_${index}`"

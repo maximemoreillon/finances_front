@@ -17,6 +17,7 @@
         outlined
         close
         class="ma-1"
+        :to="{ name: 'keyword', params: { keywordId: keyword.id } }"
         @click:close="deleteKeyword(keyword.id)"
       >
         {{ keyword.word }}
