@@ -19,12 +19,17 @@
         <v-spacer />
         <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
       </v-row>
-      <apexchart
-        v-if="transactions.length"
-        height="300"
-        :options="options"
-        :series="series"
-      />
+      <v-row v-if="transactions.length">
+        <v-col cols="12" md="6">
+          <h3>Income</h3>
+          <BreakdownChart :transactions="income" />
+        </v-col>
+        <v-col cols="12" md="6">
+          <h3>Expenses</h3>
+          <BreakdownChart :transactions="expenses" />
+        </v-col>
+      </v-row>
+
       <div v-else-if="!loading" class="text-center">No Data available</div>
     </v-card-text>
   </v-card>
@@ -36,10 +41,10 @@ import YearSelect from "@/components/YearSelect.vue"
 import MonthSelect from "@/components/MonthSelect.vue"
 import queryParamsUtils from "@/mixins/queryParamsUtils"
 import dateUtils from "@/mixins/dateUtils"
-
+import BreakdownChart from "./BreakdownChart.vue"
 export default {
   name: "AccountExpenseBreakdown",
-  components: { YearSelect, MonthSelect },
+  components: { YearSelect, MonthSelect, BreakdownChart },
   mixins: [queryParamsUtils, dateUtils],
 
   props: {},
@@ -142,32 +147,11 @@ export default {
     },
 
     expenses() {
-      return this.transactions.filter((transaction) => {
-        return transaction.amount < 0
-      })
+      return this.transactions.filter((transaction) => transaction.amount < 0)
     },
 
-    implicitylyCategorizedExpenses() {
-      // UNUSED FOR THE TIME BEING
-      // WARNING: transactions can now have multiple categories
-      // WARNING: This needs refactoring
-      return this.expenses.map((expense) => {
-        let category = expense.description
-
-        const foundCategory = this.expense_categories.find((category) =>
-          category.keywords.find((keyword) =>
-            expense.description.includes(keyword)
-          )
-        )
-
-        if (foundCategory) category = foundCategory.name
-
-        // TODO: categories plural
-        return {
-          ...expense,
-          category,
-        }
-      })
+    income() {
+      return this.transactions.filter((transaction) => transaction.amount > 0)
     },
 
     explicitlyCategorizedExpenses() {
