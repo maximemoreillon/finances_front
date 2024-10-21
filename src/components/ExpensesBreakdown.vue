@@ -1,7 +1,7 @@
 <template>
   <v-card :loading="loading">
     <v-toolbar flat>
-      <v-toolbar-title>Expenses breakdown </v-toolbar-title>
+      <v-toolbar-title>Transactions breakdown </v-toolbar-title>
       <v-spacer />
       <v-btn :to="{ name: 'transaction_categories' }" outlined>
         <v-icon>mdi-pencil</v-icon>
@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { colors } from "@/constants"
 import YearSelect from "@/components/YearSelect.vue"
 import MonthSelect from "@/components/MonthSelect.vue"
 import queryParamsUtils from "@/mixins/queryParamsUtils"
@@ -117,34 +116,6 @@ export default {
     dark() {
       return this.$vuetify.theme.dark
     },
-    series() {
-      return this.generatedGraphData.map((x) => x.amount)
-    },
-    options() {
-      return {
-        chart: {
-          type: "donut",
-          events: {
-            dataPointSelection: (_, __, config) => {
-              const categoryId =
-                this.generatedGraphData[config.dataPointIndex].id
-
-              if (categoryId === undefined) return
-              if (categoryId === this.category)
-                this.setQueryParam("category", null)
-              else this.setQueryParam("category", categoryId)
-            },
-          },
-        },
-        theme: {
-          mode: this.dark ? "dark" : "light",
-        },
-        colors,
-        labels: this.generatedGraphData.map(
-          (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
-        ),
-      }
-    },
 
     expenses() {
       return this.transactions.filter((transaction) => transaction.amount < 0)
@@ -152,56 +123,6 @@ export default {
 
     income() {
       return this.transactions.filter((transaction) => transaction.amount > 0)
-    },
-
-    explicitlyCategorizedExpenses() {
-      return this.expenses.map((expense) => {
-        const categories = expense.categories
-          ? expense.categories
-          : [{ name: expense.description, id: null }]
-
-        return {
-          ...expense,
-          categories,
-        }
-      })
-    },
-
-    generatedGraphData() {
-      const max_categories = 8
-      return (
-        this.explicitlyCategorizedExpenses
-          .reduce((acc, expense) => {
-            for (const expenseCategory of expense.categories) {
-              const entry = acc.find(
-                (entry) => entry.label === expenseCategory.name
-              )
-              const amount = Math.abs(expense.amount)
-
-              if (!entry)
-                acc.push({
-                  label: expenseCategory.name,
-                  amount,
-                  id: expenseCategory.id,
-                })
-              else entry.amount += amount
-            }
-
-            return acc
-          }, [])
-          // Further reduce to remove categories that are too small
-          .sort((a, b) => b.amount - a.amount)
-          // Remove categories that are too small
-          .reduce((acc, item, index) => {
-            if (index < max_categories) acc.push(item)
-            else {
-              if (!acc[max_categories])
-                acc.push({ label: "Other", amount: item.amount })
-              else acc[max_categories].amount += item.amount
-            }
-            return acc
-          }, [])
-      )
     },
   },
 }

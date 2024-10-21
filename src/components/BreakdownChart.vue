@@ -59,7 +59,7 @@ export default {
 
     explicitlyCategorizedExpenses() {
       return this.transactions.map((expense) => {
-        const categories = expense.categories
+        const categories = expense.categories?.length
           ? expense.categories
           : [{ name: expense.description, id: null }]
 
