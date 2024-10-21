@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card :loading="loading">
-          <v-toolbar elevation="1">
+          <v-toolbar flat>
             <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
             <v-progress-circular indeterminate v-else />
 
@@ -19,7 +19,7 @@
           <v-card-text v-if="account">
             <v-row>
               <v-col>
-                <v-text-field label="Name" />
+                <v-text-field label="Name" v-model="account.name" />
               </v-col>
               <v-col>
                 <v-text-field v-model="account.currency" label="Currency" />
