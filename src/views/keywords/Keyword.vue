@@ -1,7 +1,17 @@
 <template>
   <v-card class="mx-auto" max-width="30rem">
     <v-toolbar flat>
-      <v-btn icon @click="$router.back()">
+      <v-btn
+        icon
+        :to="
+          keyword
+            ? {
+                name: 'transaction_category',
+                params: { categoryId: keyword.category_id },
+              }
+            : undefined
+        "
+      >
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
 
@@ -72,8 +82,10 @@ export default {
       this.deleting = true
       try {
         await this.axios.delete(`/keywords/${this.keywordId}`)
-        // TODO: find a better page to push to
-        this.$router.push({ name: "transaction_categories" })
+        this.$router.push({
+          name: "transaction_category",
+          params: { categoryId: this.keyword.category_id },
+        })
       } catch (error) {
         console.error(error)
         alert("Error")

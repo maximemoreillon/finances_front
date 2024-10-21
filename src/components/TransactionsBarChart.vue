@@ -66,7 +66,7 @@ export default {
 
         const params = {
           from: new Date(`${this.year}/1/1`),
-          to: new Date(`${this.year}/12/1`),
+          to: new Date(`${this.year + 1}/1/1`),
         }
 
         const { data } = await this.axios.get(url, { params })
@@ -102,7 +102,7 @@ export default {
     expensesTotalForMonth(year, month) {
       return this.transactions_of_month(year, month).reduce(
         (acc, { amount }) => {
-          if (amount < 0) acc += -amount
+          if (amount < 0) acc -= amount
           return acc
         },
         0
