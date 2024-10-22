@@ -8,11 +8,11 @@
             <v-progress-circular indeterminate v-else />
 
             <v-spacer />
-            <v-btn @click="deleteAccount()" outlined color="#c00000">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-            <v-btn @click="updateAccount()" outlined>
+            <v-btn @click="updateAccount()">
               <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+            <v-btn @click="deleteAccount()" color="#c00000">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-toolbar>
 
