@@ -23,15 +23,15 @@
           </router-link>
         </template>
         <template v-slot:item.keywords="{ item }">
-          <!-- TODO: make a link, requires knowing id -->
           <v-chip
-            v-for="(keyword, index) in item.keywords"
-            :key="`${item._id}_kw_${index}`"
+            v-for="keyword in item.keywords"
+            :key="keyword.id"
             class="ma-1"
             label
             outlined
+            :to="{ name: 'keyword', params: { keywordId: keyword.id } }"
           >
-            {{ keyword }}
+            {{ keyword.word }}
           </v-chip>
         </template>
       </v-data-table>
