@@ -1,10 +1,10 @@
-<!-- INFO: This is currently not used -->
 <template>
-  <v-card-subtitle>
-    <template v-if="total">
+  <div>
+    <template v-if="!loading && total">
       Total assets: {{ currency }} {{ parseFloat(total).toLocaleString() }}
     </template>
-  </v-card-subtitle>
+    <v-progress-circular indeterminate v-if="loading" />
+  </div>
 </template>
 
 <script>
@@ -20,10 +20,13 @@ export default {
   },
   async mounted() {
     try {
+      this.loading = true
       await this.getExchangeRate()
       await this.getTotal()
     } catch (error) {
       console.error(error)
+    } finally {
+      this.loading = false
     }
   },
   methods: {
@@ -34,12 +37,11 @@ export default {
       this.rates = data.rates
     },
     async getTotal() {
-      const url = `/balance`
-      const params = { start: "-1mo", last: "true" }
-      const { data } = await this.axios.get(url, { params })
-      this.total = data.reduce((prev, point) => {
-        const { currency, _value } = point
-        prev += _value / this.rates[currency]
+      const url = `/accounts`
+      const { data } = await this.axios.get(url)
+      this.total = data.accounts.reduce((prev, account) => {
+        const { currency, balance } = account
+        prev += balance / this.rates[currency]
         return prev
       }, 0)
     },

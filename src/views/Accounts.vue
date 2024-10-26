@@ -5,8 +5,12 @@
       <v-spacer />
       <CreateAccountDialog />
     </v-toolbar>
-    <!-- <TotalWealth /> -->
     <v-card-text>
+      <v-row>
+        <v-col>
+          <TotalWealth />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="12" md="6" v-for="account in accounts" :key="account.id">
           <AccountPreview :account="account" />
@@ -18,13 +22,14 @@
 
 <script>
 import AccountPreview from "../components/AccountPreview.vue"
-// import TotalWealth from "../components/TotalWealth.vue"
+import TotalWealth from "../components/TotalWealth.vue"
 import CreateAccountDialog from "../components/CreateAccountDialog.vue"
 export default {
   name: "BalanceHistory",
   components: {
     AccountPreview,
     CreateAccountDialog,
+    TotalWealth,
   },
   data() {
     return {

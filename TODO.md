@@ -1,6 +1,6 @@
 - [ ] ~~Account transactions as view with query parameters~~
-- [ ] Edit account name and currency
+- [x] Edit account name and currency
 - [x] Transactions: Stop querying all at once
-- [ ] Transactions view regardless of accounts
+- [x] Transactions view regardless of accounts
 - [ ] Transaction search server-side
-- [ ] transaction category filter server-side
+- [x] transaction category filter server-side
