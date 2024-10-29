@@ -6,11 +6,10 @@
       <CreateAccountDialog />
     </v-toolbar>
     <v-card-text>
-      <v-row>
-        <v-col>
-          <TotalWealth />
-        </v-col>
-      </v-row>
+      <h3>Summary</h3>
+
+      <TotalWealth />
+
       <v-row>
         <v-col cols="12" md="6" v-for="account in accounts" :key="account.id">
           <AccountPreview :account="account" />

@@ -1,23 +1,19 @@
 <template>
-  <v-card outlined>
-    <v-card-title> Summary </v-card-title>
-    <v-card-text>
-      <v-row v-if="loading">
-        <v-col>
-          <v-progress-linear indeterminate />
-        </v-col>
-      </v-row>
-
-      <v-row v-else align="center">
-        <v-col>
-          Total assets: {{ currency }} {{ parseFloat(total).toLocaleString() }}
-        </v-col>
-        <v-col cols="3">
-          <v-select :items="currencies" v-model="currency" label="Currency" />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+  <div>
+    <v-row v-if="loading">
+      <v-col>
+        <v-progress-linear indeterminate />
+      </v-col>
+    </v-row>
+    <v-row v-else align="center">
+      <v-col cols="auto">
+        Total assets: {{ currency }} {{ parseFloat(total).toLocaleString() }}
+      </v-col>
+      <v-col cols="3">
+        <v-select :items="currencies" v-model="currency" label="Currency" />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
