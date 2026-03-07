@@ -15,9 +15,9 @@ spec:
       containers:
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
-          envFrom:
-            - secretRef:
-                name: finances-front-env-from-vault
+          # envFrom:
+          #   - secretRef:
+          #       name: finances-front-env-from-vault
           env:
             - name: VUE_APP_FINANCES_API_URL
               value: https://api.finances.home.maximemoreillon.com
