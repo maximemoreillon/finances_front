@@ -15,9 +15,6 @@ spec:
       containers:
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
-          # envFrom:
-          #   - secretRef:
-          #       name: finances-front-env-from-vault
           env:
             - name: VUE_APP_FINANCES_API_URL
               value: https://api.finances.home.maximemoreillon.com
@@ -34,58 +31,3 @@ spec:
     app.kubernetes.io/name: ${APPLICATION_NAME}
   ports:
     - port: 80
----
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: ${APPLICATION_NAME}
-#   annotations:
-#     cert-manager.io/cluster-issuer: letsencrypt
-
-#     gethomepage.dev/enabled: "true"
-#     gethomepage.dev/name: Finances
-#     gethomepage.dev/icon: mdi-finance
-#     gethomepage.dev/group: 1P
-
-# spec:
-#   tls:
-#     - hosts:
-#         - ${K8S_INGRESS_HOST}
-#       secretName: ${APPLICATION_NAME}-tls
-#   rules:
-#     - host: ${K8S_INGRESS_HOST}
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: ${APPLICATION_NAME}
-#                 port:
-#                   number: 80
----
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: finances-front-env
-spec:
-  refreshInterval: 5m0s
-  secretStoreRef:
-    name: vault
-    kind: ClusterSecretStore
-  target:
-    name: finances-front-env-from-vault
-    creationPolicy: Orphan
-  data:
-    - secretKey: VUE_APP_OIDC_CLIENT_ID
-      remoteRef:
-        key: keycloak-main-client
-        property: CLIENT_ID
-    - secretKey: VUE_APP_OIDC_CLIENT_SECRET
-      remoteRef:
-        key: keycloak-main-client
-        property: CLIENT_SECRET
-    - secretKey: VUE_APP_OIDC_AUTHORITY
-      remoteRef:
-        key: keycloak-main-client
-        property: ISSUER
