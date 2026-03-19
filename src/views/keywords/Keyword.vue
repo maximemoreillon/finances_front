@@ -14,90 +14,83 @@
       >
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-
       <v-toolbar-title>Keyword</v-toolbar-title>
       <v-spacer />
-      <v-btn icon @click="updateKeyword()" :loading="saving">
+      <v-btn icon @click="updateKeyword" :loading="saving">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
-      <v-btn icon @click="deleteKeyword()" color="#c00000" :loading="deleting">
+      <v-btn icon @click="deleteKeyword" color="#c00000" :loading="deleting">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-toolbar>
 
-    <v-card-text>
-      <template v-if="keyword">
-        <v-row>
-          <v-col>
-            <v-text-field v-model="keyword.word" label="Word"></v-text-field>
-          </v-col>
-        </v-row>
-      </template>
+    <v-card-text v-if="keyword">
+      <v-row>
+        <v-col>
+          <v-text-field v-model="keyword.word" label="Word" />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
 
-<script>
-export default {
-  name: "Keyword",
-  components: {},
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import type { Keyword } from "@/types"
+import axios from "@/axios"
 
-  data() {
-    return {
-      loading: false,
-      deleting: false,
-      saving: false,
-      keyword: null,
-    }
-  },
-  mounted() {
-    this.getKeyword()
-  },
-  methods: {
-    getKeyword() {
-      this.axios
-        .get(`/keywords/${this.keywordId}`)
-        .then((response) => {
-          this.keyword = response.data
-        })
-        .catch((error) => {
-          console.error(error)
-          alert("Error")
-        })
-    },
+const route = useRoute()
+const router = useRouter()
 
-    async updateKeyword() {
-      this.saving = true
-      try {
-        await this.axios.put(`/keywords/${this.keywordId}`, this.keyword)
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.saving = false
-      }
-    },
-    async deleteKeyword() {
-      if (!confirm("Delete keyword?")) return
-      this.deleting = true
-      try {
-        await this.axios.delete(`/keywords/${this.keywordId}`)
-        this.$router.push({
-          name: "transaction_category",
-          params: { categoryId: this.keyword.category_id },
-        })
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.deleting = false
-      }
-    },
-  },
-  computed: {
-    keywordId() {
-      return this.$route.params.keywordId
-    },
-  },
+const keyword = ref<Keyword | null>(null)
+const loading = ref(false)
+const saving = ref(false)
+const deleting = ref(false)
+
+const keywordId = computed(() => route.params.keywordId as string)
+
+async function getKeyword() {
+  loading.value = true
+  try {
+    const { data } = await axios.get<Keyword>(`/keywords/${keywordId.value}`)
+    keyword.value = data
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    loading.value = false
+  }
 }
+
+async function updateKeyword() {
+  saving.value = true
+  try {
+    await axios.put(`/keywords/${keywordId.value}`, keyword.value)
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    saving.value = false
+  }
+}
+
+async function deleteKeyword() {
+  if (!confirm("Delete keyword?")) return
+  deleting.value = true
+  try {
+    await axios.delete(`/keywords/${keywordId.value}`)
+    router.push({
+      name: "transaction_category",
+      params: { categoryId: keyword.value!.category_id },
+    })
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    deleting.value = false
+  }
+}
+
+onMounted(getKeyword)
 </script>

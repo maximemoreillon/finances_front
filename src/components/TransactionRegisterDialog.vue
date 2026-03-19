@@ -1,22 +1,18 @@
 <template>
   <v-dialog v-model="dialog" max-width="30rem">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" color="primary">
+    <template #activator="{ props }">
+      <v-btn v-bind="props" color="primary">
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title> Register transaction </v-card-title>
-
+      <v-card-title>Register transaction</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="registerTransaction">
           <v-row>
             <v-col>
-              <v-text-field
-                v-model="newTransaction.description"
-                label="Description"
-              />
+              <v-text-field v-model="newTransaction.description" label="Description" />
             </v-col>
           </v-row>
           <v-row>
@@ -28,22 +24,17 @@
               />
             </v-col>
           </v-row>
-          <v-row justify="center">
-            <v-col cols="auto">
-              <v-date-picker
-                width="auto"
-                v-model="newTransaction.time"
-              ></v-date-picker>
+          <v-row>
+            <v-col>
+              <v-text-field v-model="newTransaction.time" label="Date" type="date" />
             </v-col>
           </v-row>
           <v-row justify="end">
             <v-col cols="auto">
-              <v-btn @click="dialog = false" text> cancel </v-btn>
+              <v-btn @click="dialog = false" variant="text">Cancel</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn type="submit" :loading="registering" color="primary">
-                Save
-              </v-btn>
+              <v-btn type="submit" :loading="registering" color="primary">Save</v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -52,44 +43,32 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: "RegisterTransaction",
-  props: {
-    accountId: String,
-  },
-  data() {
-    return {
-      dialog: false,
-      registering: false,
-      newTransaction: {
-        description: "",
-        time: undefined,
-        amount: 0,
-      },
-    }
-  },
-  mounted() {},
+<script setup lang="ts">
+import { ref } from "vue"
+import axios from "@/axios"
 
-  methods: {
-    async registerTransaction() {
-      this.registering = true
-      try {
-        const url = `/accounts/${this.accountId}/transactions/`
-        const { data } = await this.axios.post(url, {
-          ...this.newTransaction,
-        })
-        if (data.id) this.$emit("transactionRegistered", data)
-        this.dialog = false
-        this.categoryId = null
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.registering = false
-      }
-    },
-  },
-  computed: {},
+const props = defineProps<{ accountId: string }>()
+const emit = defineEmits<{ transactionRegistered: [data: unknown] }>()
+
+const dialog = ref(false)
+const registering = ref(false)
+const newTransaction = ref({ description: "", time: "", amount: 0 })
+
+async function registerTransaction() {
+  registering.value = true
+  try {
+    const { data } = await axios.post(
+      `/accounts/${props.accountId}/transactions/`,
+      newTransaction.value
+    )
+    emit("transactionRegistered", data)
+    dialog.value = false
+    newTransaction.value = { description: "", time: "", amount: 0 }
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    registering.value = false
+  }
 }
 </script>

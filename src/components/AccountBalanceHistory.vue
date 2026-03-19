@@ -4,26 +4,26 @@
       <v-toolbar-title>Balance</v-toolbar-title>
       <v-spacer />
       <BalanceRegisterDialog
-        :accountId="String(accountId)"
-        @balanceRegistered="get_balance_history()"
-        :currecy="currency"
+        :accountId="accountId"
+        :currency="currency"
+        @balanceRegistered="getBalanceHistory"
       />
     </v-toolbar>
 
     <v-card-text>
       <v-row align="center" dense>
         <v-col cols="auto">
-          <template v-if="current_balance">
+          <template v-if="currentBalance">
             <v-row dense>
-              <v-col>
-                {{ currency }}
-                {{ parseFloat(current_balance).toLocaleString() }}
-              </v-col>
+              <v-col
+                >{{ currency }}
+                {{ parseFloat(String(currentBalance)).toLocaleString() }}</v-col
+              >
             </v-row>
             <v-row dense>
-              <v-col class="text-caption">
-                Last retrieved on {{ last_retrieved_formatted }}
-              </v-col>
+              <v-col class="text-caption"
+                >Last retrieved on {{ lastRetrievedFormatted }}</v-col
+              >
             </v-row>
           </template>
         </v-col>
@@ -33,8 +33,8 @@
             v-for="(button, index) in graphTimeRanges"
             :key="index"
             class="mr-2"
-            x-small
-            outlined
+            size="x-small"
+            variant="outlined"
             :color="rangeStart === button.value ? 'primary' : undefined"
             @click="rangeStart = button.value"
           >
@@ -44,7 +44,6 @@
       </v-row>
       <apexchart
         v-if="series.length"
-        ref="chart"
         width="100%"
         height="300px"
         :options="options"
@@ -55,118 +54,82 @@
   </v-card>
 </template>
 
-<script>
-import BalanceRegisterDialog from "./BalanceRegisterDialog.vue"
-import { graphTimeRanges } from "../constants"
-export default {
-  name: "AccountBalanceHistory",
-  components: {
-    BalanceRegisterDialog,
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useTheme } from "vuetify";
+import axios from "@/axios";
+import { graphTimeRanges } from "@/constants";
+import BalanceRegisterDialog from "./BalanceRegisterDialog.vue";
+
+defineProps<{ currency?: string }>();
+
+const route = useRoute();
+const theme = useTheme();
+
+const loading = ref(false);
+const currentBalance = ref(0);
+const lastRetrieved = ref<string | null>(null);
+const rangeStart = ref(graphTimeRanges[2].value);
+const series = ref<{ name: string; data: [number, number][] }[]>([]);
+
+const accountId = computed(() => route.params.accountId as string);
+const isDark = computed(() => theme.global.current.value.dark);
+
+const lastRetrievedFormatted = computed(() => {
+  if (!lastRetrieved.value) return "";
+  const date = new Date(lastRetrieved.value);
+  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+});
+
+const options = computed(() => ({
+  theme: { mode: isDark.value ? "dark" : "light" },
+  chart: {
+    id: "area-datetime",
+    type: "area",
+    zoom: { autoScaleYaxis: true },
   },
-  props: {
-    currency: String,
-  },
-  data() {
-    return {
-      loading: false,
-      current_balance: 0,
-      last_retrieved: null,
-      rangeStart: graphTimeRanges[2].value,
-      graphTimeRanges,
-      series: [],
+  stroke: { curve: "straight" },
+  colors: ["#c00000"],
+  xaxis: { type: "datetime" },
+  dataLabels: { enabled: false },
+}));
+
+async function getBalanceHistory() {
+  loading.value = true;
+  try {
+    const { data } = await axios.get<{
+      records: { balance: number; time: string }[];
+    }>(`/accounts/${accountId.value}/balance`, {
+      params: { from: rangeStart.value },
+    });
+    const { records } = data;
+    if (!records.length) {
+      series.value = [];
+      currentBalance.value = 0;
+      return;
     }
-  },
-  watch: {
-    accountId() {
-      this.get_balance_history()
-    },
-    rangeStart() {
-      this.get_balance_history()
-    },
-  },
-  mounted() {
-    this.get_balance_history()
-  },
-  methods: {
-    get_balance_history() {
-      this.loading = true
-
-      const url = `/accounts/${this.accountId}/balance`
-      const params = { from: this.rangeStart }
-
-      this.axios
-        .get(url, { params })
-        .then(({ data }) => {
-          const { records } = data
-          if (!records.length) {
-            this.series = []
-            this.current_balance = 0
-            return
-          }
-
-          const last_item = records.at(0)
-
-          this.current_balance = last_item.balance
-          this.last_retrieved = last_item.time
-
-          const chart_data = records.map(({ balance, time }) => [
-            new Date(time).getTime(),
-            Math.round(balance),
-          ])
-
-          this.series = [{ name: "balance", data: chart_data }]
-        })
-        .catch((error) => {
-          console.error(error)
-          alert(`Failed to load data`)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-  },
-  computed: {
-    last_retrieved_formatted() {
-      const date = new Date(this.last_retrieved)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1
-      const day = date.getDate()
-      return `${year}/${month}/${day}`
-    },
-    accountId() {
-      return this.$route.params.accountId
-    },
-    dark() {
-      return this.$vuetify.theme.dark
-    },
-    options() {
-      return {
-        theme: {
-          mode: this.dark ? "dark" : "light",
-        },
-        background: "#c00",
-
-        chart: {
-          id: "area-datetime",
-          type: "area",
-          zoom: {
-            autoScaleYaxis: true,
-          },
-        },
-        stroke: {
-          curve: "straight",
-        },
-
-        colors: ["#c00000"],
-
-        xaxis: {
-          type: "datetime",
-        },
-        dataLabels: {
-          enabled: false,
-        },
-      }
-    },
-  },
+    const last = records[0];
+    currentBalance.value = last.balance;
+    lastRetrieved.value = last.time;
+    series.value = [
+      {
+        name: "balance",
+        data: records.map(({ balance, time }) => [
+          new Date(time).getTime(),
+          Math.round(balance),
+        ]),
+      },
+    ];
+  } catch (error) {
+    console.error(error);
+    alert("Failed to load data");
+  } finally {
+    loading.value = false;
+  }
 }
+
+watch(accountId, getBalanceHistory);
+watch(rangeStart, getBalanceHistory);
+onMounted(getBalanceHistory);
 </script>

@@ -2,110 +2,74 @@
   <apexchart height="300" :options="options" :series="series" />
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed } from "vue"
+import { useTheme } from "vuetify"
+import type { Transaction } from "@/types"
 import { colors } from "@/constants"
+import { useQueryParams } from "@/composables/useQueryParams"
 
-import queryParamsUtils from "@/mixins/queryParamsUtils"
-import dateUtils from "@/mixins/dateUtils"
+const props = defineProps<{ transactions: Transaction[] }>()
 
-export default {
-  name: "BreakdownChart",
-  components: {},
-  mixins: [queryParamsUtils, dateUtils],
+const theme = useTheme()
+const { category, setQueryParam } = useQueryParams()
 
-  props: {
-    transactions: Array,
-  },
-  data() {
-    return {
-      // transactions: [],
-    }
-  },
-  watch: {},
-  mounted() {},
-  methods: {},
-  computed: {
-    dark() {
-      return this.$vuetify.theme.dark
-    },
-    series() {
-      return this.generatedGraphData.map((x) => x.amount)
-    },
-    options() {
-      return {
-        chart: {
-          type: "donut",
-          events: {
-            dataPointSelection: (_, __, config) => {
-              const categoryId =
-                this.generatedGraphData[config.dataPointIndex].id
+const isDark = computed(() => theme.global.current.value.dark)
 
-              if (categoryId === undefined) return
-              if (categoryId === this.category)
-                this.setQueryParam("category", null)
-              else this.setQueryParam("category", categoryId)
-            },
-          },
-        },
-        theme: {
-          mode: this.dark ? "dark" : "light",
-        },
-        colors,
-        labels: this.generatedGraphData.map(
-          (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
-        ),
-      }
-    },
-
-    explicitlyCategorizedExpenses() {
-      return this.transactions.map((expense) => {
-        const categories = expense.categories?.length
-          ? expense.categories
-          : [{ name: expense.description, id: null }]
-
-        return {
-          ...expense,
-          categories,
-        }
-      })
-    },
-
-    generatedGraphData() {
-      const max_categories = 8
-      return (
-        this.explicitlyCategorizedExpenses
-          .reduce((acc, expense) => {
-            for (const expenseCategory of expense.categories) {
-              const entry = acc.find(
-                (entry) => entry.label === expenseCategory.name
-              )
-              const amount = Math.abs(expense.amount)
-
-              if (!entry)
-                acc.push({
-                  label: expenseCategory.name,
-                  amount,
-                  id: expenseCategory.id,
-                })
-              else entry.amount += amount
-            }
-
-            return acc
-          }, [])
-          // Further reduce to remove categories that are too small
-          .sort((a, b) => b.amount - a.amount)
-          // Remove categories that are too small
-          .reduce((acc, item, index) => {
-            if (index < max_categories) acc.push(item)
-            else {
-              if (!acc[max_categories])
-                acc.push({ label: "Other", amount: item.amount })
-              else acc[max_categories].amount += item.amount
-            }
-            return acc
-          }, [])
-      )
-    },
-  },
+interface GraphEntry {
+  label: string
+  amount: number
+  id?: number
 }
+
+const explicitlyCategorized = computed(() =>
+  props.transactions.map((t) => ({
+    ...t,
+    categories: t.categories?.length ? t.categories : [{ name: t.description, id: undefined }],
+  }))
+)
+
+const generatedGraphData = computed((): GraphEntry[] => {
+  const max = 8
+  return explicitlyCategorized.value
+    .reduce<GraphEntry[]>((acc, t) => {
+      for (const cat of t.categories) {
+        const entry = acc.find((e) => e.label === cat.name)
+        const amount = Math.abs(t.amount)
+        if (!entry) acc.push({ label: cat.name, amount, id: cat.id })
+        else entry.amount += amount
+      }
+      return acc
+    }, [])
+    .sort((a, b) => b.amount - a.amount)
+    .reduce<GraphEntry[]>((acc, item, index) => {
+      if (index < max) acc.push(item)
+      else {
+        if (!acc[max]) acc.push({ label: "Other", amount: item.amount })
+        else acc[max].amount += item.amount
+      }
+      return acc
+    }, [])
+})
+
+const series = computed(() => generatedGraphData.value.map((x) => x.amount))
+
+const options = computed(() => ({
+  chart: {
+    type: "donut",
+    events: {
+      dataPointSelection: (_: unknown, __: unknown, config: { dataPointIndex: number }) => {
+        const entry = generatedGraphData.value[config.dataPointIndex]
+        if (entry.id === undefined) return
+        if (String(entry.id) === category.value) setQueryParam("category", null)
+        else setQueryParam("category", entry.id)
+      },
+    },
+  },
+  theme: { mode: isDark.value ? "dark" : "light" },
+  colors,
+  labels: generatedGraphData.value.map(
+    (x) => `${x.label}: ${new Intl.NumberFormat().format(x.amount)}`
+  ),
+}))
 </script>

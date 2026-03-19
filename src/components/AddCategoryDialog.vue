@@ -1,15 +1,14 @@
 <template>
   <v-dialog v-model="dialog" width="50rem">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" color="primary">
-        <v-icon left>mdi-plus</v-icon>
-        <span>Add</span>
+    <template #activator="{ props }">
+      <v-btn v-bind="props" color="primary">
+        <v-icon start>mdi-plus</v-icon>
+        Add
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title> Add keyword </v-card-title>
-
+      <v-card-title>Add category</v-card-title>
       <v-form @submit.prevent="addCategory">
         <v-card-text>
           <v-row align="center">
@@ -17,7 +16,7 @@
               <v-select
                 :items="categories"
                 v-model="categoryId"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Category"
               />
@@ -25,12 +24,10 @@
           </v-row>
           <v-row justify="end">
             <v-col cols="auto">
-              <v-btn @click="dialog = false" text> cancel </v-btn>
+              <v-btn @click="dialog = false" variant="text">Cancel</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn type="submit" :loading="adding" color="primary">
-                Save
-              </v-btn>
+              <v-btn type="submit" :loading="adding" color="primary">Save</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -39,48 +36,41 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: "AddCategory",
-  props: {
-    accountId: String,
-    transactionId: String,
-  },
-  data() {
-    return {
-      dialog: false,
-      categoryId: null,
-      adding: false,
-      categories: [],
-    }
-  },
-  mounted() {
-    this.getCategories()
-  },
+<script setup lang="ts">
+import { ref, onMounted } from "vue"
+import type { Category } from "@/types"
+import axios from "@/axios"
 
-  methods: {
-    async getCategories() {
-      const { data } = await this.axios.get("/categories")
-      this.categories = data.categories
-    },
-    async addCategory() {
-      this.adding = true
-      try {
-        const url = `/accounts/${this.accountId}/transactions/${this.transactionId}/categories`
-        const { data } = await this.axios.post(url, {
-          category_id: this.categoryId,
-        })
-        this.$emit("categoryAdded", data)
-        this.dialog = false
-        this.categoryId = null
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.adding = false
-      }
-    },
-  },
-  computed: {},
+const props = defineProps<{ accountId: string; transactionId: string }>()
+const emit = defineEmits<{ categoryAdded: [data: unknown] }>()
+
+const dialog = ref(false)
+const categoryId = ref<number | null>(null)
+const adding = ref(false)
+const categories = ref<Category[]>([])
+
+async function getCategories() {
+  const { data } = await axios.get<{ categories: Category[] }>("/categories")
+  categories.value = data.categories
 }
+
+async function addCategory() {
+  adding.value = true
+  try {
+    const { data } = await axios.post(
+      `/accounts/${props.accountId}/transactions/${props.transactionId}/categories`,
+      { category_id: categoryId.value }
+    )
+    emit("categoryAdded", data)
+    dialog.value = false
+    categoryId.value = null
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    adding.value = false
+  }
+}
+
+onMounted(getCategories)
 </script>

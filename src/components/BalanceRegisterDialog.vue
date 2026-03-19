@@ -1,14 +1,13 @@
 <template>
   <v-dialog v-model="dialog" width="30rem">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" color="primary">
+    <template #activator="{ props }">
+      <v-btn v-bind="props" color="primary">
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title> Register balance </v-card-title>
-
+      <v-card-title>Register balance</v-card-title>
       <v-form @submit.prevent="registerBalance">
         <v-card-text>
           <v-row justify="center">
@@ -20,16 +19,13 @@
                 :prefix="currency"
               />
             </v-col>
-            <v-col cols="auto"> </v-col>
           </v-row>
           <v-row justify="end">
             <v-col cols="auto">
-              <v-btn @click="dialog = false" text> cancel </v-btn>
+              <v-btn @click="dialog = false" variant="text">Cancel</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn type="submit" :loading="registering" color="primary">
-                Save
-              </v-btn>
+              <v-btn type="submit" :loading="registering" color="primary">Save</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -38,41 +34,30 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: "RegisterTransaction",
-  props: {
-    accountId: String,
-    currency: String,
-  },
-  data() {
-    return {
-      dialog: false,
-      registering: false,
-      balance: 0,
-    }
-  },
-  mounted() {},
+<script setup lang="ts">
+import { ref } from "vue"
+import axios from "@/axios"
 
-  methods: {
-    async registerBalance() {
-      this.registering = true
-      try {
-        const url = `/accounts/${this.accountId}/balance/`
-        const { data } = await this.axios.post(url, {
-          balance: this.balance,
-        })
-        this.$emit("balanceRegistered", data)
-        this.dialog = false
-        this.categoryId = null
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.registering = false
-      }
-    },
-  },
-  computed: {},
+const props = defineProps<{ accountId: string; currency?: string }>()
+const emit = defineEmits<{ balanceRegistered: [data: unknown] }>()
+
+const dialog = ref(false)
+const registering = ref(false)
+const balance = ref(0)
+
+async function registerBalance() {
+  registering.value = true
+  try {
+    const { data } = await axios.post(`/accounts/${props.accountId}/balance/`, {
+      balance: balance.value,
+    })
+    emit("balanceRegistered", data)
+    dialog.value = false
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    registering.value = false
+  }
 }
 </script>

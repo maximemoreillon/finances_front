@@ -1,20 +1,15 @@
 <template>
   <v-card :loading="loading" max-width="40rem" class="mx-auto">
     <v-toolbar flat>
-      <v-btn icon @click="$router.back()" exact>
+      <v-btn icon @click="router.back()">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <v-toolbar-title>Transaction</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon @click="update_transaction()" :loading="saving">
+      <v-spacer />
+      <v-btn icon @click="updateTransaction" :loading="saving">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
-      <v-btn
-        color="#c00000"
-        icon
-        @click="delete_transaction()"
-        :loading="deleting"
-      >
+      <v-btn color="#c00000" icon @click="deleteTransaction" :loading="deleting">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-toolbar>
@@ -37,7 +32,7 @@
         <v-col>
           <v-text-field
             label="Date"
-            :value="new Date(transaction.time).toLocaleDateString()"
+            :model-value="new Date(transaction.time).toLocaleDateString()"
             readonly
           />
         </v-col>
@@ -52,50 +47,42 @@
             }"
           >
             {{
-              accounts.find((a) => a.id === transaction.account_id)?.name ||
+              accounts.find((a) => a.id === transaction!.account_id)?.name ||
               transaction.account_id
             }}
           </router-link>
         </v-col>
       </v-row>
 
-      <!-- Categories -->
-      <!-- TODO: external component -->
       <v-row align="center">
         <v-col>
-          <v-card outlined>
+          <v-card variant="outlined">
             <v-toolbar flat>
               <v-toolbar-title>Categories</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn
-                :to="{ name: 'transaction_categories' }"
-                outlined
-                class="mr-2"
-              >
+              <v-spacer />
+              <v-btn :to="{ name: 'transaction_categories' }" variant="outlined" class="mr-2">
                 Manage
               </v-btn>
-              <!-- TODO: better handling of the categoryAdded event-->
-
               <AddCategoryDialog
                 :transactionId="String(transactionId)"
-                :accountId="String(accountId)"
-                @categoryAdded="get_transaction()"
+                :accountId="String(transaction.account_id)"
+                @categoryAdded="getTransaction"
               />
             </v-toolbar>
             <v-card-text>
               <v-chip
-                cols="auto"
                 v-for="category of transaction.categories"
                 :key="category.id"
                 class="mb-2 mr-2"
-                close
+                closable
                 :to="{
                   name: 'transaction_category',
                   params: { categoryId: category.id },
                 }"
                 @click:close="removeCategory(category.id)"
-                >{{ category.name }}</v-chip
               >
+                {{ category.name }}
+              </v-chip>
             </v-card-text>
           </v-card>
         </v-col>
@@ -104,110 +91,76 @@
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import type { Account, Transaction } from "@/types"
+import axios from "@/axios"
 import AddCategoryDialog from "@/components/AddCategoryDialog.vue"
-export default {
-  name: "Transaction",
-  components: {
-    AddCategoryDialog,
-  },
-  data() {
-    return {
-      transaction: null,
-      loading: false,
-      saving: false,
-      deleting: false,
-      existingCategories: [],
-      accounts: [],
-    }
-  },
-  mounted() {
-    this.get_transaction()
-    this.get_transaction_categories()
-    this.getAccounts()
 
-    // TODO: get accounts
-  },
-  methods: {
-    async getAccounts() {
-      const { data } = await this.axios.get(`/accounts`)
-      this.accounts = data.accounts
-    },
-    async get_transaction_categories() {
-      const { data } = await this.axios.get(`/categories`)
-      this.existingCategories = data.categories
-    },
-    get_transaction() {
-      this.transaction = null
-      this.loading = true
+const route = useRoute()
+const router = useRouter()
 
-      const url = `/transactions/${this.transactionId}`
-      this.axios
-        .get(url)
-        .then(({ data }) => {
-          this.transaction = data
-        })
-        .catch((error) => console.log(error))
-        .finally(() => {
-          this.loading = false
-        })
-    },
+const transaction = ref<Transaction | null>(null)
+const loading = ref(false)
+const saving = ref(false)
+const deleting = ref(false)
+const accounts = ref<Account[]>([])
 
-    update_transaction() {
-      const url = `/transactions/${this.transactionId}`
-      this.saving = true
-      this.axios
-        .put(url, this.transaction)
-        // .then(() => {})
-        .catch((error) => console.log(error))
-        .finally(() => {
-          this.saving = false
-        })
-    },
+const transactionId = computed(() => route.params.transactionId as string)
 
-    delete_transaction() {
-      if (!confirm("Delete transaction? This action is irreversible")) return
-      this.deleting = true
-      const url = `/transactions/${this.transactionId}`
-      this.axios
-        .delete(url)
-        .then(() => {
-          this.$router.go(-1)
-        })
-        .catch((error) => console.log(error))
-        .finally(() => {
-          this.deleting = false
-        })
-    },
-    async removeCategory(categoryId) {
-      if (!confirm("Remove category?")) return
-      const url = `/transactions/${this.transactionId}/categories/${categoryId}`
-      await this.axios.delete(url)
-
-      const foundIndex = this.transaction.categories.findIndex(
-        (c) => c.id === categoryId
-      )
-      if (foundIndex > -1) this.transaction.categories.splice(foundIndex, 1)
-    },
-  },
-  computed: {
-    foundAutoCategory() {
-      return "WIP"
-      // return this.existingCategories.find(({ keywords }) =>
-      //   keywords.find((k) => this.transaction.description.includes(k))
-      // )?.label
-    },
-    categorySelectOptions() {
-      return [{ label: "None", _id: null }, ...this.existingCategories]
-    },
-    accountId() {
-      return this.$route.params.accountId
-    },
-    transactionId() {
-      return this.$route.params.transactionId
-    },
-  },
+async function getAccounts() {
+  const { data } = await axios.get<{ accounts: Account[] }>("/accounts")
+  accounts.value = data.accounts
 }
-</script>
 
-<style scoped></style>
+async function getTransaction() {
+  transaction.value = null
+  loading.value = true
+  try {
+    const { data } = await axios.get<Transaction>(`/transactions/${transactionId.value}`)
+    transaction.value = data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function updateTransaction() {
+  saving.value = true
+  try {
+    await axios.put(`/transactions/${transactionId.value}`, transaction.value)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function deleteTransaction() {
+  if (!confirm("Delete transaction? This action is irreversible")) return
+  deleting.value = true
+  try {
+    await axios.delete(`/transactions/${transactionId.value}`)
+    router.go(-1)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    deleting.value = false
+  }
+}
+
+async function removeCategory(categoryId: number) {
+  if (!confirm("Remove category?")) return
+  await axios.delete(`/transactions/${transactionId.value}/categories/${categoryId}`)
+  if (!transaction.value) return
+  const idx = transaction.value.categories.findIndex((c) => c.id === categoryId)
+  if (idx > -1) transaction.value.categories.splice(idx, 1)
+}
+
+onMounted(() => {
+  getTransaction()
+  getAccounts()
+})
+</script>

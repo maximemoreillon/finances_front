@@ -6,16 +6,14 @@
           <v-toolbar flat>
             <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
             <v-progress-circular indeterminate v-else />
-
             <v-spacer />
-            <v-btn @click="updateAccount()" icon>
+            <v-btn @click="updateAccount" icon>
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
-            <v-btn @click="deleteAccount()" color="#c00000" icon>
+            <v-btn @click="deleteAccount" color="#c00000" icon>
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-toolbar>
-
           <v-card-text v-if="account">
             <v-row>
               <v-col>
@@ -35,10 +33,9 @@
         <AccountBalanceHistory :currency="account?.currency" />
       </v-col>
     </v-row>
-
     <v-row>
       <v-col>
-        <AccountMonthlyExpensesTotal />
+        <TransactionsBarChart />
       </v-col>
     </v-row>
     <v-row>
@@ -48,86 +45,69 @@
     </v-row>
     <v-row>
       <v-col>
-        <AccountTransactionsTable />
+        <TransactionsTable />
       </v-col>
     </v-row>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import type { Account } from "@/types"
+import axios from "@/axios"
 import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue"
-import AccountTransactionsTable from "@/components/TransactionsTable.vue"
-import AccountMonthlyExpensesTotal from "@/components/TransactionsBarChart.vue"
+import TransactionsTable from "@/components/TransactionsTable.vue"
+import TransactionsBarChart from "@/components/TransactionsBarChart.vue"
 import ExpensesBreakdown from "@/components/ExpensesBreakdown.vue"
-import queryParamsUtils from "../mixins/queryParamsUtils"
-export default {
-  name: "Account",
-  components: {
-    AccountBalanceHistory,
-    AccountTransactionsTable,
-    AccountMonthlyExpensesTotal,
-    ExpensesBreakdown,
-  },
-  mixins: [queryParamsUtils],
-  data() {
-    return {
-      account: null,
-      deleting: false,
-      loading: false,
-      saving: false,
-    }
-  },
-  watch: {
-    accountId() {
-      this.getAccountInfo()
-    },
-  },
 
-  mounted() {
-    this.getAccountInfo()
-  },
-  methods: {
-    async getAccountInfo() {
-      this.loading = false
-      try {
-        const { data } = await this.axios.get(`/accounts/${this.accountId}`)
-        this.account = data
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.loading = false
-      }
-    },
-    async updateAccount() {
-      this.saving = false
-      try {
-        await this.axios.put(`/accounts/${this.accountId}`, this.account)
-      } catch (error) {
-        alert("Update failed")
-        console.error(error)
-      } finally {
-        this.saving = false
-      }
-    },
-    async deleteAccount() {
-      if (!confirm(`Delete account?`)) return
-      this.deleting = false
-      try {
-        await this.axios.delete(`/accounts/${this.accountId}`)
-        this.$router.push("/accounts")
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.deleting = false
-      }
-    },
-  },
-  computed: {
-    accountId() {
-      return this.$route.params.accountId
-    },
-  },
+const route = useRoute()
+const router = useRouter()
+
+const account = ref<Account | null>(null)
+const loading = ref(false)
+const saving = ref(false)
+const deleting = ref(false)
+
+const accountId = computed(() => route.params.accountId as string)
+
+async function getAccountInfo() {
+  loading.value = true
+  try {
+    const { data } = await axios.get<Account>(`/accounts/${accountId.value}`)
+    account.value = data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 }
-</script>
 
-<style scoped></style>
+async function updateAccount() {
+  saving.value = true
+  try {
+    await axios.put(`/accounts/${accountId.value}`, account.value)
+  } catch (error) {
+    alert("Update failed")
+    console.error(error)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function deleteAccount() {
+  if (!confirm("Delete account?")) return
+  deleting.value = true
+  try {
+    await axios.delete(`/accounts/${accountId.value}`)
+    router.push("/accounts")
+  } catch (error) {
+    console.error(error)
+  } finally {
+    deleting.value = false
+  }
+}
+
+watch(accountId, getAccountInfo)
+onMounted(getAccountInfo)
+</script>

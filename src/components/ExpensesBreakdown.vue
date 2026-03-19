@@ -1,9 +1,9 @@
 <template>
   <v-card :loading="loading">
     <v-toolbar flat>
-      <v-toolbar-title>Transactions breakdown </v-toolbar-title>
+      <v-toolbar-title>Transactions breakdown</v-toolbar-title>
       <v-spacer />
-      <v-btn :to="{ name: 'transaction_categories' }" outlined>
+      <v-btn :to="{ name: 'transaction_categories' }" variant="outlined">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
     </v-toolbar>
@@ -17,7 +17,7 @@
           <MonthSelect />
         </v-col>
         <v-spacer />
-        <v-col cols="auto"> {{ transactions.length }} transactions </v-col>
+        <v-col cols="auto">{{ transactions.length }} transactions</v-col>
       </v-row>
       <v-row v-if="transactions.length">
         <v-col cols="12" md="6">
@@ -29,101 +29,51 @@
           <BreakdownChart :transactions="expenses" />
         </v-col>
       </v-row>
-
       <div v-else-if="!loading" class="text-center">No Data available</div>
     </v-card-text>
   </v-card>
 </template>
 
-<script>
-import YearSelect from "@/components/YearSelect.vue"
-import MonthSelect from "@/components/MonthSelect.vue"
-import queryParamsUtils from "@/mixins/queryParamsUtils"
-import dateUtils from "@/mixins/dateUtils"
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue"
+import { useRoute } from "vue-router"
+import type { Transaction } from "@/types"
+import axios from "@/axios"
+import { useQueryParams } from "@/composables/useQueryParams"
+import { useDateRange } from "@/composables/useDateRange"
+import YearSelect from "./YearSelect.vue"
+import MonthSelect from "./MonthSelect.vue"
 import BreakdownChart from "./BreakdownChart.vue"
-export default {
-  name: "AccountExpenseBreakdown",
-  components: { YearSelect, MonthSelect, BreakdownChart },
-  mixins: [queryParamsUtils, dateUtils],
 
-  props: {},
-  data() {
-    return {
-      loading: false,
-      transactions: [],
-      expense_categories: [],
-    }
-  },
-  watch: {
-    accountId() {
-      this.get_transactions()
-    },
-    year() {
-      this.get_transactions()
-    },
-    month() {
-      this.get_transactions()
-    },
-  },
-  mounted() {
-    this.get_transaction_categories()
-  },
-  methods: {
-    get_transaction_categories() {
-      this.loading = true
-      const url = `/categories`
-      this.axios
-        .get(url)
-        .then(({ data }) => {
-          this.expense_categories = data.categories
-          this.get_transactions()
-        })
-        .catch((error) => {
-          if (error.response) console.log(error.response.data)
-          else console.error(error)
-          alert("Error")
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    get_transactions() {
-      this.loading = true
+const route = useRoute()
+const { year, month } = useQueryParams()
+const { start_date, end_date } = useDateRange()
 
-      let url
-      if (this.accountId) url = `/accounts/${this.accountId}/transactions`
-      else url = `/transactions`
-      const params = { from: this.start_date, to: this.end_date }
+const loading = ref(false)
+const transactions = ref<Transaction[]>([])
 
-      this.axios
-        .get(url, { params })
-        .then(({ data }) => {
-          this.transactions = data.records
-        })
-        .catch((error) => {
-          if (error.response) console.log(error.response.data)
-          else console.error(error)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-  },
-  computed: {
-    accountId() {
-      return this.$route.params.accountId
-    },
-    dark() {
-      return this.$vuetify.theme.dark
-    },
+const accountId = computed(() => route.params.accountId as string | undefined)
 
-    expenses() {
-      return this.transactions.filter((transaction) => transaction.amount < 0)
-    },
+const expenses = computed(() => transactions.value.filter((t) => t.amount < 0))
+const income = computed(() => transactions.value.filter((t) => t.amount > 0))
 
-    income() {
-      return this.transactions.filter((transaction) => transaction.amount > 0)
-    },
-  },
+async function getTransactions() {
+  loading.value = true
+  try {
+    const url = accountId.value ? `/accounts/${accountId.value}/transactions` : "/transactions"
+    const { data } = await axios.get<{ records: Transaction[] }>(url, {
+      params: { from: start_date.value, to: end_date.value },
+    })
+    transactions.value = data.records
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 }
+
+watch(accountId, getTransactions)
+watch(year, getTransactions)
+watch(month, getTransactions)
+onMounted(getTransactions)
 </script>
