@@ -42,6 +42,8 @@
         <TransactionsTable />
       </v-col>
     </v-row>
+
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color">{{ snackbar.message }}</v-snackbar>
   </div>
 </template>
 
@@ -61,6 +63,11 @@ const category = ref<Category | null>(null)
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
+const snackbar = ref({ show: false, message: "", color: "" })
+
+function showSnackbar(message: string, color = "") {
+  snackbar.value = { show: true, message, color }
+}
 
 const categoryId = computed(() => route.params.categoryId as string)
 
@@ -71,7 +78,7 @@ async function getCategory() {
     category.value = data
   } catch (error) {
     console.error(error)
-    alert("Error")
+    showSnackbar("Failed to load category", "error")
   } finally {
     loading.value = false
   }
@@ -81,9 +88,10 @@ async function updateCategory() {
   saving.value = true
   try {
     await axios.put(`/categories/${categoryId.value}`, category.value)
+    showSnackbar("Category updated successfully", "success")
   } catch (error) {
     console.error(error)
-    alert("Error")
+    showSnackbar("Failed to update category", "error")
   } finally {
     saving.value = false
   }
@@ -97,7 +105,7 @@ async function deleteCategory() {
     router.push({ name: "transaction_categories" })
   } catch (error) {
     console.error(error)
-    alert("Error")
+    showSnackbar("Failed to delete category", "error")
   } finally {
     deleting.value = false
   }

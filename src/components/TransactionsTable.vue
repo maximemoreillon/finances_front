@@ -18,7 +18,8 @@
         <v-col cols="auto">
           <MonthSelect />
         </v-col>
-        <v-col cols="auto">
+
+        <v-col cols="4">
           <v-text-field
             label="Search"
             v-model="search"
@@ -56,7 +57,9 @@
         </template>
 
         <template #item.time="{ item }">
-          {{ new Date(item.time).toLocaleString("ja-JP", toLocaleStringOptions) }}
+          {{
+            new Date(item.time).toLocaleString("ja-JP", toLocaleStringOptions)
+          }}
         </template>
 
         <template #item.amount="{ item }">
@@ -80,7 +83,9 @@
         </template>
 
         <template #item.account_id="{ item }">
-          <router-link :to="{ name: 'account', params: { accountId: item.account_id } }">
+          <router-link
+            :to="{ name: 'account', params: { accountId: item.account_id } }"
+          >
             {{ accounts.find((a) => a.id === item.account_id)?.name }}
           </router-link>
         </template>
@@ -90,34 +95,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue"
-import { useRoute } from "vue-router"
-import type { Account, Category, Transaction } from "@/types"
-import axios from "@/axios"
-import { useQueryParams } from "@/composables/useQueryParams"
-import { useDateRange } from "@/composables/useDateRange"
-import MonthSelect from "./MonthSelect.vue"
-import YearSelect from "./YearSelect.vue"
-import TransactionRegisterDialog from "./TransactionRegisterDialog.vue"
+import { ref, computed, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import type { Account, Category, Transaction } from "@/types";
+import axios from "@/axios";
+import { useQueryParams } from "@/composables/useQueryParams";
+import { useDateRange } from "@/composables/useDateRange";
+import MonthSelect from "./MonthSelect.vue";
+import YearSelect from "./YearSelect.vue";
+import TransactionRegisterDialog from "./TransactionRegisterDialog.vue";
 
-const route = useRoute()
-const { year, month, category, setQueryParam } = useQueryParams()
-const { start_date, end_date } = useDateRange()
+const route = useRoute();
+const { year, month, category, setQueryParam } = useQueryParams();
+const { start_date, end_date } = useDateRange();
 
-const loading = ref(false)
-const search = ref("")
-const transactions = ref<Transaction[]>([])
-const categories = ref<Category[]>([])
-const accounts = ref<Account[]>([])
+const loading = ref(false);
+const search = ref("");
+const transactions = ref<Transaction[]>([]);
+const categories = ref<Category[]>([]);
+const accounts = ref<Account[]>([]);
 
 const toLocaleStringOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
-}
+};
 
-const accountId = computed(() => route.params.accountId as string | undefined)
-const categoryId = computed(() => route.params.categoryId as string | undefined)
+const accountId = computed(() => route.params.accountId as string | undefined);
+const categoryId = computed(
+  () => route.params.categoryId as string | undefined,
+);
 
 const headers = computed(() => {
   const h = [
@@ -125,50 +132,55 @@ const headers = computed(() => {
     { title: "Description", key: "description" },
     { title: "Amount", key: "amount" },
     { title: "Categories", key: "categories", sortable: false },
-  ]
+  ];
   if (!categoryId.value && !accountId.value) {
-    h.push({ title: "Account", key: "account_id" })
+    h.push({ title: "Account", key: "account_id" });
   }
-  return h
-})
+  return h;
+});
 
 async function getTransactionCategories() {
-  const { data } = await axios.get<{ categories: Category[] }>("/categories")
-  categories.value = data.categories
+  const { data } = await axios.get<{ categories: Category[] }>("/categories");
+  categories.value = data.categories;
 }
 
 async function getAccounts() {
-  const { data } = await axios.get<{ accounts: Account[] }>("/accounts")
-  accounts.value = data.accounts
+  const { data } = await axios.get<{ accounts: Account[] }>("/accounts");
+  accounts.value = data.accounts;
 }
 
 async function getTransactions() {
-  loading.value = true
+  loading.value = true;
   try {
-    let url: string
-    if (accountId.value) url = `/accounts/${accountId.value}/transactions`
-    else if (categoryId.value) url = `/categories/${categoryId.value}/transactions`
-    else url = "/transactions"
+    let url: string;
+    if (accountId.value) url = `/accounts/${accountId.value}/transactions`;
+    else if (categoryId.value)
+      url = `/categories/${categoryId.value}/transactions`;
+    else url = "/transactions";
 
     const { data } = await axios.get<{ records: Transaction[] }>(url, {
-      params: { from: start_date.value, to: end_date.value, category: category.value },
-    })
-    transactions.value = data.records
+      params: {
+        from: start_date.value,
+        to: end_date.value,
+        category: category.value,
+      },
+    });
+    transactions.value = data.records;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-watch(accountId, getTransactions)
-watch(year, getTransactions)
-watch(month, getTransactions)
-watch(category, getTransactions)
+watch(accountId, getTransactions);
+watch(year, getTransactions);
+watch(month, getTransactions);
+watch(category, getTransactions);
 
 onMounted(() => {
-  getTransactionCategories()
-  getAccounts()
-  getTransactions()
-})
+  getTransactionCategories();
+  getAccounts();
+  getTransactions();
+});
 </script>
