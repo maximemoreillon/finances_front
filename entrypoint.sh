@@ -3,23 +3,11 @@
 ROOT_DIR=/app
 
 # Replace env vars in files served by NGINX
-echo "Replacing eenvironment variables"
-for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*.js;
+echo "Replacing environment variables"
+for file in $ROOT_DIR/assets/*.js* $ROOT_DIR/index.html;
 do
   echo "Processing $file ...";
-
-  sed -i 's|VUE_APP_FINANCES_API_URL_PLACEHOLDER|'${VUE_APP_FINANCES_API_URL}'|g' $file
-  
-  # Legacy auth
-  sed -i 's|VUE_APP_IDENTIFICATION_URL_PLACEHOLDER|'${VUE_APP_IDENTIFICATION_URL}'|g' $file
-  sed -i 's|VUE_APP_LOGIN_URL_PLACEHOLDER|'${VUE_APP_LOGIN_URL}'|g' $file
-
-  # OIDC Auth
-  sed -i 's|VUE_APP_OIDC_AUTHORITY_PLACEHOLDER|'${VUE_APP_OIDC_AUTHORITY}'|g' $file
-  sed -i 's|VUE_APP_OIDC_CLIENT_ID_PLACEHOLDER|'${VUE_APP_OIDC_CLIENT_ID}'|g' $file
-  sed -i 's|VUE_APP_OIDC_AUDIENCE_PLACEHOLDER|'${VUE_APP_OIDC_AUDIENCE}'|g' $file
-
-
+  sed -i 's|VITE_FINANCES_API_URL_PLACEHOLDER|'${VITE_FINANCES_API_URL}'|g' $file
 done
 
 echo "Starting Nginx"

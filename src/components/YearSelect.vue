@@ -1,30 +1,17 @@
 <template>
   <v-select
     :items="years"
-    :value="year"
-    @change="setQueryParam('year', $event)"
-    label="year"
+    :model-value="year"
+    @update:model-value="setQueryParam('year', $event)"
+    label="Year"
+    hide-details
   />
 </template>
 
-<script>
-import queryParamsUtils from "@/mixins/queryParamsUtils"
+<script setup lang="ts">
+import { useQueryParams } from "@/composables/useQueryParams"
 
-export default {
-  name: "YearSelect",
-  components: {},
-  mixins: [queryParamsUtils],
+const { year, setQueryParam } = useQueryParams()
 
-  data() {
-    return {
-      years: Array.from(Array(10).keys()).map(
-        (y) => new Date().getFullYear() - y
-      ),
-    }
-  },
-  watch: {},
-  mounted() {},
-  methods: {},
-  computed: {},
-}
+const years = Array.from(Array(10).keys()).map((y) => new Date().getFullYear() - y)
 </script>

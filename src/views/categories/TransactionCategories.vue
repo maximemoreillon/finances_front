@@ -3,16 +3,16 @@
     <v-toolbar flat>
       <v-toolbar-title>Transaction categories</v-toolbar-title>
       <v-spacer />
-      <v-btn outlined class="mr-2" :loading="applying" @click="applyCategories">
-        <v-icon left>mdi-reload</v-icon>
-        <span>Apply</span>
+      <v-btn variant="outlined" class="mr-2" :loading="applying" @click="applyCategories">
+        <v-icon start>mdi-reload</v-icon>
+        Apply
       </v-btn>
       <CreateCategoryDialog />
     </v-toolbar>
 
     <v-card-text>
       <v-data-table :headers="headers" :items="categories" :loading="loading">
-        <template v-slot:item.name="{ item }">
+        <template #item.name="{ item }">
           <router-link
             :to="{
               name: 'transaction_category',
@@ -22,13 +22,13 @@
             {{ item.name }}
           </router-link>
         </template>
-        <template v-slot:item.keywords="{ item }">
+        <template #item.keywords="{ item }">
           <v-chip
             v-for="keyword in item.keywords"
             :key="keyword.id"
             class="ma-1"
             label
-            outlined
+            variant="outlined"
             :to="{ name: 'keyword', params: { keywordId: keyword.id } }"
           >
             {{ keyword.word }}
@@ -39,58 +39,48 @@
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, onMounted } from "vue"
+import type { Category } from "@/types"
+import axios from "@/axios"
 import CreateCategoryDialog from "@/components/categories/CreateCategoryDialog.vue"
 
-export default {
-  name: "TransactionCategories",
-  components: { CreateCategoryDialog },
-  data() {
-    return {
-      categories: [],
-      loading: false,
-      applying: false,
-      headers: [
-        { value: "name", text: "Name" },
-        { value: "keywords", text: "Keywords" },
-        { value: "transaction_count", text: "Transactions" },
-      ],
-    }
-  },
-  mounted() {
-    this.get_categories()
-  },
-  methods: {
-    get_categories() {
-      this.loading = true
-      this.axios
-        .get(`/categories`)
-        .then(({ data }) => {
-          this.categories = data.categories
-        })
-        .catch((error) => {
-          console.error(error)
-          alert("Error")
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    async applyCategories() {
-      try {
-        this.applying = true
-        await this.axios.patch("/categories")
-        alert("Categories applied")
-        this.get_categories()
-      } catch (error) {
-        alert("Applying categories failed")
-        console.error(error)
-      } finally {
-        this.applying = false
-      }
-    },
-  },
-}
-</script>
+const categories = ref<Category[]>([])
+const loading = ref(false)
+const applying = ref(false)
 
-<style scoped></style>
+const headers = [
+  { key: "name", title: "Name" },
+  { key: "keywords", title: "Keywords", sortable: false },
+  { key: "transaction_count", title: "Transactions" },
+]
+
+async function getCategories() {
+  loading.value = true
+  try {
+    const { data } = await axios.get<{ categories: Category[] }>("/categories")
+    categories.value = data.categories
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    loading.value = false
+  }
+}
+
+async function applyCategories() {
+  applying.value = true
+  try {
+    await axios.patch("/categories")
+    alert("Categories applied")
+    await getCategories()
+  } catch (error) {
+    alert("Applying categories failed")
+    console.error(error)
+  } finally {
+    applying.value = false
+  }
+}
+
+onMounted(getCategories)
+</script>

@@ -1,15 +1,14 @@
 <template>
   <v-dialog v-model="dialog" width="50rem">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" color="primary">
-        <v-icon left>mdi-plus</v-icon>
-        <span>New</span>
+    <template #activator="{ props }">
+      <v-btn v-bind="props" color="primary">
+        <v-icon start>mdi-plus</v-icon>
+        New
       </v-btn>
     </template>
 
     <v-card>
-      <v-card-title> Create transaction category </v-card-title>
-
+      <v-card-title>Create transaction category</v-card-title>
       <v-form @submit.prevent="createCategory">
         <v-card-text>
           <v-row justify="center">
@@ -19,12 +18,10 @@
           </v-row>
           <v-row justify="end">
             <v-col cols="auto">
-              <v-btn @click="dialog = false" text> cancel </v-btn>
+              <v-btn @click="dialog = false" variant="text">Cancel</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn type="submit" :loading="registering" color="primary">
-                Register
-              </v-btn>
+              <v-btn type="submit" :loading="registering" color="primary">Register</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -33,41 +30,27 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: "CreateCategoryDialog",
-  props: {
-    accountId: String,
-  },
-  data() {
-    return {
-      dialog: false,
-      registering: false,
-      name: "",
-    }
-  },
-  mounted() {},
+<script setup lang="ts">
+import { ref } from "vue"
+import { useRouter } from "vue-router"
+import axios from "@/axios"
 
-  methods: {
-    async createCategory() {
-      this.registering = true
-      try {
-        const url = `/categories`
-        const { data } = await this.axios.post(url, {
-          name: this.name,
-        })
-        this.$router.push({
-          name: "transaction_category",
-          params: { categoryId: data.id },
-        })
-      } catch (error) {
-        console.error(error)
-        alert("Error")
-      } finally {
-        this.registering = false
-      }
-    },
-  },
-  computed: {},
+const router = useRouter()
+
+const dialog = ref(false)
+const registering = ref(false)
+const name = ref("")
+
+async function createCategory() {
+  registering.value = true
+  try {
+    const { data } = await axios.post<{ id: number }>("/categories", { name: name.value })
+    router.push({ name: "transaction_category", params: { categoryId: data.id } })
+  } catch (error) {
+    console.error(error)
+    alert("Error")
+  } finally {
+    registering.value = false
+  }
 }
 </script>

@@ -1,34 +1,25 @@
 <template>
   <v-select
     :items="months"
-    :value="month"
-    @change="handleChage"
+    :model-value="month"
+    @update:model-value="handleChange"
     label="Month"
+    hide-details
   />
 </template>
 
-<script>
-import queryParamsUtils from "@/mixins/queryParamsUtils"
+<script setup lang="ts">
+import { useQueryParams } from "@/composables/useQueryParams"
 
-export default {
-  name: "MonthSelect",
-  mixins: [queryParamsUtils],
-  data() {
-    return {
-      months: [
-        { text: "Any", value: -1 },
-        ...Array.from(Array(12).keys()).map((m) => m + 1),
-      ],
-    }
-  },
-  watch: {},
-  mounted() {},
-  methods: {
-    handleChage(val) {
-      if (val === -1) this.setQueryParam("month", null)
-      else this.setQueryParam("month", val)
-    },
-  },
-  computed: {},
+const { month, setQueryParam } = useQueryParams()
+
+const months = [
+  { title: "Any", value: -1 },
+  ...Array.from(Array(12).keys()).map((m) => m + 1),
+]
+
+function handleChange(val: number) {
+  if (val === -1) setQueryParam("month", null)
+  else setQueryParam("month", val)
 }
 </script>

@@ -4,19 +4,14 @@
       <v-toolbar-title>Monthly transactions</v-toolbar-title>
       <v-spacer />
     </v-toolbar>
-
     <v-card-text>
       <v-row>
         <v-col cols="auto">
-          <YearSelect
-            :year="year"
-            @yearSelection="$emit('yearSelection', $event)"
-          />
+          <YearSelect />
         </v-col>
       </v-row>
       <apexchart
         v-if="transactions.length"
-        ref="chart"
         width="100%"
         height="300"
         :options="options"
@@ -27,142 +22,95 @@
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue"
+import { useRoute } from "vue-router"
+import { useTheme } from "vuetify"
+import type { Transaction } from "@/types"
+import axios from "@/axios"
 import { colors } from "@/constants"
+import { useQueryParams } from "@/composables/useQueryParams"
 import YearSelect from "./YearSelect.vue"
-import queryParamsUtils from "../mixins/queryParamsUtils"
 
-export default {
-  name: "TransactionsBarChart",
-  components: { YearSelect },
-  mixins: [queryParamsUtils],
+const route = useRoute()
+const theme = useTheme()
+const { year, setQueryParam } = useQueryParams()
 
-  data() {
-    return {
-      loading: false,
-      transactions: [],
-    }
-  },
-  watch: {
-    accountId() {
-      this.get_transactions()
-    },
-    year() {
-      this.get_transactions()
-    },
-  },
-  mounted() {
-    this.get_transactions()
-  },
-  methods: {
-    async get_transactions() {
-      this.loading = true
-      try {
-        let url
-        if (this.categoryId) url = `/categories/${this.categoryId}/transactions`
-        else if (this.accountId)
-          url = `/accounts/${this.accountId}/transactions`
-        else url = `/transactions`
+const loading = ref(false)
+const transactions = ref<Transaction[]>([])
 
-        const params = {
-          from: new Date(`${this.year}/1/1`),
-          to: new Date(`${this.year + 1}/1/1`),
-        }
+const accountId = computed(() => route.params.accountId as string | undefined)
+const categoryId = computed(() => route.params.categoryId as string | undefined)
+const isDark = computed(() => theme.global.current.value.dark)
 
-        const { data } = await this.axios.get(url, { params })
-        this.transactions = data.records
-      } catch (error) {
-        if (error.response) console.log(error.response.data)
-        else console.error(error)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    transactions_of_month(year, month) {
-      const start_date = new Date(`${year}/${month}/01`)
-      const end_year = month < 12 ? year : year + 1
-      const end_month = month < 12 ? month + 1 : 1
-
-      const end_date = new Date(`${end_year}/${end_month}/01`)
-
-      return this.transactions.filter(
-        (t) => start_date <= new Date(t.time) && new Date(t.time) < end_date
-      )
-    },
-    incomeTotalForMonth(year, month) {
-      return this.transactions_of_month(year, month).reduce(
-        (acc, { amount }) => {
-          if (amount > 0) acc += amount
-          return acc
-        },
-        0
-      )
-    },
-    expensesTotalForMonth(year, month) {
-      return this.transactions_of_month(year, month).reduce(
-        (acc, { amount }) => {
-          if (amount < 0) acc -= amount
-          return acc
-        },
-        0
-      )
-    },
-  },
-  computed: {
-    dark() {
-      return this.$vuetify.theme.dark
-    },
-    options() {
-      return {
-        chart: {
-          id: "area-datetime",
-          type: "bar",
-          events: {
-            dataPointSelection: (_, __, config) => {
-              const clicked_month = config.dataPointIndex + 1
-              this.setQueryParam("month", clicked_month)
-            },
-          },
-        },
-        theme: {
-          mode: this.dark ? "dark" : "light",
-        },
-        background: "#c00",
-
-        xaxis: {
-          categories: Array.from(Array(12).keys()).map((m) => m + 1),
-        },
-
-        colors,
-        dataLabels: {
-          enabled: false,
-        },
-      }
-    },
-    accountId() {
-      return this.$route.params.accountId
-    },
-    categoryId() {
-      return this.$route.params.categoryId
-    },
-
-    formatted_income() {
-      return Array.from(Array(12).keys())
-        .map((m) => m + 1)
-        .map((month) => this.incomeTotalForMonth(this.year, month))
-    },
-    formatted_expenses() {
-      return Array.from(Array(12).keys())
-        .map((m) => m + 1)
-        .map((month) => this.expensesTotalForMonth(this.year, month))
-    },
-    series() {
-      return [
-        { name: "Expenses", data: this.formatted_expenses },
-        { name: "Income", data: this.formatted_income },
-      ]
-    },
-  },
+function transactionsOfMonth(y: number, m: number) {
+  const start = new Date(`${y}/${m}/01`)
+  const endYear = m < 12 ? y : y + 1
+  const endMonth = m < 12 ? m + 1 : 1
+  const end = new Date(`${endYear}/${endMonth}/01`)
+  return transactions.value.filter((t) => start <= new Date(t.time) && new Date(t.time) < end)
 }
+
+function incomeTotalForMonth(y: number, m: number) {
+  return transactionsOfMonth(y, m).reduce((acc, { amount }) => {
+    if (amount > 0) acc += amount
+    return acc
+  }, 0)
+}
+
+function expensesTotalForMonth(y: number, m: number) {
+  return transactionsOfMonth(y, m).reduce((acc, { amount }) => {
+    if (amount < 0) acc -= amount
+    return acc
+  }, 0)
+}
+
+const months = Array.from(Array(12).keys()).map((m) => m + 1)
+
+const series = computed(() => [
+  { name: "Expenses", data: months.map((m) => expensesTotalForMonth(year.value, m)) },
+  { name: "Income", data: months.map((m) => incomeTotalForMonth(year.value, m)) },
+])
+
+const options = computed(() => ({
+  chart: {
+    id: "bar-monthly",
+    type: "bar",
+    events: {
+      dataPointSelection: (_: unknown, __: unknown, config: { dataPointIndex: number }) => {
+        setQueryParam("month", config.dataPointIndex + 1)
+      },
+    },
+  },
+  theme: { mode: isDark.value ? "dark" : "light" },
+  xaxis: { categories: months },
+  colors,
+  dataLabels: { enabled: false },
+}))
+
+async function getTransactions() {
+  loading.value = true
+  try {
+    let url: string
+    if (categoryId.value) url = `/categories/${categoryId.value}/transactions`
+    else if (accountId.value) url = `/accounts/${accountId.value}/transactions`
+    else url = "/transactions"
+
+    const { data } = await axios.get<{ records: Transaction[] }>(url, {
+      params: {
+        from: new Date(`${year.value}/1/1`),
+        to: new Date(`${year.value + 1}/1/1`),
+      },
+    })
+    transactions.value = data.records
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+watch(accountId, getTransactions)
+watch(year, getTransactions)
+onMounted(getTransactions)
 </script>

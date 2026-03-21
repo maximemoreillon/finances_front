@@ -1,92 +1,47 @@
 <template>
-  <AppTemplate @user="get_user($event)" :options="options">
-    <template v-slot:nav>
-      <v-list dense nav>
-        <v-list-item :to="{ name: 'accounts' }">
-          <v-list-item-icon>
-            <v-icon>mdi-chart-line</v-icon>
-          </v-list-item-icon>
+  <v-app>
+    <v-app-bar color="#333333">
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-title>Finances</v-app-bar-title>
+    </v-app-bar>
 
-          <v-list-item-content>
-            <v-list-item-title>Accounts</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'transactions' }">
-          <v-list-item-icon>
-            <v-icon>mdi-swap-horizontal</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Transactions</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'transaction_categories' }">
-          <v-list-item-icon>
-            <v-icon>mdi-shape</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Transaction categories</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="{ name: 'about' }">
-          <v-list-item-icon>
-            <v-icon>mdi-information-outline</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>About</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+    <v-navigation-drawer v-model="drawer">
+      <v-list nav>
+        <v-list-item
+          prepend-icon="mdi-chart-line"
+          title="Accounts"
+          :to="{ name: 'accounts' }"
+        />
+        <v-list-item
+          prepend-icon="mdi-swap-horizontal"
+          title="Transactions"
+          :to="{ name: 'transactions' }"
+        />
+        <v-list-item
+          prepend-icon="mdi-shape"
+          title="Transaction categories"
+          :to="{ name: 'transaction_categories' }"
+        />
+        <v-list-item
+          prepend-icon="mdi-information-outline"
+          title="About"
+          :to="{ name: 'about' }"
+        />
       </v-list>
-    </template>
-  </AppTemplate>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container>
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<script>
-import AppTemplate from "@moreillon/vue_application_template_vuetify"
-const {
-  VUE_APP_LOGIN_URL,
-  VUE_APP_IDENTIFICATION_URL,
-  VUE_APP_OIDC_AUTHORITY,
-  VUE_APP_OIDC_CLIENT_ID,
-  VUE_APP_OIDC_AUDIENCE,
-} = process.env
-export default {
-  name: "App",
+<script setup lang="ts">
+import { ref } from "vue";
 
-  components: {
-    AppTemplate,
-  },
-
-  data: () => ({
-    options: {
-      title: "Finances",
-      login_url: VUE_APP_LOGIN_URL,
-      identification_url: VUE_APP_IDENTIFICATION_URL,
-      oidc: {
-        authority: VUE_APP_OIDC_AUTHORITY,
-        client_id: VUE_APP_OIDC_CLIENT_ID,
-        extraQueryParams: {
-          audience: VUE_APP_OIDC_AUDIENCE,
-        },
-      },
-    },
-  }),
-
-  methods: {
-    get_user(user) {
-      if (!user) return
-      if (user.access_token)
-        this.axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${user.access_token}`
-    },
-  },
-}
+const drawer = ref(true);
 </script>
 
 <style>
@@ -96,7 +51,6 @@ export default {
 .apexcharts-svg {
   background: none !important;
 }
-
 .apexcharts-zoom-icon.apexcharts-selected svg {
   fill: #c00000 !important;
 }
