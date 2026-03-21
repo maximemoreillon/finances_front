@@ -1,7 +1,6 @@
 <template>
   <v-card
     height="100%"
-    variant="outlined"
     :to="{ name: 'account', params: { accountId: account.id } }"
   >
     <v-card-title>{{ account.name }}</v-card-title>
@@ -20,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Account } from "@/types"
+import type { Account } from "@/types";
 
-defineProps<{ account: Account }>()
+defineProps<{ account: Account }>();
 </script>

@@ -1,8 +1,12 @@
 <template>
   <v-dialog v-model="dialog" width="50rem">
     <template #activator="{ props }">
-      <v-btn v-bind="props" color="primary">
-        <v-icon>mdi-plus</v-icon>
+      <v-btn
+        v-bind="props"
+        color="primary"
+        prepend-icon="mdi-plus"
+        text="Create"
+      >
       </v-btn>
     </template>
 
@@ -23,7 +27,9 @@
               <v-btn @click="dialog = false" variant="text">Cancel</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn type="submit" :loading="registering" color="primary">Save</v-btn>
+              <v-btn type="submit" :loading="registering" color="primary"
+                >Save</v-btn
+              >
             </v-col>
           </v-row>
         </v-card-text>
@@ -33,26 +39,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import { useRouter } from "vue-router"
-import axios from "@/axios"
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "@/axios";
 
-const router = useRouter()
+const router = useRouter();
 
-const dialog = ref(false)
-const registering = ref(false)
-const newAccount = ref({ name: "", currency: "JPY" })
+const dialog = ref(false);
+const registering = ref(false);
+const newAccount = ref({ name: "", currency: "JPY" });
 
 async function createAccount() {
-  registering.value = true
+  registering.value = true;
   try {
-    const { data } = await axios.post<{ id: number }>("/accounts", newAccount.value)
-    router.push({ name: "account", params: { accountId: data.id } })
+    const { data } = await axios.post<{ id: number }>(
+      "/accounts",
+      newAccount.value,
+    );
+    router.push({ name: "account", params: { accountId: data.id } });
   } catch (error) {
-    console.error(error)
-    alert("Error")
+    console.error(error);
+    alert("Error");
   } finally {
-    registering.value = false
+    registering.value = false;
   }
 }
 </script>

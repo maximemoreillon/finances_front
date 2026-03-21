@@ -1,5 +1,10 @@
 <template>
   <v-app>
+    <v-app-bar color="#333333">
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-title>Finances</v-app-bar-title>
+    </v-app-bar>
+
     <v-navigation-drawer v-model="drawer">
       <v-list nav>
         <v-list-item
@@ -24,11 +29,6 @@
         />
       </v-list>
     </v-navigation-drawer>
-
-    <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <v-app-bar-title>Finances</v-app-bar-title>
-    </v-app-bar>
 
     <v-main>
       <v-container>
