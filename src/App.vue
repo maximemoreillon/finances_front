@@ -3,6 +3,9 @@
     <v-app-bar color="#333333">
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title>Finances</v-app-bar-title>
+      <v-btn icon @click="toggleTheme">
+        <v-icon>{{ dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer">
@@ -39,9 +42,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useTheme } from "vuetify";
 
 const drawer = ref(true);
+const theme = useTheme();
+const dark = computed(() => theme.global.current.value.dark);
+
+theme.global.name.value = localStorage.getItem("theme") ?? "light";
+
+function toggleTheme() {
+  const next = dark.value ? "light" : "dark";
+  theme.global.name.value = next;
+  localStorage.setItem("theme", next);
+}
 </script>
 
 <style>
