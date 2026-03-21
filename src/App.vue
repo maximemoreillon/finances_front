@@ -4,14 +4,14 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title>Finances</v-app-bar-title>
       <v-btn icon @click="toggleTheme">
-        <v-icon>{{ dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+        <v-icon>{{ dark ? "mdi-weather-sunny" : "mdi-weather-night" }}</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer">
       <v-list nav>
         <v-list-item
-          prepend-icon="mdi-chart-line"
+          prepend-icon="mdi-bank"
           title="Accounts"
           :to="{ name: 'accounts' }"
         />
