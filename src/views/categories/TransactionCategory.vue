@@ -4,7 +4,12 @@
       <v-col>
         <v-card>
           <template #prepend>
-            <v-btn icon exact :to="{ name: 'transaction_categories' }">
+            <v-btn
+              icon
+              exact
+              :to="{ name: 'transaction_categories' }"
+              variant="flat"
+            >
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-icon>mdi-shape</v-icon>
@@ -13,10 +18,19 @@
           <template #title>Category</template>
 
           <template #append>
-            <v-btn icon @click="updateCategory" :loading="saving">
+            <v-btn
+              @click="updateCategory"
+              :loading="saving"
+              class="mr-2"
+              color="primary"
+            >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
-            <v-btn icon @click="deleteCategory" color="#c00000" :loading="deleting">
+            <v-btn
+              @click="deleteCategory"
+              :loading="deleting"
+              variant="outlined"
+            >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
@@ -47,73 +61,77 @@
       </v-col>
     </v-row>
 
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color">{{ snackbar.message }}</v-snackbar>
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color">{{
+      snackbar.message
+    }}</v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue"
-import { useRoute, useRouter } from "vue-router"
-import type { Category } from "@/types"
-import axios from "@/axios"
-import TransactionsTable from "@/components/TransactionsTable.vue"
-import CategoryKeywords from "@/components/categories/CategoryKeywords.vue"
-import TransactionsBarChart from "@/components/TransactionsBarChart.vue"
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import type { Category } from "@/types";
+import axios from "@/axios";
+import TransactionsTable from "@/components/TransactionsTable.vue";
+import CategoryKeywords from "@/components/categories/CategoryKeywords.vue";
+import TransactionsBarChart from "@/components/TransactionsBarChart.vue";
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-const category = ref<Category | null>(null)
-const loading = ref(false)
-const saving = ref(false)
-const deleting = ref(false)
-const snackbar = ref({ show: false, message: "", color: "" })
+const category = ref<Category | null>(null);
+const loading = ref(false);
+const saving = ref(false);
+const deleting = ref(false);
+const snackbar = ref({ show: false, message: "", color: "" });
 
 function showSnackbar(message: string, color = "") {
-  snackbar.value = { show: true, message, color }
+  snackbar.value = { show: true, message, color };
 }
 
-const categoryId = computed(() => route.params.categoryId as string)
+const categoryId = computed(() => route.params.categoryId as string);
 
 async function getCategory() {
-  loading.value = true
+  loading.value = true;
   try {
-    const { data } = await axios.get<Category>(`/categories/${categoryId.value}`)
-    category.value = data
+    const { data } = await axios.get<Category>(
+      `/categories/${categoryId.value}`,
+    );
+    category.value = data;
   } catch (error) {
-    console.error(error)
-    showSnackbar("Failed to load category", "error")
+    console.error(error);
+    showSnackbar("Failed to load category", "error");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function updateCategory() {
-  saving.value = true
+  saving.value = true;
   try {
-    await axios.put(`/categories/${categoryId.value}`, category.value)
-    showSnackbar("Category updated successfully", "success")
+    await axios.put(`/categories/${categoryId.value}`, category.value);
+    showSnackbar("Category updated successfully", "success");
   } catch (error) {
-    console.error(error)
-    showSnackbar("Failed to update category", "error")
+    console.error(error);
+    showSnackbar("Failed to update category", "error");
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 async function deleteCategory() {
-  if (!confirm("Delete category?")) return
-  deleting.value = true
+  if (!confirm("Delete category?")) return;
+  deleting.value = true;
   try {
-    await axios.delete(`/categories/${categoryId.value}`)
-    router.push({ name: "transaction_categories" })
+    await axios.delete(`/categories/${categoryId.value}`);
+    router.push({ name: "transaction_categories" });
   } catch (error) {
-    console.error(error)
-    showSnackbar("Failed to delete category", "error")
+    console.error(error);
+    showSnackbar("Failed to delete category", "error");
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
 }
 
-onMounted(getCategory)
+onMounted(getCategory);
 </script>
