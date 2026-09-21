@@ -3,6 +3,15 @@
     <v-toolbar flat>
       <v-toolbar-title>Transactions</v-toolbar-title>
       <v-spacer />
+      <v-btn
+        prepend-icon="mdi-download"
+        variant="outlined"
+        class="mr-2"
+        :disabled="!transactions.length"
+        @click="exportCsv"
+      >
+        Export CSV
+      </v-btn>
       <TransactionRegisterDialog
         v-if="accountId"
         :accountId="accountId"
@@ -138,6 +147,42 @@ const headers = computed(() => {
   }
   return h;
 });
+
+function accountName(id: number) {
+  return accounts.value.find((a) => a.id === id)?.name ?? "";
+}
+
+function csvField(value: string | number) {
+  const s = String(value);
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function exportCsv() {
+  const rows = [
+    ["Date", "Description", "Amount", "Currency", "Categories", "Account"],
+    ...transactions.value.map((t) => [
+      t.time,
+      t.description,
+      t.amount,
+      t.currency,
+      t.categories.map((c) => c.name).join("; "),
+      accountName(t.account_id),
+    ]),
+  ];
+  const csv = rows.map((row) => row.map(csvField).join(",")).join("\r\n");
+
+  // The BOM makes Excel read the file as UTF-8 (descriptions may be Japanese)
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download =
+    month.value === -1
+      ? `transactions_${year.value}.csv`
+      : `transactions_${year.value}-${String(month.value).padStart(2, "0")}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 async function getTransactionCategories() {
   const { data } = await axios.get<{ categories: Category[] }>("/categories");
