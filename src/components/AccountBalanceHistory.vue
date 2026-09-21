@@ -1,5 +1,9 @@
 <template>
   <v-card :loading="loading">
+    <template #prepend>
+      <v-icon>mdi-finance</v-icon>
+    </template>
+
     <template #title>Balance</template>
 
     <template #append>

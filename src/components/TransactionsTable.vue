@@ -1,5 +1,9 @@
 <template>
   <v-card>
+    <template #prepend>
+      <v-icon>mdi-swap-horizontal</v-icon>
+    </template>
+
     <template #title>Transactions</template>
 
     <template #append>

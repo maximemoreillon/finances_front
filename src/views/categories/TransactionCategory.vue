@@ -7,6 +7,7 @@
             <v-btn icon exact :to="{ name: 'transaction_categories' }">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
+            <v-icon>mdi-shape</v-icon>
           </template>
 
           <template #title>Category</template>

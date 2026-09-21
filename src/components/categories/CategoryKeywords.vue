@@ -1,5 +1,9 @@
 <template>
   <v-card :loading="loading">
+    <template #prepend>
+      <v-icon>mdi-shape</v-icon>
+    </template>
+
     <template #title>Keywords</template>
 
     <template #append>

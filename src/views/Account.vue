@@ -3,6 +3,10 @@
     <v-row>
       <v-col>
         <v-card :loading="loading">
+          <template #prepend>
+            <v-icon>mdi-bank</v-icon>
+          </template>
+
           <template #title>
             <span v-if="account">{{ account.name }}</span>
             <v-progress-circular indeterminate size="24" v-else />

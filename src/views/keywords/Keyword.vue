@@ -14,6 +14,7 @@
       >
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
+      <v-icon>mdi-shape</v-icon>
     </template>
 
     <template #title>Keyword</template>

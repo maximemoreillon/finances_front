@@ -4,6 +4,7 @@
       <v-btn icon @click="router.back()">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
+      <v-icon>mdi-swap-horizontal</v-icon>
     </template>
 
     <template #title>Transaction</template>
@@ -60,6 +61,10 @@
       <v-row align="center">
         <v-col>
           <v-card variant="outlined">
+            <template #prepend>
+              <v-icon>mdi-shape</v-icon>
+            </template>
+
             <template #title>Categories</template>
 
             <template #append>

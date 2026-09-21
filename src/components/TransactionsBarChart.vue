@@ -1,5 +1,9 @@
 <template>
   <v-card :loading="loading">
+    <template #prepend>
+      <v-icon>mdi-swap-horizontal</v-icon>
+    </template>
+
     <template #title>Monthly transactions</template>
     <v-card-text>
       <v-row>

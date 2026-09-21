@@ -1,5 +1,9 @@
 <template>
   <v-card class="mx-auto" max-width="60rem">
+    <template #prepend>
+      <v-icon>mdi-shape</v-icon>
+    </template>
+
     <template #title>Transaction categories</template>
 
     <template #append>
