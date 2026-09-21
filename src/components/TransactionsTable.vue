@@ -4,13 +4,12 @@
 
     <template #append>
       <v-btn
-        prepend-icon="mdi-download"
         variant="outlined"
         class="mr-2"
         :disabled="!transactions.length"
         @click="exportCsv"
       >
-        Export CSV
+        <v-icon>mdi-download</v-icon>
       </v-btn>
       <TransactionRegisterDialog
         v-if="accountId"

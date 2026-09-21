@@ -9,7 +9,7 @@
           </template>
 
           <template #append>
-            <v-btn @click="updateAccount">
+            <v-btn @click="updateAccount" class="mr-2" color="primary">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
             <v-btn @click="deleteAccount" variant="outlined">
