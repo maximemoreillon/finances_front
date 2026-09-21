@@ -1,5 +1,6 @@
 import axios from "axios"
+import { env } from "./runtimeEnv"
 
-axios.defaults.baseURL = import.meta.env.VITE_FINANCES_API_URL
+axios.defaults.baseURL = env.VITE_FINANCES_API_URL
 
 export default axios

@@ -7,11 +7,9 @@ COPY ./ .
 RUN npm run build
 
 FROM nginx as production-stage
-RUN mkdir /app
-COPY --from=build-stage /app/dist /app
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d/default.conf
 
-# Custom stuff
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+# Generates env.js from VITE_* env vars at container start
+COPY ./40-env-config.sh /docker-entrypoint.d/40-env-config.sh
+RUN chmod +x /docker-entrypoint.d/40-env-config.sh

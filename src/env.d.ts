@@ -7,3 +7,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface Window {
+  // Injected at container start by env.js
+  __ENV__?: Partial<ImportMetaEnv>
+}
