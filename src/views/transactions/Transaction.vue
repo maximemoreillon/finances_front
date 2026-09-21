@@ -1,18 +1,21 @@
 <template>
   <v-card :loading="loading" max-width="40rem" class="mx-auto">
-    <v-toolbar flat>
+    <template #prepend>
       <v-btn icon @click="router.back()">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      <v-toolbar-title>Transaction</v-toolbar-title>
-      <v-spacer />
+    </template>
+
+    <template #title>Transaction</template>
+
+    <template #append>
       <v-btn icon @click="updateTransaction" :loading="saving">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
       <v-btn color="#c00000" icon @click="deleteTransaction" :loading="deleting">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
-    </v-toolbar>
+    </template>
 
     <v-card-text v-if="transaction">
       <v-row align="center">
@@ -57,9 +60,9 @@
       <v-row align="center">
         <v-col>
           <v-card variant="outlined">
-            <v-toolbar flat>
-              <v-toolbar-title>Categories</v-toolbar-title>
-              <v-spacer />
+            <template #title>Categories</template>
+
+            <template #append>
               <v-btn :to="{ name: 'transaction_categories' }" variant="outlined" class="mr-2">
                 Manage
               </v-btn>
@@ -68,7 +71,7 @@
                 :accountId="String(transaction.account_id)"
                 @categoryAdded="getTransaction"
               />
-            </v-toolbar>
+            </template>
             <v-card-text>
               <v-chip
                 v-for="category of transaction.categories"

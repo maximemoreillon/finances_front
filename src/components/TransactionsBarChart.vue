@@ -1,9 +1,6 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat>
-      <v-toolbar-title>Monthly transactions</v-toolbar-title>
-      <v-spacer />
-    </v-toolbar>
+    <template #title>Monthly transactions</template>
     <v-card-text>
       <v-row>
         <v-col cols="auto">

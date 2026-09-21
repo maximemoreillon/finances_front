@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-toolbar flat>
-      <v-toolbar-title>Transactions</v-toolbar-title>
-      <v-spacer />
+    <template #title>Transactions</template>
+
+    <template #append>
       <v-btn
         prepend-icon="mdi-download"
         variant="outlined"
@@ -17,7 +17,7 @@
         :accountId="accountId"
         @transactionRegistered="getTransactions"
       />
-    </v-toolbar>
+    </template>
 
     <v-card-text>
       <v-row dense align="center">

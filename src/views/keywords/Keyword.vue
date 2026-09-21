@@ -1,6 +1,6 @@
 <template>
   <v-card class="mx-auto" max-width="30rem">
-    <v-toolbar flat>
+    <template #prepend>
       <v-btn
         icon
         :to="
@@ -14,15 +14,18 @@
       >
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      <v-toolbar-title>Keyword</v-toolbar-title>
-      <v-spacer />
+    </template>
+
+    <template #title>Keyword</template>
+
+    <template #append>
       <v-btn icon @click="updateKeyword" :loading="saving">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
       <v-btn icon @click="deleteKeyword" color="#c00000" :loading="deleting">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
-    </v-toolbar>
+    </template>
 
     <v-card-text v-if="keyword">
       <v-row>

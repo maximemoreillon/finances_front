@@ -3,19 +3,22 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-toolbar flat>
+          <template #prepend>
             <v-btn icon exact :to="{ name: 'transaction_categories' }">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
-            <v-toolbar-title>Category</v-toolbar-title>
-            <v-spacer />
+          </template>
+
+          <template #title>Category</template>
+
+          <template #append>
             <v-btn icon @click="updateCategory" :loading="saving">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
             <v-btn icon @click="deleteCategory" color="#c00000" :loading="deleting">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
-          </v-toolbar>
+          </template>
           <v-card-text v-if="category">
             <v-row>
               <v-col>

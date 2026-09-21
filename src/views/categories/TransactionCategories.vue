@@ -1,14 +1,14 @@
 <template>
   <v-card class="mx-auto" max-width="60rem">
-    <v-toolbar flat>
-      <v-toolbar-title>Transaction categories</v-toolbar-title>
-      <v-spacer />
+    <template #title>Transaction categories</template>
+
+    <template #append>
       <v-btn variant="outlined" class="mr-2" :loading="applying" @click="applyCategories">
         <v-icon start>mdi-reload</v-icon>
         Apply
       </v-btn>
       <CreateCategoryDialog />
-    </v-toolbar>
+    </template>
 
     <v-card-text>
       <v-data-table :headers="headers" :items="categories" :loading="loading">

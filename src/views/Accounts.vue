@@ -2,13 +2,11 @@
   <v-row>
     <v-col>
       <v-card>
-        <v-toolbar>
-          <v-toolbar-title> Accounts </v-toolbar-title>
+        <template #title>Accounts</template>
 
-          <template v-slot:append>
-            <CreateAccountDialog />
-          </template>
-        </v-toolbar>
+        <template #append>
+          <CreateAccountDialog />
+        </template>
         <v-card-text>
           <TotalWealth />
         </v-card-text>

@@ -3,17 +3,19 @@
     <v-row>
       <v-col>
         <v-card :loading="loading">
-          <v-toolbar flat>
-            <v-toolbar-title v-if="account">{{ account.name }}</v-toolbar-title>
-            <v-progress-circular indeterminate v-else />
-            <v-spacer />
+          <template #title>
+            <span v-if="account">{{ account.name }}</span>
+            <v-progress-circular indeterminate size="24" v-else />
+          </template>
+
+          <template #append>
             <v-btn @click="updateAccount" icon>
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
             <v-btn @click="deleteAccount" color="#c00000" icon>
               <v-icon>mdi-delete</v-icon>
             </v-btn>
-          </v-toolbar>
+          </template>
           <v-card-text v-if="account">
             <v-row>
               <v-col>

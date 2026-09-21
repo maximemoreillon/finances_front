@@ -1,14 +1,14 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat>
-      <v-toolbar-title>Balance</v-toolbar-title>
-      <v-spacer />
+    <template #title>Balance</template>
+
+    <template #append>
       <BalanceRegisterDialog
         :accountId="accountId"
         :currency="currency"
         @balanceRegistered="getBalanceHistory"
       />
-    </v-toolbar>
+    </template>
 
     <v-card-text>
       <v-row align="center" dense>

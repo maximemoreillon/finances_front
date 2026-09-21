@@ -1,12 +1,12 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat>
-      <v-toolbar-title>Transactions breakdown</v-toolbar-title>
-      <v-spacer />
+    <template #title>Transactions breakdown</template>
+
+    <template #append>
       <v-btn :to="{ name: 'transaction_categories' }" variant="outlined">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-    </v-toolbar>
+    </template>
 
     <v-card-text>
       <v-row align="baseline">

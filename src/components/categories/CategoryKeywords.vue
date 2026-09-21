@@ -1,10 +1,10 @@
 <template>
   <v-card :loading="loading">
-    <v-toolbar flat>
-      <v-toolbar-title>Keywords</v-toolbar-title>
-      <v-spacer />
+    <template #title>Keywords</template>
+
+    <template #append>
       <AddKeywordDialog :categoryId="categoryId" @keywordAdded="keywords.push($event)" />
-    </v-toolbar>
+    </template>
     <v-card-text>
       <v-chip
         v-for="keyword in keywords"
