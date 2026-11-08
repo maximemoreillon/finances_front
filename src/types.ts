@@ -2,6 +2,7 @@ export interface Account {
   id: number
   name: string
   currency: string
+  icon_url?: string | null
   balance: number
   transaction_count: number
 }

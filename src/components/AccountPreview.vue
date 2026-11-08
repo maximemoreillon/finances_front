@@ -3,7 +3,10 @@
     height="100%"
     :to="{ name: 'account', params: { accountId: account.id } }"
   >
-    <v-card-title>{{ account.name }}</v-card-title>
+    <template #prepend>
+      <AccountIcon :icon-url="account.icon_url" />
+    </template>
+    <template #title>{{ account.name }}</template>
     <v-card-text>
       <v-row dense>
         <v-col>Currency: {{ account.currency }}</v-col>
@@ -20,6 +23,7 @@
 
 <script setup lang="ts">
 import type { Account } from "@/types";
+import AccountIcon from "@/components/AccountIcon.vue";
 
 defineProps<{ account: Account }>();
 </script>
