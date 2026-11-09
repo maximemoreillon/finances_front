@@ -4,7 +4,7 @@
       <v-col>
         <v-card :loading="loading">
           <template #prepend>
-            <v-icon>mdi-bank</v-icon>
+            <AccountIcon :icon-url="account?.icon_url" />
           </template>
 
           <template #title>
@@ -12,24 +12,18 @@
             <v-progress-circular indeterminate size="24" v-else />
           </template>
 
+          <template #subtitle v-if="account">{{ account.currency }}</template>
+
           <template #append>
-            <v-btn @click="updateAccount" class="mr-2" color="primary">
-              <v-icon>mdi-content-save</v-icon>
-            </v-btn>
-            <v-btn @click="deleteAccount" variant="outlined">
+            <AccountEditDialog
+              v-if="account"
+              :account="account"
+              @updated="account = $event"
+            />
+            <v-btn @click="deleteAccount" :loading="deleting" variant="outlined">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
-          <v-card-text v-if="account">
-            <v-row>
-              <v-col>
-                <v-text-field label="Name" v-model="account.name" />
-              </v-col>
-              <v-col>
-                <v-text-field v-model="account.currency" label="Currency" />
-              </v-col>
-            </v-row>
-          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -66,13 +60,14 @@ import AccountBalanceHistory from "@/components/AccountBalanceHistory.vue";
 import TransactionsTable from "@/components/TransactionsTable.vue";
 import TransactionsBarChart from "@/components/TransactionsBarChart.vue";
 import ExpensesBreakdown from "@/components/ExpensesBreakdown.vue";
+import AccountIcon from "@/components/AccountIcon.vue";
+import AccountEditDialog from "@/components/AccountEditDialog.vue";
 
 const route = useRoute();
 const router = useRouter();
 
 const account = ref<Account | null>(null);
 const loading = ref(false);
-const saving = ref(false);
 const deleting = ref(false);
 
 const accountId = computed(() => route.params.accountId as string);
@@ -86,18 +81,6 @@ async function getAccountInfo() {
     console.error(error);
   } finally {
     loading.value = false;
-  }
-}
-
-async function updateAccount() {
-  saving.value = true;
-  try {
-    await axios.put(`/accounts/${accountId.value}`, account.value);
-  } catch (error) {
-    alert("Update failed");
-    console.error(error);
-  } finally {
-    saving.value = false;
   }
 }
 
